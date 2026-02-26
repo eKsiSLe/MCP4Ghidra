@@ -6,12 +6,12 @@ An autonomous workflow for continuously improving both:
 
 ## Quick Start - Running the Continuous Loop
 
-The easiest way to use this is with Claude Code:
+The easiest way to use this is with AI Assistant:
 
 ```
 You: Run the continuous improvement loop for Ghidra
 
-Claude: [Starts the loop, documents functions, improves tools]
+AI: [Starts the loop, documents functions, improves tools]
 ```
 
 Or invoke the slash command: `/improve`
@@ -59,7 +59,7 @@ Or invoke the slash command: `/improve`
 
 ## Usage
 
-### With Claude Code (Recommended)
+### With AI Assistant (Recommended)
 
 ```python
 # Start the improvement loop
@@ -80,7 +80,7 @@ loop.start_session()
 # Document a function
 result = document_next_function(loop)
 if result:
-    # Claude analyzes the decompiled code and applies documentation
+    # AI analyzes the decompiled code and applies documentation
     apply_function_documentation(
         loop,
         address=result["function"]["address"],
@@ -133,7 +133,7 @@ python workflows/continuous_improvement.py --dry-run --standalone
 | `re_documentation_tools.py` | Curated 25-tool subset for RE work |
 | `re_improvement_workflow.py` | Original agent-based workflow |
 | `test_workflow.py` | Test harness |
-| `run_improvement_loop.py` | Instructions for Claude Code |
+| `run_improvement_loop.py` | Instructions for AI Assistant |
 
 ## State Persistence
 
@@ -209,4 +209,4 @@ Summary:
 - requests library
 - Ghidra running with GhidraMCP plugin
 - A loaded binary in Ghidra
-- Claude Code (for full autonomous operation)
+- AI Assistant (for full autonomous operation)

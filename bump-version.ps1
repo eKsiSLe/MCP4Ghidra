@@ -8,7 +8,7 @@ Updates the plugin version string in every file that contains it:
   - src/main/java/com/xebyte/MCP4GhidraPlugin.java   (fallback strings)
   - ghidra-mcp-setup.ps1                             ($PluginVersion)
   - tests/endpoints.json
-  - CLAUDE.md
+  - AI_ASSISTANT.md
   - README.md
 
 Does NOT touch the Ghidra version (ghidra.version in pom.xml).
@@ -66,8 +66,8 @@ $rules = @(
     @{ File = 'ghidra-mcp-setup.ps1';                                          Pat = '\$PluginVersion\s*=\s*"' + [regex]::Escape($Old) + '"';  Rep = ('$PluginVersion = "' + $New + '"') },
     # tests/endpoints.json - "version": "2.0.x"
     @{ File = 'tests\endpoints.json';                                          Pat = '"version":\s*"' + [regex]::Escape($Old) + '"';           Rep = ('"version": "' + $New + '"') },
-    # CLAUDE.md - **Version**: 2.0.x
-    @{ File = 'CLAUDE.md';                                                     Pat = '\*\*Version\*\*:\s*' + [regex]::Escape($Old);            Rep = ('**Version**: ' + $New) },
+    # AI_ASSISTANT.md - **Version**: 2.0.x
+    @{ File = 'AI_ASSISTANT.md';                                                     Pat = '\*\*Version\*\*:\s*' + [regex]::Escape($Old);            Rep = ('**Version**: ' + $New) },
     # README.md - | **Version** | 2.0.x |
     @{ File = 'README.md';                                                     Pat = '\|\s*\*\*Version\*\*\s*\|\s*' + [regex]::Escape($Old) + '\s*\|'; Rep = ('| **Version** | ' + $New + ' |') }
 )

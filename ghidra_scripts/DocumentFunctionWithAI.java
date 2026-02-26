@@ -1,11 +1,11 @@
-// Document current function by calling Claude AI with comprehensive plate comment prompt
-// This script analyzes the current function and uses Claude to generate a detailed
+// Document current function by calling AI AI with comprehensive plate comment prompt
+// This script analyzes the current function and uses AI to generate a detailed
 // function header comment following the standard plate comment format.
 //
 // @author Ben Ethington
 // @category Diablo 2
 // @keybinding ctrl shift P
-// @menupath Diablo II.Document Function with Claude
+// @menupath Diablo II.Document Function with AI
 // @toolbar
 
 import ghidra.app.script.GhidraScript;
@@ -19,7 +19,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DocumentFunctionWithClaude extends GhidraScript {
+public class DocumentFunctionWithAI extends GhidraScript {
     
     private static final String PLATE_COMMENT_PROMPT = 
         "First, call get_current_function() function to retrieve the function at the current cursor position in Ghidra.\n\n" +
@@ -87,7 +87,7 @@ public class DocumentFunctionWithClaude extends GhidraScript {
         }
 
         println("Analyzing function: " + currentFunction.getName() + " @ " + currentFunction.getEntryPoint());
-        println("Claude will retrieve full function details via get_current_function() MCP tool");
+        println("AI will retrieve full function details via get_current_function() MCP tool");
 
         // Build the complete prompt
         String fullPrompt = PLATE_COMMENT_PROMPT +
@@ -95,11 +95,11 @@ public class DocumentFunctionWithClaude extends GhidraScript {
             "Use the MCP tool set_plate_comment to apply the comment to the function's address. " +
             "Remember: provide ONLY plain text without decorative borders - Ghidra adds formatting automatically.";
 
-        println("\n=== Calling Claude AI ===");
+        println("\n=== Calling AI AI ===");
         println("Prompt length: " + fullPrompt.length() + " characters");
-        println("Claude will query Ghidra for current function details via MCP");
+        println("AI will query Ghidra for current function details via MCP");
 
-        // Find Claude CLI and MCP config
+        // Find AI CLI and MCP config
         String userHome = System.getProperty("user.home");
         String mcpConfig = findMcpConfig(userHome);
         
@@ -110,11 +110,11 @@ public class DocumentFunctionWithClaude extends GhidraScript {
             return;
         }
 
-        // Execute Claude CLI with direct stdin
-        // Use full path to claude.cmd since Java ProcessBuilder doesn't use PATH
-        String claudePath = System.getenv("APPDATA") + "\\npm\\claude.cmd";
+        // Execute AI CLI with direct stdin
+        // Use full path to ai.cmd since Java ProcessBuilder doesn't use PATH
+        String aiPath = System.getenv("APPDATA") + "\\npm\\ai.cmd";
         ProcessBuilder pb = new ProcessBuilder(
-            claudePath, "-p", 
+            aiPath, "-p", 
             "--mcp-config", mcpConfig,
             "--dangerously-skip-permissions"
         );
@@ -135,7 +135,7 @@ public class DocumentFunctionWithClaude extends GhidraScript {
         StringBuilder output = new StringBuilder();
         String line;
         
-        println("\n=== Claude Output ===");
+        println("\n=== AI Output ===");
         while ((line = reader.readLine()) != null) {
             println(line);
             output.append(line).append("\n");
@@ -148,7 +148,7 @@ public class DocumentFunctionWithClaude extends GhidraScript {
             println("Function documentation completed!");
             println("Check the function's plate comment in the decompiler view.");
         } else {
-            popup("Claude CLI failed with exit code: " + exitCode + "\n\nSee console for details.");
+            popup("AI CLI failed with exit code: " + exitCode + "\n\nSee console for details.");
         }
     }
 

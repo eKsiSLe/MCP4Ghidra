@@ -156,7 +156,7 @@ Most Ghidra MCP implementations give you a handful of read-only tools and call i
 
 > **Additional helper scripts** (Linux equivalents of the PowerShell utilities):
 > - `functions-extract.sh` — Extract functions via Ghidra REST API (uses `curl`/`jq`)
-> - `functions-process.sh` — Parallel function processing with Claude CLI
+> - `functions-process.sh` — Parallel function processing with AI CLI
 
 ### Basic Usage
 
@@ -503,7 +503,7 @@ See [CHANGELOG.md](CHANGELOG.md) for version history.
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   AI/Automation │◄──►│   MCP Bridge    │◄──►│  Ghidra Plugin  │
 │     Tools       │    │ (bridge_mcp_    │    │ (GhidraMCP.jar) │
-│  (Claude, etc.) │    │  ghidra.py)     │    │                 │
+│  (AI, etc.) │    │  ghidra.py)     │    │                 │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
         │                       │                       │
    MCP Protocol            HTTP REST              Ghidra API

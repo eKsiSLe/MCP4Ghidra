@@ -9,7 +9,7 @@ Modules:
     re_improvement_workflow: Autonomous improvement loop with RE Expert and Toolsmith agents
     continuous_improvement: Main orchestrator for autonomous documentation
     ghidra_manager: Ghidra process lifecycle management
-    claude_analyzer: Claude API integration for automated analysis
+    ai_analyzer: AI API integration for automated analysis
     session_reporter: Session statistics and reporting
     quality_tracker: Documentation completeness tracking
     dashboard: CLI progress dashboard
@@ -35,9 +35,9 @@ Usage:
         ContinuousImprovementLoop, ensure_ghidra, check_ghidra_status
     )
 
-    # Use Claude for analysis
-    from workflows.claude_analyzer import (
-        ClaudeAnalyzer, AutoDocumenter, analyze_single_function
+    # Use AI for analysis
+    from workflows.ai_analyzer import (
+        AIAnalyzer, AutoDocumenter, analyze_single_function
     )
 """
 
@@ -119,8 +119,8 @@ from .ghidra_manager import (
     GhidraState,
 )
 
-from .claude_analyzer import (
-    ClaudeAnalyzer,
+from .ai_analyzer import (
+    AIAnalyzer,
     AutoDocumenter,
     AnalysisResult,
     create_analyzer,
@@ -203,8 +203,8 @@ __all__ = [
     "GhidraConfig",
     "GhidraState",
 
-    # Claude Analyzer
-    "ClaudeAnalyzer",
+    # AI Analyzer
+    "AIAnalyzer",
     "AutoDocumenter",
     "AnalysisResult",
     "create_analyzer",

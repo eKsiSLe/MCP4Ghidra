@@ -653,7 +653,7 @@ public class BatchDocumentFunctionsAllBinaries extends GhidraScript {
                     line.append(" @ ").append(fs.address);
                     line.append(" (Score: ").append(fs.score).append(")");
 
-                    // Append issues list for Claude Code to know what to fix
+                    // Append issues list for AI Assistant to know what to fix
                     if (!fs.issues.isEmpty()) {
                         line.append(" [").append(String.join("; ", fs.issues)).append("]");
                     }

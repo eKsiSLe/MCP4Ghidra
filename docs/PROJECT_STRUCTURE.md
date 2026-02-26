@@ -37,7 +37,7 @@ ghidra-mcp/
 │   ├── CHANGELOG.md                  # Version history
 │   ├── CONTRIBUTING.md               # Contribution guidelines
 │   ├── LICENSE                       # Project license
-│   ├── CLAUDE.md                     # Claude AI integration guide
+│   ├── AI_ASSISTANT.md                     # AI AI integration guide
 │   ├── NAMING_CONVENTIONS.md         # Naming standards
 │   ├── IMPROVEMENTS.md               # Project improvements log
 │   ├── IMPROVEMENTS_QUICK_REFERENCE.md  # Quick reference
@@ -174,7 +174,7 @@ ghidra-mcp/
 ├── 🧪 tests/ - Python Test Suite
 │   ├── test_enhanced_mcp.py
 │   ├── test_complete_system.py
-│   ├── test_claude_simple.py
+│   ├── test_ai_simple.py
 │   ├── test_http_struct_tools.py
 │   ├── test_enhanced_prompt_tools.py
 │   └── test_mcp_category_tools.py
@@ -307,7 +307,7 @@ README.md
 CHANGELOG.md
 CONTRIBUTING.md
 DOCUMENTATION_INDEX.md
-CLAUDE.md
+AI_ASSISTANT.md
 NAMING_CONVENTIONS.md
 ```
 

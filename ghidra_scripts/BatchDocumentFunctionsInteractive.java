@@ -1,4 +1,4 @@
-// Batch Document Functions with Claude Code (Interactive Version)
+// Batch Document Functions with AI Assistant (Interactive Version)
 // Interactive version with configuration prompts before processing.
 //
 // Completeness Tests:
@@ -32,7 +32,7 @@ public class BatchDocumentFunctionsInteractive extends GhidraScript {
     private int maxScore = 99;
     private boolean dryRun = false;
     private boolean generateTodoFile = true;
-    private boolean invokeClaudeDirectly = false;
+    private boolean invokeAIDirectly = false;
     private int delayBetweenFunctionsMs = 2000;
     private String outputDirectory = "";
 
@@ -81,7 +81,7 @@ public class BatchDocumentFunctionsInteractive extends GhidraScript {
 
     @Override
     public void run() throws Exception {
-        println("=== Batch Document Functions with Claude Code ===");
+        println("=== Batch Document Functions with AI Assistant ===");
         println("Interactive Configuration Mode");
         println("");
 
@@ -97,7 +97,7 @@ public class BatchDocumentFunctionsInteractive extends GhidraScript {
         println("  Score Range: " + minScore + " - " + maxScore);
         println("  Dry Run: " + dryRun);
         println("  Generate Todo File: " + generateTodoFile);
-        println("  Invoke Claude Directly: " + invokeClaudeDirectly);
+        println("  Invoke AI Directly: " + invokeAIDirectly);
         println("  Output Directory: " + (outputDirectory.isEmpty() ? "Current" : outputDirectory));
         println("");
 
@@ -168,9 +168,9 @@ public class BatchDocumentFunctionsInteractive extends GhidraScript {
             generateTodoFile();
         }
 
-        if (invokeClaudeDirectly && !dryRun) {
-            if (askYesNo("Invoke Claude", "Ready to invoke Claude Code for " + needsWorkFunctions + " functions?")) {
-                invokeClaudeForFunctions();
+        if (invokeAIDirectly && !dryRun) {
+            if (askYesNo("Invoke AI", "Ready to invoke AI Assistant for " + needsWorkFunctions + " functions?")) {
+                invokeAIForFunctions();
             }
         }
 
@@ -181,25 +181,25 @@ public class BatchDocumentFunctionsInteractive extends GhidraScript {
     private boolean configureOptions() throws Exception {
         // Mode selection
         String modeAnalyze = "Analyze Only (generate todo file for functions-process.ps1)";
-        String modeClaude = "Analyze and Invoke Claude (process directly)";
+        String modeAI = "Analyze and Invoke AI (process directly)";
         String modeQuick = "Quick Analysis (dry run, no output files)";
 
         String mode = askChoice("Select Operation Mode",
             "What would you like to do?",
-            Arrays.asList(modeAnalyze, modeClaude, modeQuick),
+            Arrays.asList(modeAnalyze, modeAI, modeQuick),
             modeAnalyze);
 
         if (mode.equals(modeAnalyze)) {
             generateTodoFile = true;
-            invokeClaudeDirectly = false;
+            invokeAIDirectly = false;
             dryRun = false;
-        } else if (mode.equals(modeClaude)) {
+        } else if (mode.equals(modeAI)) {
             generateTodoFile = true;
-            invokeClaudeDirectly = true;
+            invokeAIDirectly = true;
             dryRun = false;
         } else {
             generateTodoFile = false;
-            invokeClaudeDirectly = false;
+            invokeAIDirectly = false;
             dryRun = true;
         }
 
@@ -455,8 +455,8 @@ public class BatchDocumentFunctionsInteractive extends GhidraScript {
         }
     }
 
-    private void invokeClaudeForFunctions() throws Exception {
-        println("\n=== Invoking Claude Code ===");
+    private void invokeAIForFunctions() throws Exception {
+        println("\n=== Invoking AI Assistant ===");
 
         String userHome = System.getProperty("user.home");
         String mcpConfig = findMcpConfig(userHome);
@@ -469,7 +469,7 @@ public class BatchDocumentFunctionsInteractive extends GhidraScript {
             return;
         }
 
-        String claudePath = System.getenv("APPDATA") + "\\npm\\claude.cmd";
+        String aiPath = System.getenv("APPDATA") + "\\npm\\ai.cmd";
 
         int processed = 0;
         int successful = 0;
@@ -483,7 +483,7 @@ public class BatchDocumentFunctionsInteractive extends GhidraScript {
 
             try {
                 ProcessBuilder pb = new ProcessBuilder(
-                    claudePath,
+                    aiPath,
                     "--system-prompt-file", promptFile,
                     "--mcp-config", mcpConfig,
                     "--dangerously-skip-permissions",

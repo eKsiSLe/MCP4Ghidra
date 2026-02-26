@@ -10,8 +10,8 @@ This is the main entry point for fully autonomous operation. It combines:
 5. Error recovery
 
 Usage:
-    # Run autonomously with Claude Code
-    python autonomous_loop.py --mode claude
+    # Run autonomously with AI Assistant
+    python autonomous_loop.py --mode ai
 
     # Check status
     python autonomous_loop.py --status
@@ -31,7 +31,7 @@ Architecture:
         |       - Ghidra interaction
         |       - Function processing
         |
-        +-> Claude Code (external)
+        +-> AI Assistant (external)
                 - Function analysis
                 - Issue remediation
 """
@@ -69,7 +69,7 @@ from workflows.self_improvement import SelfImprovementEngine
 from workflows.continuous_improvement import ContinuousImprovementLoop
 
 
-# Prompts for Claude Code
+# Prompts for AI Assistant
 DOCUMENT_FUNCTION_PROMPT = """You are documenting a function in Ghidra. Work silently and efficiently.
 
 Target: {function_name} @ {function_address}
@@ -138,11 +138,11 @@ class AutonomousLoop:
         self.consecutive_errors = 0
         self.session_start = datetime.now()
 
-    def run_claude(self, prompt: str, timeout: int = 300) -> Dict[str, Any]:
-        """Run Claude Code with a prompt."""
+    def run_ai(self, prompt: str, timeout: int = 300) -> Dict[str, Any]:
+        """Run AI Assistant with a prompt."""
         try:
             result = subprocess.run(
-                ["claude", "-p", prompt, "--output-format", "text"],
+                ["ai", "-p", prompt, "--output-format", "text"],
                 capture_output=True,
                 text=True,
                 timeout=timeout,
@@ -182,13 +182,13 @@ class AutonomousLoop:
         # Mark work started
         self.loop.start_function_work(func_name, func_addr)
 
-        # Run Claude to document
+        # Run AI to document
         prompt = DOCUMENT_FUNCTION_PROMPT.format(
             function_name=func_name,
             function_address=func_addr
         )
 
-        result = self.run_claude(prompt)
+        result = self.run_ai(prompt)
 
         if result.get("status") == "success":
             self.consecutive_errors = 0
@@ -235,13 +235,13 @@ class AutonomousLoop:
             instruction=issue.get("instruction", "")
         )
 
-        result = self.run_claude(prompt, timeout=120)
+        result = self.run_ai(prompt, timeout=120)
 
         if result.get("status") == "fixed":
             # Resolve the issue
             self.improvement_engine.issues.resolve_issue(
                 issue["issue_id"],
-                result.get("action", "Fixed by Claude")
+                result.get("action", "Fixed by AI")
             )
             logger.info(f"Resolved issue {issue['issue_id']}")
         else:
@@ -256,8 +256,8 @@ class AutonomousLoop:
         # First, run the engine's internal cycle
         cycle_result = self.improvement_engine.run_improvement_cycle()
 
-        # Then process any issues that need Claude
-        work_queue = self.improvement_engine.get_claude_work_queue()
+        # Then process any issues that need AI
+        work_queue = self.improvement_engine.get_ai_work_queue()
 
         issues_processed = 0
         for issue in work_queue[:5]:  # Process up to 5 issues per cycle
@@ -265,7 +265,7 @@ class AutonomousLoop:
             if result.get("status") == "fixed":
                 issues_processed += 1
 
-        cycle_result["claude_issues_processed"] = issues_processed
+        cycle_result["ai_issues_processed"] = issues_processed
 
         return cycle_result
 
@@ -326,7 +326,7 @@ class AutonomousLoop:
             if self.functions_processed > 0 and self.functions_processed % self.improvement_interval == 0:
                 cycle_result = self.run_improvement_cycle()
                 session_results["improvement_cycles"] += 1
-                session_results["issues_resolved"] += cycle_result.get("claude_issues_processed", 0)
+                session_results["issues_resolved"] += cycle_result.get("ai_issues_processed", 0)
 
             # Process next function
             result = self.process_next_function()
@@ -362,12 +362,12 @@ class AutonomousLoop:
                 "duration": str(datetime.now() - self.session_start)
             },
             "improvement": self.improvement_engine.get_status(),
-            "work_queue": len(self.improvement_engine.get_claude_work_queue())
+            "work_queue": len(self.improvement_engine.get_ai_work_queue())
         }
 
 
 def interactive_mode():
-    """Run in interactive mode with Claude Code."""
+    """Run in interactive mode with AI Assistant."""
     print("""
 ============================================================
  AUTONOMOUS SELF-IMPROVING DOCUMENTATION SYSTEM
@@ -411,7 +411,7 @@ Commands:
                 print(json.dumps(result, indent=2))
 
             elif action == "issues":
-                queue = loop.improvement_engine.get_claude_work_queue()
+                queue = loop.improvement_engine.get_ai_work_queue()
                 print(f"\nOpen issues requiring attention: {len(queue)}")
                 for i, issue in enumerate(queue[:10], 1):
                     print(f"  {i}. [{issue['action']}] {issue['function']} - {issue['instruction'][:50]}")
@@ -475,7 +475,7 @@ def main():
 
     if args.issues:
         engine = SelfImprovementEngine()
-        queue = engine.get_claude_work_queue()
+        queue = engine.get_ai_work_queue()
         print(json.dumps(queue, indent=2))
         return 0
 

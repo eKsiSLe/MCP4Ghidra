@@ -468,16 +468,16 @@ code = decompile_function(address='0x401000', offset=100, limit=100)
   - Installed in x86win.cspec
 
 ### Bug Fixes
-- ✅ **Fixed DocumentFunctionWithClaude.java** - Windows compatibility
-  - Resolved "claude: CreateProcess error=2" 
-  - Now uses full path: `%APPDATA%\npm\claude.cmd`
+- ✅ **Fixed DocumentFunctionWithAI.java** - Windows compatibility
+  - Resolved "ai: CreateProcess error=2" 
+  - Now uses full path: `%APPDATA%\npm\ai.cmd`
   - Changed keybinding from Ctrl+Shift+D to Ctrl+Shift+P
 
 ### New Files & Tools
 - ✅ **ghidra_scripts/** - Example Ghidra scripts
-  - `DocumentFunctionWithClaude.java` - AI-assisted function documentation
+  - `DocumentFunctionWithAI.java` - AI-assisted function documentation
   - `ClearCallReturnOverrides.java` - Clean orphaned flow overrides
-- ✅ **mcp-config.json** - Claude MCP configuration template
+- ✅ **mcp-config.json** - AI MCP configuration template
 - ✅ **mcp_function_processor.py** - Batch function processing automation
 - ✅ **scripts/hybrid-function-processor.ps1** - Automated analysis workflows
 

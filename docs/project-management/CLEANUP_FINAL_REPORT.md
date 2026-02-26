@@ -46,7 +46,7 @@ Successfully completed comprehensive 3-phase cleanup and reorganization of the G
 - ✅ Created docs/guides/ (5 ordinal workflow files)
 - ✅ Created docs/analysis/ (18 binary analysis files)
 - ✅ Created docs/reference/ (5 project management files)
-- ✅ Root level: 4 essential files (README, CLAUDE, CHANGELOG, START_HERE)
+- ✅ Root level: 4 essential files (README, AI, CHANGELOG, START_HERE)
 
 **File Movements**:
 - 5 ORDINAL_*.md files → docs/guides/
@@ -57,7 +57,7 @@ Successfully completed comprehensive 3-phase cleanup and reorganization of the G
 ```
 Root (4 files)
 ├── README.md
-├── CLAUDE.md
+├── AI_ASSISTANT.md
 ├── CHANGELOG.md
 └── START_HERE.md
 
@@ -291,7 +291,7 @@ Navigation: Fully indexed
 ```
 README.md                 - Main installation & documentation
 CHANGELOG.md              - Version history
-CLAUDE.md                 - AI configuration guide
+AI_ASSISTANT.md                 - AI configuration guide
 START_HERE.md             - Quick navigation (FIXED ✅)
 ```
 

@@ -29,14 +29,14 @@ param(
     # External binary priority order file (one binary name per line, # comments allowed)
     # If not provided, the built-in Diablo2 order is used as a fallback
     [string]$BinaryOrderFile = "",
-    # Skip pre-flight validation checks (claude in PATH, Ghidra health, prompt file)
+    # Skip pre-flight validation checks (ai in PATH, Ghidra health, prompt file)
     [switch]$SkipPreFlight,
     # Show INFO-level diagnostic messages on console without writing a log file.
     # More granular than -Log (which writes everything to a file).
     # Combine with -Log to get both console diagnostics AND the log file.
     [Alias("D")][switch]$Diagnostic,
     # Record timing for every major operation and print a breakdown at the end.
-    # Use with -DryRun to measure pre-processing overhead without calling Claude.
+    # Use with -DryRun to measure pre-processing overhead without calling AI.
     [Alias("P")][switch]$Profile
 )
 
@@ -221,14 +221,14 @@ function Show-Help {
     Write-Host "functions-process.ps1 - Parallel Function Processing with MCP"
     Write-Host ""
     Write-Host "PARALLEL OPTIONS:"
-    Write-Host "  -Workers, -w, -j <n>   Number of parallel Claude workers (default: 1)"
+    Write-Host "  -Workers, -w, -j <n>   Number of parallel AI workers (default: 1)"
     Write-Host "  -Coordinator           Run as coordinator spawning workers"
     Write-Host ""
     Write-Host "PROCESSING OPTIONS:"
     Write-Host "  -Single, -1            Process one function and stop"
     Write-Host "  -Function, -f <name>   Process specific function"
     Write-Host "  -Reverse, -r           Process from bottom to top"
-    Write-Host "  -Model, -m <model>     Claude model: haiku|sonnet|opus (default: opus)"
+    Write-Host "  -Model, -m <model>     AI model: haiku|sonnet|opus (default: opus)"
     Write-Host "  -MaxFunctions, -n <n>  Stop after N functions (0 = unlimited)"
     Write-Host "  -MinScore <n>          Only process functions with score >= n"
     Write-Host "  -MaxScore <n>          Only process functions with score <= n"
@@ -240,9 +240,9 @@ function Show-Help {
     Write-Host "  -Diagnostic, -D        Show INFO diagnostics on console (no log file)"
     Write-Host "                         Combine with -Log to get both console + file"
     Write-Host "  -Profile, -P           Record timing for every major operation."
-    Write-Host "                         Use -DryRun -Profile to benchmark without Claude."
+    Write-Host "                         Use -DryRun -Profile to benchmark without AI."
     Write-Host "  -Subagent              Opus orchestrator + Haiku subagents"
-    Write-Host "  -Rescan                Re-scan scores without Claude processing"
+    Write-Host "  -Rescan                Re-scan scores without AI processing"
     Write-Host "  -Cleanup               Remove auto-generated Ghidra scripts"
     Write-Host "  -PickThreshold, -Pick  Show popup to select minimum completeness threshold"
     Write-Host "                         Functions below threshold added to reprocess list"
@@ -283,7 +283,7 @@ function Invoke-CleanupScripts {
     .SYNOPSIS
         Remove auto-generated Ghidra scripts created during function documentation.
     .DESCRIPTION
-        Claude creates address-specific scripts (RecreateFunction*.java, FixFUN_*.java, etc.)
+        AI creates address-specific scripts (RecreateFunction*.java, FixFUN_*.java, etc.)
         when it encounters problematic functions. These are one-time use and can be cleaned up.
         Note: FixFunctionParameters.java and FixFunctionParametersHeadless.java are preserved.
     #>
@@ -777,7 +777,7 @@ function Update-CompletenessTracking {
 
 function Invoke-ReEvaluate {
     Write-Host "=== RE-EVALUATION MODE ===" -ForegroundColor Cyan
-    Write-Host "Scanning functions for updated completeness scores (no Claude processing)" -ForegroundColor Cyan
+    Write-Host "Scanning functions for updated completeness scores (no AI processing)" -ForegroundColor Cyan
     Write-Host ""
 
     # Load todo file to get function list
@@ -1288,7 +1288,7 @@ function Get-McpErrors {
     
     # Common MCP error patterns
     $errorPatterns = @(
-        # Patterns must be specific to avoid matching Claude's explanatory text
+        # Patterns must be specific to avoid matching AI's explanatory text
         # Require patterns to start with error indicators or be at line start
         @{ Pattern = '(?im)^\s*error[:\s]+.*?(?:failed|unable|cannot|could not|timeout|connection refused)'; Type = 'General Error' },
         @{ Pattern = '(?i)mcp_ghidra_\w+.*?(?:failed|error|exception)'; Type = 'MCP Tool Failure' },
@@ -1462,7 +1462,7 @@ function Process-Function {
     }
     
     # Build minimal user message (workflow is now sent via --system-prompt-file)
-    # Include issues list if available so Claude knows what to fix
+    # Include issues list if available so AI knows what to fix
     $issuesSection = ""
     if ($issues) {
         $issuesSection = @"
@@ -1490,7 +1490,7 @@ Use the attached workflow document to document $funcName$(if ($address) { " at 0
     try {
         $modelInfo = if ($FullModelName) { "model $FullModelName" } else { "default model" }
         
-        Write-Log "Invoking Claude for $funcName with $modelInfo"
+        Write-Log "Invoking AI for $funcName with $modelInfo"
         
         $retryCount = 0
         $backoffSeconds = 2
@@ -1498,18 +1498,18 @@ Use the attached workflow document to document $funcName$(if ($address) { " at 0
         $output = ""
         
         while ($retryCount -lt $MaxRetries) {
-            # Invoke Claude exactly like the fast working command:
-            # echo "message" | claude --system-prompt-file "path" 2>&1
-            # Temporarily unset CLAUDECODE so nested claude invocations are allowed
-            $savedClaudeCode = $env:CLAUDECODE
-            $env:CLAUDECODE = $null
+            # Invoke AI exactly like the fast working command:
+            # echo "message" | ai --system-prompt-file "path" 2>&1
+            # Temporarily unset AICODE so nested ai invocations are allowed
+            $savedAICode = $env:AICODE
+            $env:AICODE = $null
             if ($FullModelName) {
-                $output = echo $userMessage | claude --system-prompt-file $promptFile --model $FullModelName 2>&1
+                $output = echo $userMessage | ai --system-prompt-file $promptFile --model $FullModelName 2>&1
             } else {
-                $output = echo $userMessage | claude --system-prompt-file $promptFile 2>&1
+                $output = echo $userMessage | ai --system-prompt-file $promptFile 2>&1
             }
             $exitCode = $LASTEXITCODE
-            $env:CLAUDECODE = $savedClaudeCode
+            $env:AICODE = $savedAICode
             
             # Check for rate limit message (5-hour limit)
             $outputStr = $output -join "`n"
@@ -1636,7 +1636,7 @@ Use the attached workflow document to document $funcName$(if ($address) { " at 0
             # Extract output for analysis
             $outputStr = $output -join "`n"
             
-            # Check for SKIP response first (function intentionally skipped by Claude)
+            # Check for SKIP response first (function intentionally skipped by AI)
             if ($outputStr -match "SKIP:\s*([^\n]+)(?:\n+Reason:\s*(.+))?") {
                 $skipFunc = $Matches[1].Trim()
                 $skipReason = if ($Matches[2]) { $Matches[2].Trim() } else { "No reason provided" }
@@ -1868,7 +1868,7 @@ function Start-Coordinator {
     Write-Host ""
     Write-Host "Each worker will:" -ForegroundColor White
     Write-Host "  - Pick an unclaimed function from the todo list" -ForegroundColor Gray
-    Write-Host "  - Process it with Claude" -ForegroundColor Gray
+    Write-Host "  - Process it with AI" -ForegroundColor Gray
     Write-Host "  - Move to the next unclaimed function" -ForegroundColor Gray
     Write-Host "  - Continue until all functions are done" -ForegroundColor Gray
     Write-Host ""
@@ -1946,7 +1946,7 @@ function Invoke-PreFlight {
     .SYNOPSIS
         Validate runtime prerequisites before starting any processing.
     .DESCRIPTION
-        Checks: GhidraServer URL format, claude CLI in PATH, Ghidra /health endpoint,
+        Checks: GhidraServer URL format, ai CLI in PATH, Ghidra /health endpoint,
         and todo file existence. Exits with code 1 on any hard failure.
         Skip with -SkipPreFlight for CI environments that handle these externally.
     #>
@@ -1967,10 +1967,10 @@ function Invoke-PreFlight {
         $failures += "GhidraServer '$GhidraServer' is not a valid URL: $($_.Exception.Message)"
     }
 
-    # 2. Check claude CLI is available
-    $claudeCmd = Get-Command "claude" -ErrorAction SilentlyContinue
-    if (-not $claudeCmd) {
-        $failures += "'claude' not found in PATH  -  install Claude CLI before running this script"
+    # 2. Check ai CLI is available
+    $aiCmd = Get-Command "ai" -ErrorAction SilentlyContinue
+    if (-not $aiCmd) {
+        $failures += "'ai' not found in PATH  -  install AI CLI before running this script"
     }
 
     # 3. Ping Ghidra via /get_version (lightweight, always registered by the plugin)
@@ -2011,7 +2011,7 @@ if ($CleanupScripts) {
     exit 0
 }
 
-# Re-evaluate mode - scan existing functions without Claude processing
+# Re-evaluate mode - scan existing functions without AI processing
 if ($ReEvaluate) {
     Invoke-ReEvaluate
     exit 0
@@ -2359,7 +2359,7 @@ while ($programQueue.Count -gt 0 -or $script:CurrentProgram) {
     }
 
     try {
-        # DryRun: show what would be processed without invoking Claude
+        # DryRun: show what would be processed without invoking AI
         if ($DryRun) {
             Write-WorkerHost "  DRY RUN: Would process $funcName @ $address ($programName)" "Cyan"
             $processedCount++

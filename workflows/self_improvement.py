@@ -557,14 +557,14 @@ class IssueRemediator:
             return False, str(e)
 
     def _remediate_missing_name(self, issue: Dict) -> Tuple[bool, str]:
-        """This requires Claude analysis - return instructions."""
+        """This requires AI analysis - return instructions."""
         # We can't auto-fix naming without AI analysis
         # Instead, return specific guidance
-        return False, "NEEDS_CLAUDE: Analyze function and suggest name"
+        return False, "NEEDS_AI: Analyze function and suggest name"
 
     def _remediate_missing_prototype(self, issue: Dict) -> Tuple[bool, str]:
-        """This requires Claude analysis - return instructions."""
-        return False, "NEEDS_CLAUDE: Analyze function and set prototype"
+        """This requires AI analysis - return instructions."""
+        return False, "NEEDS_AI: Analyze function and set prototype"
 
     def _remediate_missing_types(self, issue: Dict) -> Tuple[bool, str]:
         """Attempt to infer types from context."""
@@ -577,19 +577,19 @@ class IssueRemediator:
         # Try to get decompiled code for context
         result = self.client.call("decompile", {"name": issue.get("function_name", func_addr)})
         if not result.get("success"):
-            return False, "NEEDS_CLAUDE: Could not decompile for type inference"
+            return False, "NEEDS_AI: Could not decompile for type inference"
 
-        # Basic type inference (very limited without Claude)
-        # Just flag for Claude analysis
-        return False, f"NEEDS_CLAUDE: Type {len(variables)} variables"
+        # Basic type inference (very limited without AI)
+        # Just flag for AI analysis
+        return False, f"NEEDS_AI: Type {len(variables)} variables"
 
     def _remediate_plate_comment(self, issue: Dict) -> Tuple[bool, str]:
-        """This requires Claude analysis - return instructions."""
-        return False, "NEEDS_CLAUDE: Improve plate comment"
+        """This requires AI analysis - return instructions."""
+        return False, "NEEDS_AI: Improve plate comment"
 
     def get_remediable_issues(self) -> List[Dict]:
         """Get issues that can potentially be auto-remediated."""
-        # Currently most issues need Claude, but we track them
+        # Currently most issues need AI, but we track them
         return self.issues.get_priority_issues(limit=20)
 
 
@@ -737,9 +737,9 @@ class SelfImprovementEngine:
             success, message = self.remediator.remediate_issue(issue)
             if success:
                 cycle_results["remediations_attempted"] += 1
-            elif message.startswith("NEEDS_CLAUDE"):
-                # Log that this needs Claude attention
-                logger.info(f"Issue {issue['id']} needs Claude: {message}")
+            elif message.startswith("NEEDS_AI"):
+                # Log that this needs AI attention
+                logger.info(f"Issue {issue['id']} needs AI: {message}")
 
         # 4. Analyze patterns and create proposals
         self._analyze_and_propose(cycle_results)
@@ -814,16 +814,16 @@ class SelfImprovementEngine:
             "priority_issues": self.issues.get_priority_issues(limit=5)
         }
 
-    def get_claude_work_queue(self) -> List[Dict]:
+    def get_ai_work_queue(self) -> List[Dict]:
         """
-        Get issues that need Claude's attention.
+        Get issues that need AI's attention.
 
         Returns prioritized list of issues with specific instructions.
         """
         work_queue = []
 
         for issue in self.issues.get_priority_issues(limit=20):
-            # Determine what Claude needs to do
+            # Determine what AI needs to do
             issue_type = issue["issue_type"]
 
             if issue_type == IssueType.QUALITY_MISSING_NAME.value:
@@ -909,7 +909,7 @@ def main():
     parser.add_argument("--status", action="store_true", help="Show current status")
     parser.add_argument("--cycle", action="store_true", help="Run improvement cycle")
     parser.add_argument("--issues", action="store_true", help="Show open issues")
-    parser.add_argument("--work-queue", action="store_true", help="Show Claude work queue")
+    parser.add_argument("--work-queue", action="store_true", help="Show AI work queue")
     parser.add_argument("--proposals", action="store_true", help="Show improvement proposals")
 
     args = parser.parse_args()
@@ -925,7 +925,7 @@ def main():
         issues = engine.issues.get_priority_issues(limit=20)
         print(json.dumps(issues, indent=2))
     elif args.work_queue:
-        queue = engine.get_claude_work_queue()
+        queue = engine.get_ai_work_queue()
         print(json.dumps(queue, indent=2))
     elif args.proposals:
         proposals = [p for p in engine.state.proposals if p["status"] == "proposed"]

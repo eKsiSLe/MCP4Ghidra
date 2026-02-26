@@ -2,7 +2,7 @@
 """
 Autonomous Runner for Continuous Improvement
 
-This script runs Claude Code in a loop, feeding it documentation tasks
+This script runs AI Assistant in a loop, feeding it documentation tasks
 and collecting results. It provides the "outer loop" for fully automated
 self-improvement.
 
@@ -10,12 +10,12 @@ Usage:
     python autonomous_runner.py --max-functions 100 --session-hours 4
 
 Requirements:
-    - Claude Code CLI installed (`claude` command available)
+    - AI Assistant CLI installed (`ai` command available)
     - Ghidra running with MCP plugin
-    - ANTHROPIC_API_KEY set (for Claude Code)
+    - ANTHROPIC_API_KEY set (for AI Assistant)
 
 Architecture:
-    This script -> Claude Code (subprocess) -> MCP -> Ghidra
+    This script -> AI Assistant (subprocess) -> MCP -> Ghidra
 """
 
 import subprocess
@@ -42,7 +42,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-# Prompts for Claude Code
+# Prompts for AI Assistant
 DOCUMENT_PROMPT = """Document the next undocumented function in Ghidra:
 
 1. Use find_next_undefined_function to find a FUN_* function
@@ -71,21 +71,21 @@ IMPROVE_TOOLING_PROMPT = """Review recent friction points and propose tool impro
 """
 
 
-def run_claude_code(prompt: str, timeout: int = 300) -> dict:
+def run_ai_code(prompt: str, timeout: int = 300) -> dict:
     """
-    Run Claude Code with a prompt and parse the result.
+    Run AI Assistant with a prompt and parse the result.
 
     Args:
-        prompt: The prompt to send to Claude Code
+        prompt: The prompt to send to AI Assistant
         timeout: Timeout in seconds
 
     Returns:
         Parsed JSON result or error dict
     """
     try:
-        # Run claude with the prompt
+        # Run ai with the prompt
         result = subprocess.run(
-            ["claude", "-p", prompt, "--output-format", "text"],
+            ["ai", "-p", prompt, "--output-format", "text"],
             capture_output=True,
             text=True,
             timeout=timeout,
@@ -95,7 +95,7 @@ def run_claude_code(prompt: str, timeout: int = 300) -> dict:
         output = result.stdout.strip()
 
         # Try to extract JSON from the output
-        # Claude might wrap it in markdown or have extra text
+        # AI might wrap it in markdown or have extra text
         import re
         json_match = re.search(r'\{[^{}]*"status"[^{}]*\}', output, re.DOTALL)
 
@@ -163,7 +163,7 @@ def run_autonomous_session(
         # Document next function
         logger.info(f"[{function_count + 1}/{max_functions}] Documenting next function...")
 
-        result = run_claude_code(DOCUMENT_PROMPT)
+        result = run_ai_code(DOCUMENT_PROMPT)
 
         if result.get("status") == "success":
             stats["functions_documented"] += 1
@@ -184,7 +184,7 @@ def run_autonomous_session(
         # Periodically check for tool improvements
         if function_count % improvement_interval == 0:
             logger.info("Checking for tool improvements...")
-            improvement = run_claude_code(IMPROVE_TOOLING_PROMPT, timeout=120)
+            improvement = run_ai_code(IMPROVE_TOOLING_PROMPT, timeout=120)
 
             if improvement.get("status") == "proposed":
                 stats["improvements_proposed"] += 1

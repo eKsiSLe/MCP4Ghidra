@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AI_ASSISTANT.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI Assistant (ai.ai/code) when working with code in this repository.
 
 ## Project Overview
 
@@ -112,7 +112,7 @@ cp target/GhidraMCP.jar "<ghidra_install>/Extensions/Ghidra/"
 ### Running the MCP Bridge
 
 ```bash
-# Stdio transport (default, for AI tools like Claude)
+# Stdio transport (default, for AI tools like AI)
 python bridge_mcp_ghidra.py
 
 # SSE transport (for web/HTTP clients)
@@ -176,7 +176,7 @@ These files work together to implement version management. **You only edit `pom.
 | `src/main/java/com/xebyte/MCP4GhidraPlugin.java` | Plugin code with `VersionInfo` class | 🔍 Loads version dynamically at runtime |
 | `CHANGELOG.md` | Version history and release notes | 📝 Update manually for each release |
 | `README.md` | User documentation | ✅ No version refs (generic) |
-| `CLAUDE.md` | AI guidance (this file) | ✅ No version refs (generic) |
+| `AI_ASSISTANT.md` | AI guidance (this file) | ✅ No version refs (generic) |
 | Other documentation files | User guides, references, examples | ✅ All generic (no version refs) |
 
 ### What Each File Does
@@ -307,7 +307,7 @@ mvn clean package assembly:single
 These files should NOT contain hardcoded version numbers:
 - README.md (use "Latest" or generic language)
 - START_HERE.md (use "Current implementation" or generic)
-- CLAUDE.md (use "Configured in pom.xml")
+- AI_ASSISTANT.md (use "Configured in pom.xml")
 - docs/TOOL_REFERENCE.md (examples show generic "X.Y.Z")
 - docs/PERFORMANCE_BASELINES.md (generic timing references)
 - All other documentation
@@ -341,7 +341,7 @@ For detailed implementation information, see `MAVEN_VERSION_MANAGEMENT.md`.
 ### Automation & Scripts
 
 - `ghidra_scripts/` - Ghidra scripts for automation
-  - `DocumentFunctionWithClaude.java` - AI-assisted function documentation (Ctrl+Shift+P)
+  - `DocumentFunctionWithAI.java` - AI-assisted function documentation (Ctrl+Shift+P)
   - `ClearCallReturnOverrides.java` - Clean orphaned flow overrides
 - `mcp_function_processor.py` - Batch function processing automation
 - `scripts/hybrid-function-processor.ps1` - Automated analysis workflows
@@ -349,7 +349,7 @@ For detailed implementation information, see `MAVEN_VERSION_MANAGEMENT.md`.
 ### Configuration
 
 - `.env.template` - Environment variables template (copy to `.env` for local config)
-- `mcp-config.json` - Claude MCP configuration template
+- `mcp-config.json` - AI MCP configuration template
 - `pytest.ini` - Test configuration with markers and coverage settings
 - `requirements.txt` - Production dependencies (mcp, requests, fastmcp)
 - `requirements-test.txt` - Test dependencies

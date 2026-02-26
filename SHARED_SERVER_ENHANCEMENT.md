@@ -28,7 +28,7 @@ Add the ability for ghidra-mcp headless server to connect to a shared Ghidra rep
         │                         │
         │                         │
    MCP/REST API            pd2 repository
-   (Claude, etc.)          (all analysis)
+   (AI, etc.)          (all analysis)
 ```
 
 ## Configuration

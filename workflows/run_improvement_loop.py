@@ -2,11 +2,11 @@
 """
 Simple entry point for the continuous improvement loop.
 
-This script provides the context and instructions for Claude Code
+This script provides the context and instructions for AI Assistant
 to run the improvement loop autonomously.
 
 Usage:
-    Just read this file and Claude will know what to do!
+    Just read this file and AI will know what to do!
 """
 
 IMPROVEMENT_LOOP_INSTRUCTIONS = """

@@ -296,7 +296,7 @@ For existing files that don't follow conventions:
 
 | Current | Recommended | Action | Priority |
 |---------|-------------|--------|----------|
-| `CLAUDE.md` | `ARCHITECTURE.md` | Rename when restructuring | Low |
+| `AI_ASSISTANT.md` | `ARCHITECTURE.md` | Rename when restructuring | Low |
 | `ordinal_fix_log_*.txt` | Archive to `logs/` folder | Organize existing logs | Low |
 | Old reports | Archive or consolidate | Move to `archive/` | Low |
 | Examples `.py` files | Already `snake_case` ✅ | No action | — |

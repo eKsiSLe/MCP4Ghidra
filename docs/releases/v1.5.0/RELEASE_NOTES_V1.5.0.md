@@ -256,7 +256,7 @@ python bridge_mcp_ghidra.py --ghidra-server http://127.0.0.1:8089/
 - **Ghidra Version**: 11.4.2 (backward compatible with 11.x)
 - **Java Version**: 21 LTS
 - **Python Version**: 3.8+
-- **MCP Protocol**: Compatible with Claude Code, Claude Desktop, and all MCP clients
+- **MCP Protocol**: Compatible with AI Assistant, Desktop AI Client, and all MCP clients
 
 ## Known Issues
 

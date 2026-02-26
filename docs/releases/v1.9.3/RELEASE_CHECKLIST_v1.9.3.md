@@ -2,7 +2,7 @@
 
 **Release Version**: 1.9.3  
 **Release Date**: November 14, 2025  
-**Release Manager**: Claude/User  
+**Release Manager**: AI/User  
 
 ## Pre-Release Verification
 
@@ -112,4 +112,4 @@
 **Release Status**: ✅ APPROVED FOR RELEASE
 
 **Approval Date**: November 14, 2025  
-**Approved By**: Claude/User
+**Approved By**: AI/User

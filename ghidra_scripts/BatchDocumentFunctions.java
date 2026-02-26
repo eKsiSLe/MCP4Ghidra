@@ -1,5 +1,5 @@
-// Batch Document Functions with Claude Code
-// Iterates through all functions, validates completeness, and invokes Claude for undocumented ones.
+// Batch Document Functions with AI Assistant
+// Iterates through all functions, validates completeness, and invokes AI for undocumented ones.
 //
 // Completeness Tests:
 // 1. Plate Comment: Has summary, Algorithm, Parameters (if needed), Returns sections
@@ -44,10 +44,10 @@ public class BatchDocumentFunctions extends GhidraScript {
     // Configuration
     private static final int MAX_FUNCTIONS = 0;           // 0 = unlimited
     private static final int DEFAULT_THRESHOLD = 80;      // Default minimum completeness threshold
-    private static final boolean DRY_RUN = false;         // If true, only generate list without invoking Claude
+    private static final boolean DRY_RUN = false;         // If true, only generate list without invoking AI
     private static final boolean GENERATE_TODO_FILE = true; // Generate FunctionsTodo.txt for PowerShell script
-    private static final boolean INVOKE_CLAUDE_DIRECTLY = false; // Invoke Claude from Java (slower)
-    private static final int DELAY_BETWEEN_FUNCTIONS_MS = 2000;   // Delay between Claude calls
+    private static final boolean INVOKE_AI_DIRECTLY = false; // Invoke AI from Java (slower)
+    private static final int DELAY_BETWEEN_FUNCTIONS_MS = 2000;   // Delay between AI calls
 
     // Runtime configuration (set by dialog)
     private int minThreshold = 0;                         // Functions BELOW this need work
@@ -199,7 +199,7 @@ public class BatchDocumentFunctions extends GhidraScript {
 
     @Override
     public void run() throws Exception {
-        println("=== Batch Document Functions with Claude Code ===");
+        println("=== Batch Document Functions with AI Assistant ===");
 
         // Show threshold picker dialog
         Integer threshold = showThresholdPickerDialog();
@@ -219,7 +219,7 @@ public class BatchDocumentFunctions extends GhidraScript {
         println("  Max Functions: " + (MAX_FUNCTIONS == 0 ? "Unlimited" : MAX_FUNCTIONS));
         println("  Dry Run: " + DRY_RUN);
         println("  Generate Todo File: " + GENERATE_TODO_FILE);
-        println("  Invoke Claude Directly: " + INVOKE_CLAUDE_DIRECTLY);
+        println("  Invoke AI Directly: " + INVOKE_AI_DIRECTLY);
         println("");
 
         // Initialize decompiler for variable analysis
@@ -290,8 +290,8 @@ public class BatchDocumentFunctions extends GhidraScript {
             generateTodoFile();
         }
 
-        if (INVOKE_CLAUDE_DIRECTLY && !DRY_RUN) {
-            invokeClaudeForFunctions();
+        if (INVOKE_AI_DIRECTLY && !DRY_RUN) {
+            invokeAIForFunctions();
         }
 
         // Print summary statistics
@@ -501,10 +501,10 @@ public class BatchDocumentFunctions extends GhidraScript {
     }
 
     /**
-     * Invoke Claude Code for each function that needs work
+     * Invoke AI Assistant for each function that needs work
      */
-    private void invokeClaudeForFunctions() throws Exception {
-        println("\n=== Invoking Claude Code for " + needsWorkFunctions + " functions ===");
+    private void invokeAIForFunctions() throws Exception {
+        println("\n=== Invoking AI Assistant for " + needsWorkFunctions + " functions ===");
 
         String userHome = System.getProperty("user.home");
         String mcpConfig = findMcpConfig(userHome);
@@ -523,7 +523,7 @@ public class BatchDocumentFunctions extends GhidraScript {
         println("MCP Config: " + mcpConfig);
         println("Prompt File: " + promptFile);
 
-        String claudePath = System.getenv("APPDATA") + "\\npm\\claude.cmd";
+        String aiPath = System.getenv("APPDATA") + "\\npm\\ai.cmd";
 
         int processed = 0;
         int successful = 0;
@@ -547,7 +547,7 @@ public class BatchDocumentFunctions extends GhidraScript {
 
             try {
                 ProcessBuilder pb = new ProcessBuilder(
-                    claudePath,
+                    aiPath,
                     "--system-prompt-file", promptFile,
                     "--mcp-config", mcpConfig,
                     "--dangerously-skip-permissions",
@@ -582,7 +582,7 @@ public class BatchDocumentFunctions extends GhidraScript {
                         println("  SKIPPED: " + extractSkipReason(output.toString()));
                         successful++;
                     } else {
-                        println("  WARNING: Claude completed but no DONE marker found");
+                        println("  WARNING: AI completed but no DONE marker found");
                         successful++;
                     }
                 } else {
@@ -607,7 +607,7 @@ public class BatchDocumentFunctions extends GhidraScript {
             }
         }
 
-        println("\n=== Claude Processing Complete ===");
+        println("\n=== AI Processing Complete ===");
         println("Processed: " + processed);
         println("Successful: " + successful);
         println("Failed: " + failed);

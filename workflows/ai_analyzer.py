@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-Claude Integration for Automated Function Analysis
+AI Integration for Automated Function Analysis
 
-This module provides integration with Claude API for automated reverse engineering
+This module provides integration with AI API for automated reverse engineering
 analysis. It can analyze decompiled code, suggest function names, infer types,
 and generate documentation comments.
 
 Usage:
-    from workflows.claude_analyzer import ClaudeAnalyzer
+    from workflows.ai_analyzer import AIAnalyzer
 
-    analyzer = ClaudeAnalyzer()
+    analyzer = AIAnalyzer()
     result = analyzer.analyze_function(decompiled_code, context)
 
     # Apply suggestions
@@ -22,8 +22,8 @@ Usage:
     )
 
 Environment:
-    ANTHROPIC_API_KEY: API key for Claude (required)
-    CLAUDE_MODEL: Model to use (default: claude-sonnet-4-20250514)
+    ANTHROPIC_API_KEY: API key for AI (required)
+    AI_MODEL: Model to use (default: ai-sonnet-4-20250514)
 """
 
 import os
@@ -39,12 +39,12 @@ from pathlib import Path
 LOG_DIR = Path(__file__).parent / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 
-logger = logging.getLogger('claude_analyzer')
+logger = logging.getLogger('ai_analyzer')
 logger.setLevel(logging.INFO)
 
 if not logger.handlers:
     file_handler = logging.FileHandler(
-        LOG_DIR / f"claude_analyzer_{datetime.now().strftime('%Y%m%d')}.log",
+        LOG_DIR / f"ai_analyzer_{datetime.now().strftime('%Y%m%d')}.log",
         encoding='utf-8'
     )
     file_handler.setFormatter(logging.Formatter(
@@ -54,8 +54,8 @@ if not logger.handlers:
     logger.addHandler(file_handler)
 
 
-# Default model - using claude-sonnet-4-20250514 for good balance of speed and quality
-DEFAULT_MODEL = "claude-sonnet-4-20250514"
+# Default model - using ai-sonnet-4-20250514 for good balance of speed and quality
+DEFAULT_MODEL = "ai-sonnet-4-20250514"
 
 # Analysis prompt template
 ANALYSIS_PROMPT = """You are an expert reverse engineer analyzing decompiled code from a game binary.
@@ -135,7 +135,7 @@ Respond with ONLY a JSON object in this exact format:
 
 @dataclass
 class AnalysisResult:
-    """Result of Claude's function analysis."""
+    """Result of AI's function analysis."""
     purpose: str = ""
     suggested_name: str = ""
     confidence: float = 0.0
@@ -165,25 +165,25 @@ class AnalysisResult:
         }
 
 
-class ClaudeAnalyzer:
+class AIAnalyzer:
     """
-    Claude-powered function analyzer for reverse engineering.
+    AI-powered function analyzer for reverse engineering.
 
     This class provides automated analysis of decompiled functions using
-    Claude's language model. It can suggest function names, types, and
+    AI's language model. It can suggest function names, types, and
     documentation based on code patterns and context.
     """
 
     def __init__(self, api_key: str = None, model: str = None):
         """
-        Initialize the Claude analyzer.
+        Initialize the AI analyzer.
 
         Args:
             api_key: Anthropic API key (defaults to ANTHROPIC_API_KEY env var)
-            model: Model to use (defaults to claude-sonnet-4-20250514)
+            model: Model to use (defaults to ai-sonnet-4-20250514)
         """
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
-        self.model = model or os.environ.get("CLAUDE_MODEL", DEFAULT_MODEL)
+        self.model = model or os.environ.get("AI_MODEL", DEFAULT_MODEL)
         self._client = None
         self._stats = {
             "analyses_performed": 0,
@@ -193,7 +193,7 @@ class ClaudeAnalyzer:
         }
 
         if not self.api_key:
-            logger.warning("No ANTHROPIC_API_KEY found - Claude analysis will be unavailable")
+            logger.warning("No ANTHROPIC_API_KEY found - AI analysis will be unavailable")
 
     @property
     def client(self):
@@ -209,7 +209,7 @@ class ClaudeAnalyzer:
         return self._client
 
     def is_available(self) -> bool:
-        """Check if Claude analysis is available."""
+        """Check if AI analysis is available."""
         if not self.api_key:
             return False
         try:
@@ -248,7 +248,7 @@ class ClaudeAnalyzer:
             AnalysisResult with suggested documentation
         """
         if not self.is_available():
-            return AnalysisResult(error="Claude API not available (no API key or anthropic package)")
+            return AnalysisResult(error="AI API not available (no API key or anthropic package)")
 
         # Format the prompt
         prompt = ANALYSIS_PROMPT.format(
@@ -301,11 +301,11 @@ class ClaudeAnalyzer:
             return AnalysisResult(error=str(e))
 
     def _parse_response(self, response_text: str) -> AnalysisResult:
-        """Parse Claude's JSON response into an AnalysisResult."""
+        """Parse AI's JSON response into an AnalysisResult."""
         result = AnalysisResult()
 
         # Try to extract JSON from the response
-        # Claude sometimes wraps JSON in markdown code blocks
+        # AI sometimes wraps JSON in markdown code blocks
         json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', response_text, re.DOTALL)
         if json_match:
             json_str = json_match.group(1)
@@ -405,25 +405,25 @@ class ClaudeAnalyzer:
 
 class AutoDocumenter:
     """
-    Automated function documenter that combines Claude analysis with Ghidra updates.
+    Automated function documenter that combines AI analysis with Ghidra updates.
 
     This class orchestrates the full workflow:
     1. Fetch function data from Ghidra
-    2. Send to Claude for analysis
-    3. Apply Claude's suggestions back to Ghidra
+    2. Send to AI for analysis
+    3. Apply AI's suggestions back to Ghidra
     4. Verify completeness
     """
 
-    def __init__(self, improvement_loop, analyzer: ClaudeAnalyzer = None):
+    def __init__(self, improvement_loop, analyzer: AIAnalyzer = None):
         """
         Initialize the auto-documenter.
 
         Args:
             improvement_loop: ContinuousImprovementLoop instance
-            analyzer: ClaudeAnalyzer instance (created if not provided)
+            analyzer: AIAnalyzer instance (created if not provided)
         """
         self.loop = improvement_loop
-        self.analyzer = analyzer or ClaudeAnalyzer()
+        self.analyzer = analyzer or AIAnalyzer()
         self._session_stats = {
             "functions_analyzed": 0,
             "functions_documented": 0,
@@ -476,7 +476,7 @@ class AutoDocumenter:
                     "function": func_name
                 }
 
-            # Send to Claude for analysis
+            # Send to AI for analysis
             result = self.analyzer.analyze_function(
                 decompiled_code=analysis_data["decompiled"],
                 func_name=func_name,
@@ -611,9 +611,9 @@ class AutoDocumenter:
 # Convenience functions for integration
 # =============================================================================
 
-def create_analyzer(api_key: str = None, model: str = None) -> ClaudeAnalyzer:
-    """Create a Claude analyzer instance."""
-    return ClaudeAnalyzer(api_key=api_key, model=model)
+def create_analyzer(api_key: str = None, model: str = None) -> AIAnalyzer:
+    """Create a AI analyzer instance."""
+    return AIAnalyzer(api_key=api_key, model=model)
 
 
 def analyze_single_function(
@@ -634,7 +634,7 @@ def analyze_single_function(
     Returns:
         Analysis result as a dict
     """
-    analyzer = ClaudeAnalyzer()
+    analyzer = AIAnalyzer()
     result = analyzer.analyze_function(
         decompiled_code=decompiled_code,
         func_name=func_name,
@@ -678,14 +678,14 @@ def main():
     """CLI entry point for testing."""
     import argparse
 
-    parser = argparse.ArgumentParser(description="Claude Function Analyzer")
+    parser = argparse.ArgumentParser(description="AI Function Analyzer")
     parser.add_argument("--test", action="store_true", help="Run a test analysis")
     parser.add_argument("--check", action="store_true", help="Check API availability")
     parser.add_argument("--stats", action="store_true", help="Show analyzer stats")
 
     args = parser.parse_args()
 
-    analyzer = ClaudeAnalyzer()
+    analyzer = AIAnalyzer()
 
     if args.check:
         print(f"API Available: {analyzer.is_available()}")
@@ -717,7 +717,7 @@ def main():
         }
         """
 
-        print("Testing Claude analysis...")
+        print("Testing AI analysis...")
         result = analyzer.analyze_function(
             decompiled_code=test_code,
             func_name="FUN_00401000",

@@ -15,7 +15,7 @@ The system improves both:
 - The MCP tools themselves that interface WITH Ghidra
 
 Usage:
-    python continuous_improvement.py                    # Run with Claude Code
+    python continuous_improvement.py                    # Run with AI Assistant
     python continuous_improvement.py --standalone      # Run standalone (limited)
     python continuous_improvement.py --dry-run         # Preview without changes
 """
@@ -397,7 +397,7 @@ class DeploymentManager:
 
     def restart_bridge(self) -> bool:
         """Signal that the bridge needs to be restarted."""
-        # In MCP context, this would be handled by Claude Code
+        # In MCP context, this would be handled by AI Assistant
         logger.info(
             "Bridge restart required - changes will take effect on next MCP session"
         )
@@ -476,7 +476,7 @@ class ContinuousImprovementLoop:
     """
     Main orchestrator for continuous self-improvement.
 
-    This is designed to be called by Claude Code, which provides the
+    This is designed to be called by AI Assistant, which provides the
     intelligence for:
     - Analyzing decompiled code to understand function purpose
     - Deciding on good names for functions/variables
@@ -711,7 +711,7 @@ class ContinuousImprovementLoop:
         return None
 
     def get_function_analysis(self, func_name: str) -> Dict[str, Any]:
-        """Get comprehensive analysis of a function for Claude to interpret."""
+        """Get comprehensive analysis of a function for AI to interpret."""
         analysis = {
             "name": func_name,
             "decompiled": None,
@@ -1052,7 +1052,7 @@ class ContinuousImprovementLoop:
                         break
                     continue
 
-                # Success - mark as ready for Claude analysis
+                # Success - mark as ready for AI analysis
                 batch_results["successful"] += 1
                 batch_results["results"].append(
                     {
@@ -1271,7 +1271,7 @@ class ContinuousImprovementLoop:
 
 
 # =============================================================================
-# Claude Code Integration Functions
+# AI Assistant Integration Functions
 # =============================================================================
 
 
@@ -1398,7 +1398,7 @@ def apply_function_documentation(
     """
     Apply documentation to a function.
 
-    This is called by Claude Code after analyzing the function.
+    This is called by AI Assistant after analyzing the function.
     """
     results = loop.apply_documentation(
         func_address=address,
@@ -1424,7 +1424,7 @@ def report_tool_friction(
     """
     Report friction with a tool.
 
-    Called by Claude Code when encountering issues.
+    Called by AI Assistant when encountering issues.
     """
     loop.record_friction(
         f"Tool {tool_name}: {issue}",
@@ -1463,7 +1463,7 @@ def implement_proposed_change(
     """
     Implement a proposed change with actual code.
 
-    Called by Claude Code after generating the code.
+    Called by AI Assistant after generating the code.
     """
     return loop.implement_tool_change(change_id, code)
 
@@ -1490,7 +1490,7 @@ def test_and_deploy(loop: ContinuousImprovementLoop) -> Tuple[bool, Dict]:
 
 
 # =============================================================================
-# Standalone Execution (Limited without Claude)
+# Standalone Execution (Limited without AI)
 # =============================================================================
 
 
@@ -1510,7 +1510,7 @@ def main():
     parser.add_argument(
         "--standalone",
         action="store_true",
-        help="Run in standalone mode (limited without Claude)",
+        help="Run in standalone mode (limited without AI)",
     )
 
     args = parser.parse_args()
@@ -1539,7 +1539,7 @@ def main():
         print("\n" + "=" * 60)
         print("STANDALONE MODE")
         print("=" * 60)
-        print("Note: Full improvement loop requires Claude Code integration.")
+        print("Note: Full improvement loop requires AI Assistant integration.")
         print("In standalone mode, we can only report status and run tests.")
         print()
 
@@ -1553,8 +1553,8 @@ def main():
                 print(
                     f"\nNext function to document: {func['name']} @ {func['address']}"
                 )
-                print("\nTo document this function, run with Claude Code:")
-                print("  Claude> Analyze and document the function at", func["address"])
+                print("\nTo document this function, run with AI Assistant:")
+                print("  AI> Analyze and document the function at", func["address"])
             else:
                 print(
                     "\nNo undocumented functions found (all FUN_* functions documented)"
@@ -1570,12 +1570,12 @@ def main():
     print("=" * 60)
     print(
         """
-This system is designed to run with Claude Code for full functionality.
+This system is designed to run with AI Assistant for full functionality.
 
-Usage with Claude Code:
-    1. Start Claude Code in this directory
+Usage with AI Assistant:
+    1. Start AI Assistant in this directory
     2. Ask: "Run the continuous improvement loop"
-    3. Claude will analyze functions and improve tooling
+    3. AI will analyze functions and improve tooling
 
 Standalone commands:
     python continuous_improvement.py --status      # View status

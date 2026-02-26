@@ -22,7 +22,7 @@
 ✅ CHANGELOG.md       (industry standard)
 ✅ CONTRIBUTING.md    (GitHub standard)
 ✅ LICENSE            (legal standard)
-❌ CLAUDE.md          (project-specific)
+❌ AI_ASSISTANT.md          (project-specific)
 ❌ START_HERE.md      (project-specific)
 ```
 
@@ -57,7 +57,7 @@
 |---------|-------------|--------|
 | `START_HERE.md` | `getting-started.md` | Descriptive kebab-case |
 | `DOCUMENTATION_INDEX.md` | `docs-index.md` | Shorter, kebab-case |
-| `CLAUDE.md` | `ai-assistant-guide.md` | Descriptive, not tool-specific |
+| `AI_ASSISTANT.md` | `ai-assistant-guide.md` | Descriptive, not tool-specific |
 | `PROJECT_STRUCTURE.md` | `project-structure.md` | Consistent kebab-case |
 | `NAMING_CONVENTIONS.md` | `naming-conventions.md` | Consistent kebab-case |
 | `IMPROVEMENTS_QUICK_REFERENCE.md` | `improvements-quick-ref.md` | Shorter |

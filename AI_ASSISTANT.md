@@ -1,4 +1,4 @@
-# Ghidra MCP - Claude Code Project Guide
+# Ghidra MCP - AI Assistant Project Guide
 
 ## Project Overview
 

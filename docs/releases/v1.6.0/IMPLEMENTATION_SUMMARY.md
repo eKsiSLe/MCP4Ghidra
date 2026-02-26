@@ -117,7 +117,7 @@ Added 7 new HTTP endpoint handlers and backend implementations:
 3. Test Python MCP bridge with new tools
 4. Run integration tests to verify all endpoints
 5. Document new tools in API_REFERENCE.md
-6. Update CLAUDE.md with v1.6.0 features
+6. Update AI_ASSISTANT.md with v1.6.0 features
 
 ## Code Quality
 - Follows existing patterns from v1.5.0 implementation

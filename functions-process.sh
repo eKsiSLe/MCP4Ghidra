@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Parallel Function Processing with MCP (Linux)
-# Processes functions from FunctionsTodo.txt using Claude CLI
+# Processes functions from FunctionsTodo.txt using AI CLI
 #
 # Usage:
 #   ./functions-process.sh
@@ -12,7 +12,7 @@
 #   ./functions-process.sh --cleanup              # Remove generated scripts
 #   ./functions-process.sh --help
 #
-# Dependencies: curl, jq, claude (Claude CLI)
+# Dependencies: curl, jq, ai (AI CLI)
 
 set -euo pipefail
 
@@ -69,14 +69,14 @@ show_help() {
 functions-process.sh - Parallel Function Processing with MCP (Linux)
 
 PARALLEL OPTIONS:
-  -w, --workers <n>          Number of parallel Claude workers (default: 1)
+  -w, --workers <n>          Number of parallel AI workers (default: 1)
   --coordinator              Run as coordinator spawning workers
 
 PROCESSING OPTIONS:
   -1, --single               Process one function and stop
   -f, --function <name>      Process specific function
   -r, --reverse              Process from bottom to top
-  -m, --model <model>        Claude model: haiku|sonnet|opus (default: opus)
+  -m, --model <model>        AI model: haiku|sonnet|opus (default: opus)
   -n, --max-functions <n>    Stop after N functions (0 = unlimited)
   --min-score <n>            Only process functions with score >= n
   --max-score <n>            Only process functions with score <= n
@@ -86,7 +86,7 @@ PROCESSING OPTIONS:
   -C, --compact              Use compact prompt (~60% smaller)
   -L, --log                  Enable logging, output files, checkpoints
   --subagent                 Opus orchestrator + Haiku subagents
-  --rescan                   Re-scan scores without Claude processing
+  --rescan                   Re-scan scores without AI processing
   --cleanup                  Remove auto-generated Ghidra scripts
   --pick-threshold           Show menu to select minimum completeness threshold
   --server <url>             Ghidra server URL (default: http://127.0.0.1:8089)
@@ -578,7 +578,7 @@ invoke_cleanup_scripts() {
 
 invoke_reevaluate() {
     echo -e "${CYAN}=== RE-EVALUATION MODE ===${NC}"
-    echo -e "${CYAN}Scanning functions for updated completeness scores (no Claude processing)${NC}"
+    echo -e "${CYAN}Scanning functions for updated completeness scores (no AI processing)${NC}"
     echo ""
 
     [[ ! -f "$TODO_FILE" ]] && { echo -e "${RED}ERROR: Todo file not found at ${TODO_FILE}${NC}" >&2; return; }
@@ -894,7 +894,7 @@ Focus on fixing these specific issues to reach 100% completeness."
         fi
     fi
 
-    # Invoke Claude
+    # Invoke AI
     local retry_count=0
     local backoff_seconds=2
     local success=false
@@ -902,9 +902,9 @@ Focus on fixing these specific issues to reach 100% completeness."
 
     while [[ $retry_count -lt $MAX_RETRIES ]]; do
         if [[ -n "$MODEL" ]]; then
-            output=$(echo "$user_message" | claude --system-prompt-file "$PROMPT_FILE" --model "$MODEL" 2>&1) || true
+            output=$(echo "$user_message" | ai --system-prompt-file "$PROMPT_FILE" --model "$MODEL" 2>&1) || true
         else
-            output=$(echo "$user_message" | claude --system-prompt-file "$PROMPT_FILE" 2>&1) || true
+            output=$(echo "$user_message" | ai --system-prompt-file "$PROMPT_FILE" 2>&1) || true
         fi
 
         local exit_code=$?

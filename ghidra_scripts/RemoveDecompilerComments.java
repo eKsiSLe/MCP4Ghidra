@@ -1,5 +1,5 @@
 //Removes all decompiler/auto-generated comments from current function
-//@author Claude
+//@author AI
 //@category Documentation
 //@keybinding
 //@menupath Tools.Remove Decompiler Comments

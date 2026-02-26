@@ -1,4 +1,4 @@
-// Verify __thiscall calling conventions for all functions using Claude AI
+// Verify __thiscall calling conventions for all functions using AI AI
 //@author Ben Ethington
 //@category Diablo 2
 //@keybinding
@@ -26,7 +26,7 @@ import ghidra.program.model.symbol.*;
 import java.io.*;
 import java.util.*;
 
-public class VerifyThiscallConventionsClaude extends GhidraScript {
+public class VerifyThiscallConventionsAI extends GhidraScript {
 
     @Override
     public void run() throws Exception {
@@ -35,10 +35,10 @@ public class VerifyThiscallConventionsClaude extends GhidraScript {
             return;
         }
 
-        // Find the claude command
-        String claudeCmd = findClaudeCommand();
-        if (claudeCmd == null) {
-            popup("Could not find claude command. Please ensure claude CLI is installed.");
+        // Find the ai command
+        String aiCmd = findAICommand();
+        if (aiCmd == null) {
+            popup("Could not find ai command. Please ensure ai CLI is installed.");
             return;
         }
 
@@ -64,14 +64,14 @@ public class VerifyThiscallConventionsClaude extends GhidraScript {
         
         // Ask user if they want to proceed
         if (!askYesNo("Verify Thiscall Conventions", 
-                String.format("Found %d functions with __thiscall. Process them with Claude?", 
+                String.format("Found %d functions with __thiscall. Process them with AI?", 
                 thiscallFunctions.size()))) {
             return;
         }
 
         // Process each function
         monitor.initialize(thiscallFunctions.size());
-        monitor.setMessage("Verifying calling conventions with Claude...");
+        monitor.setMessage("Verifying calling conventions with AI...");
         
         int processed = 0;
         int verified = 0;
@@ -96,18 +96,18 @@ public class VerifyThiscallConventionsClaude extends GhidraScript {
                     .append(" and verify that the calling convention is correct for it. If the calling convention is not correct please change it to the correct calling invention.");
 
                 String prompt = promptBuilder.toString();
-                String result = callClaude(claudeCmd, prompt);
+                String result = callAI(aiCmd, prompt);
                 
                 if (result != null && !result.isEmpty()) {
                     printf("\n========================================\n");
                     printf("Function: %s @ %s\n", func.getName(), func.getEntryPoint());
                     printf("Current Convention: %s\n", func.getCallingConventionName());
                     printf("Signature: %s\n", func.getSignature().getPrototypeString());
-                    printf("\nClaude Analysis:\n%s\n", result);
+                    printf("\nAI Analysis:\n%s\n", result);
                     printf("========================================\n");
                     verified++;
                 } else {
-                    printf("WARNING: No response from Claude for function %s\n", func.getName());
+                    printf("WARNING: No response from AI for function %s\n", func.getName());
                     failed++;
                 }
                 
@@ -135,40 +135,40 @@ public class VerifyThiscallConventionsClaude extends GhidraScript {
     }
 
     /**
-     * Find the claude command based on the operating system
+     * Find the ai command based on the operating system
      */
-    private String findClaudeCommand() {
+    private String findAICommand() {
         String os = System.getProperty("os.name").toLowerCase();
         
         if (os.contains("win")) {
             // Windows: Try npm global installation path
             String appData = System.getenv("APPDATA");
             if (appData != null) {
-                File claudeCmd = new File(appData + "\\npm\\claude.cmd");
-                if (claudeCmd.exists()) {
-                    return claudeCmd.getAbsolutePath();
+                File aiCmd = new File(appData + "\\npm\\ai.cmd");
+                if (aiCmd.exists()) {
+                    return aiCmd.getAbsolutePath();
                 }
             }
             
             // Try ProgramFiles
             String programFiles = System.getenv("ProgramFiles");
             if (programFiles != null) {
-                File claudeCmd = new File(programFiles + "\\nodejs\\claude.cmd");
-                if (claudeCmd.exists()) {
-                    return claudeCmd.getAbsolutePath();
+                File aiCmd = new File(programFiles + "\\nodejs\\ai.cmd");
+                if (aiCmd.exists()) {
+                    return aiCmd.getAbsolutePath();
                 }
             }
         } else {
             // Unix-like systems
             String[] paths = {
-                "/usr/local/bin/claude",
-                "/usr/bin/claude",
-                System.getProperty("user.home") + "/.local/bin/claude"
+                "/usr/local/bin/ai",
+                "/usr/bin/ai",
+                System.getProperty("user.home") + "/.local/bin/ai"
             };
             
             for (String path : paths) {
-                File claudeCmd = new File(path);
-                if (claudeCmd.exists() && claudeCmd.canExecute()) {
+                File aiCmd = new File(path);
+                if (aiCmd.exists() && aiCmd.canExecute()) {
                     return path;
                 }
             }
@@ -178,15 +178,15 @@ public class VerifyThiscallConventionsClaude extends GhidraScript {
     }
 
     /**
-     * Call Claude CLI with the given prompt
+     * Call AI CLI with the given prompt
      */
-    private String callClaude(String claudeCmd, String prompt) {
+    private String callAI(String aiCmd, String prompt) {
         StringBuilder output = new StringBuilder();
         
         try {
-            // Create command: claude --dangerously-skip-permissions (read from stdin)
+            // Create command: ai --dangerously-skip-permissions (read from stdin)
             List<String> command = new ArrayList<>();
-            command.add(claudeCmd);
+            command.add(aiCmd);
             command.add("--dangerously-skip-permissions");
             
             ProcessBuilder pb = new ProcessBuilder(command);
@@ -211,11 +211,11 @@ public class VerifyThiscallConventionsClaude extends GhidraScript {
             
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                printf("WARNING: Claude process exited with code %d\n", exitCode);
+                printf("WARNING: AI process exited with code %d\n", exitCode);
             }
             
         } catch (IOException | InterruptedException e) {
-            printf("ERROR calling Claude: %s\n", e.getMessage());
+            printf("ERROR calling AI: %s\n", e.getMessage());
             return null;
         }
         

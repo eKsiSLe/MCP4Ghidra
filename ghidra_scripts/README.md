@@ -6,7 +6,7 @@ This directory contains scripts that run **directly inside Ghidra** (not via MCP
 
 ### Java Scripts
 - **ClearCallReturnOverrides.java** - Clears incorrect CALL_RETURN flow overrides that prevent proper control flow analysis
-- **DocumentFunctionWithClaude.java** - Documents the current function by calling Claude AI with comprehensive plate comment prompt (Keybinding: Ctrl+Shift+D)
+- **DocumentFunctionWithAI.java** - Documents the current function by calling AI AI with comprehensive plate comment prompt (Keybinding: Ctrl+Shift+D)
 
 ## How to Use These Scripts
 

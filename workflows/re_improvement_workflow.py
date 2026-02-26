@@ -290,7 +290,7 @@ class REExpertAgent:
         Returns True if documentation was successful.
         """
         # For now, this is a simplified implementation
-        # A full implementation would use Claude to analyze and generate names/comments
+        # A full implementation would use AI to analyze and generate names/comments
 
         # Check if we can even proceed
         if not analysis.get("decompiled"):

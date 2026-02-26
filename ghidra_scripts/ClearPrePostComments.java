@@ -1,5 +1,5 @@
 //Clears PRE and POST comments from the current program or selection (preserves EOL and PLATE)
-//@author Claude
+//@author AI
 //@category Documentation
 //@keybinding
 //@menupath Tools.Clear Pre Post Comments
