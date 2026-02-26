@@ -5,7 +5,7 @@ Bump the GhidraMCP plugin version across all source files.
 .DESCRIPTION
 Updates the plugin version string in every file that contains it:
   - pom.xml                                          (<version> tag + description)
-  - src/main/java/com/xebyte/GhidraMCPPlugin.java   (fallback strings)
+  - src/main/java/com/xebyte/MCP4GhidraPlugin.java   (fallback strings)
   - ghidra-mcp-setup.ps1                             ($PluginVersion)
   - tests/endpoints.json
   - CLAUDE.md
@@ -60,8 +60,8 @@ $rules = @(
     @{ File = 'pom.xml';                                                       Pat = '(<version>)' + [regex]::Escape($Old) + '(</version>)'; Rep = ('${1}' + $New + '${2}') },
     # pom.xml - version mention in <description>
     @{ File = 'pom.xml';                                                       Pat = 'v' + [regex]::Escape($Old) + ':';                        Rep = ('v' + $New + ':') },
-    # GhidraMCPPlugin.java - two fallback string literals "2.0.x"
-    @{ File = 'src\main\java\com\xebyte\GhidraMCPPlugin.java';                 Pat = '"' + [regex]::Escape($Old) + '"';                        Rep = ('"' + $New + '"') },
+    # MCP4GhidraPlugin.java - two fallback string literals "2.0.x"
+    @{ File = 'src\main\java\com\xebyte\MCP4GhidraPlugin.java';                 Pat = '"' + [regex]::Escape($Old) + '"';                        Rep = ('"' + $New + '"') },
     # ghidra-mcp-setup.ps1 - $PluginVersion = "2.0.x"
     @{ File = 'ghidra-mcp-setup.ps1';                                          Pat = '\$PluginVersion\s*=\s*"' + [regex]::Escape($Old) + '"';  Rep = ('$PluginVersion = "' + $New + '"') },
     # tests/endpoints.json - "version": "2.0.x"

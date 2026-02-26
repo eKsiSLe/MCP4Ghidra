@@ -88,7 +88,7 @@ class VersionInfo {
     private static final int ENDPOINT_COUNT = 146;
     
     static {
-        try (InputStream input = GhidraMCPPlugin.class
+        try (InputStream input = MCP4GhidraPlugin.class
                 .getResourceAsStream("/version.properties")) {
             if (input != null) {
                 Properties props = new Properties();
@@ -146,7 +146,7 @@ class VersionInfo {
                   "malware analysis (IOC extraction, behavior detection, anti-analysis detection), and Ghidra script automation. " +
                   "See project documentation for usage and version history."
 )
-public class GhidraMCPPlugin extends Plugin {
+public class MCP4GhidraPlugin extends Plugin {
 
     private HttpServer server;
     private DockingAction startServerAction;
@@ -181,7 +181,7 @@ public class GhidraMCPPlugin extends Plugin {
         "signed", "unsigned", "volatile", "inline", "restrict"
     );
 
-    public GhidraMCPPlugin(PluginTool tool) {
+    public MCP4GhidraPlugin(PluginTool tool) {
         super(tool);
         Msg.info(this, "============================================");
         Msg.info(this, "GhidraMCP " + VersionInfo.getFullVersion());
@@ -199,7 +199,7 @@ public class GhidraMCPPlugin extends Plugin {
 
         try {
             startServer();
-            Msg.info(this, "GhidraMCPPlugin loaded successfully with HTTP server on port " +
+            Msg.info(this, "MCP4GhidraPlugin loaded successfully with HTTP server on port " +
                 options.getInt(PORT_OPTION_NAME, DEFAULT_PORT));
         }
         catch (IOException e) {

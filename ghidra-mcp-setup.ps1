@@ -1068,7 +1068,7 @@ foreach ($userDir in $possibleUserDirs) {
         foreach ($prefsFile in $prefsFiles) {
             try {
                 [xml]$xmlContent = Get-Content $prefsFile.FullName
-                $pluginNode = $xmlContent.SelectSingleNode("//PLUGIN[@NAME='GhidraMCPPlugin']")
+                $pluginNode = $xmlContent.SelectSingleNode("//PLUGIN[@NAME='MCP4GhidraPlugin']")
                 
                 if ($pluginNode) {
                     $pluginNode.SetAttribute("ENABLED", "true")

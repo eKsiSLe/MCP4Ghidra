@@ -9,17 +9,17 @@ import java.time.Duration;
 
 
 /**
- * Functional tests for GhidraMCPPlugin HTTP server endpoints.
+ * Functional tests for MCP4GhidraPlugin HTTP server endpoints.
  *
  * This test suite validates the MCP server functionality by testing
  * HTTP endpoints directly against a running Ghidra instance with the plugin.
  *
  * Prerequisites:
- * - Ghidra must be running with GhidraMCPPlugin enabled
+ * - Ghidra must be running with MCP4GhidraPlugin enabled
  * - A program must be loaded in Ghidra
  * - MCP HTTP server must be started (Tools > GhidraMCP > Start MCP Server)
  */
-public class GhidraMCPPluginTest extends TestCase {
+public class MCP4GhidraPluginTest extends TestCase {
 
     private static final String BASE_URL = "http://127.0.0.1:8089";
     private static final int TIMEOUT_SECONDS = 10;

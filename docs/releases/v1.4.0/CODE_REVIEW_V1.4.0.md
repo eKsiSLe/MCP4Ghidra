@@ -22,7 +22,7 @@
 
 ### 1. Missing Thread Safety in New Methods
 
-**Location**: `GhidraMCPPlugin.java:5895-6252`
+**Location**: `MCP4GhidraPlugin.java:5895-6252`
 **Severity**: CRITICAL
 **Impact**: Race conditions, crashes, data corruption
 
@@ -68,7 +68,7 @@ private String analyzeStructFieldUsage(String addressStr, String structName, int
 
 ### 2. Resource Leak in DecompInterface
 
-**Location**: `GhidraMCPPlugin.java:5931-5942`
+**Location**: `MCP4GhidraPlugin.java:5931-5942`
 **Severity**: CRITICAL
 **Impact**: Memory leak, resource exhaustion
 
@@ -107,7 +107,7 @@ try {
 
 ### 3. Missing Input Validation for maxFunctionsToAnalyze
 
-**Location**: `GhidraMCPPlugin.java:5895`
+**Location**: `MCP4GhidraPlugin.java:5895`
 **Severity**: CRITICAL
 **Impact**: DoS attack, infinite loops, resource exhaustion
 
@@ -134,7 +134,7 @@ private String analyzeStructFieldUsage(String addressStr, String structName, int
 
 ### 4. Weak Pattern Matching in analyzeFieldUsageInCode
 
-**Location**: `GhidraMCPPlugin.java:6027-6069`
+**Location**: `MCP4GhidraPlugin.java:6027-6069`
 **Severity**: MAJOR
 **Impact**: False positives, incorrect suggestions
 
@@ -189,7 +189,7 @@ if (token.length() > 2 &&
 
 ### 5. No Limit on Field Count
 
-**Location**: `GhidraMCPPlugin.java:5954-5980`
+**Location**: `MCP4GhidraPlugin.java:5954-5980`
 **Severity**: MAJOR
 **Impact**: JSON response too large, network timeout
 
@@ -237,7 +237,7 @@ return gson.toJson(result);
 
 ### 7. Missing Null Checks in getFieldAccessContext
 
-**Location**: `GhidraMCPPlugin.java:6090-6146`
+**Location**: `MCP4GhidraPlugin.java:6090-6146`
 **Severity**: MAJOR
 **Impact**: NullPointerException
 
@@ -273,7 +273,7 @@ try {
 
 ### 8. No Timeout on Decompilation Operations
 
-**Location**: `GhidraMCPPlugin.java:5935`
+**Location**: `MCP4GhidraPlugin.java:5935`
 **Severity**: MAJOR
 **Impact**: Request hangs indefinitely
 
@@ -370,7 +370,7 @@ Msg.info(this, "Field analysis completed in " + duration + "ms");
 
 ### 13. Redundant String Escaping
 
-**Location**: `GhidraMCPPlugin.java:5963-5964`
+**Location**: `MCP4GhidraPlugin.java:5963-5964`
 
 **Problem**: Field name is already from Ghidra API, unlikely to contain JSON special chars, but defensive is good.
 
@@ -380,7 +380,7 @@ Msg.info(this, "Field analysis completed in " + duration + "ms");
 
 ### 14. Missing Documentation for FieldUsageInfo
 
-**Location**: `GhidraMCPPlugin.java:5994`
+**Location**: `MCP4GhidraPlugin.java:5994`
 
 **Recommended Fix**:
 ```java
@@ -403,7 +403,7 @@ private static class FieldUsageInfo {
 
 ### 15. generateFieldNameSuggestions Returns Empty List
 
-**Location**: `GhidraMCPPlugin.java:6218-6244`
+**Location**: `MCP4GhidraPlugin.java:6218-6244`
 
 **Problem**: If no type patterns match, returns empty list. Should have fallback.
 
@@ -533,7 +533,7 @@ if not isinstance(num_examples, int) or num_examples < 1 or num_examples > 50:
 
 ## 📝 SPECIFIC CODE FIXES REQUIRED
 
-### File: `src/main/java/com/xebyte/GhidraMCPPlugin.java`
+### File: `src/main/java/com/xebyte/MCP4GhidraPlugin.java`
 
 **Lines to modify**: 5895-5989, 6079-6146, 6155-6213
 

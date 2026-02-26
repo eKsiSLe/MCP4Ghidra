@@ -232,7 +232,7 @@ Current behavior:
 - Current name if already renamed
 - Specific constraint that failed
 
-**Location**: Requires changes in `GhidraMCPPlugin.java`, not Python bridge.
+**Location**: Requires changes in `MCP4GhidraPlugin.java`, not Python bridge.
 
 ---
 
@@ -331,7 +331,7 @@ find_call_patterns(function_name)  # Common call sequences
 ### HIGH PRIORITY
 
 #### 1. Enhance Error Messages (Java Plugin)
-**Location**: `GhidraMCPPlugin.java`
+**Location**: `MCP4GhidraPlugin.java`
 
 Add to variable rename error responses:
 ```json
@@ -370,7 +370,7 @@ def document_function_complete(...):
 ---
 
 #### 3. Implement Remaining Search Filters (v1.7.0)
-**Location**: `GhidraMCPPlugin.java` + `bridge_mcp_ghidra.py`
+**Location**: `MCP4GhidraPlugin.java` + `bridge_mcp_ghidra.py`
 
 Add to `search_functions_enhanced`:
 ```python

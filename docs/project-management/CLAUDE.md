@@ -18,7 +18,7 @@ Ghidra MCP Server is a production-ready Model Context Protocol (MCP) server that
 
 ### Three-Layer System
 
-1. **Ghidra Java Plugin** (`src/main/java/com/xebyte/GhidraMCPPlugin.java`)
+1. **Ghidra Java Plugin** (`src/main/java/com/xebyte/MCP4GhidraPlugin.java`)
    - Embedded HTTP server running on port 8089 (configurable)
    - Exposes Ghidra's reverse engineering API as REST endpoints
    - Single-file plugin (~10,900 lines) with 107 endpoints (105 analysis + 1 generation + 1 execution)
@@ -173,7 +173,7 @@ These files work together to implement version management. **You only edit `pom.
 | `pom.xml` | **Single source of truth** | ✏️ **Edit version here only** |
 | `src/main/resources/version.properties` | Runtime version source for Java plugin | 🔄 Maven auto-substitutes `${project.version}` |
 | `src/main/resources/extension.properties` | Ghidra extension metadata | 🔄 Maven auto-substitutes `${project.version}` |
-| `src/main/java/com/xebyte/GhidraMCPPlugin.java` | Plugin code with `VersionInfo` class | 🔍 Loads version dynamically at runtime |
+| `src/main/java/com/xebyte/MCP4GhidraPlugin.java` | Plugin code with `VersionInfo` class | 🔍 Loads version dynamically at runtime |
 | `CHANGELOG.md` | Version history and release notes | 📝 Update manually for each release |
 | `README.md` | User documentation | ✅ No version refs (generic) |
 | `CLAUDE.md` | AI guidance (this file) | ✅ No version refs (generic) |
@@ -212,7 +212,7 @@ description=Production-ready MCP server for Ghidra
 - Tells Ghidra the plugin version
 - Substituted by Maven during build
 
-#### **`GhidraMCPPlugin.java` (Dynamic Loading)**
+#### **`MCP4GhidraPlugin.java` (Dynamic Loading)**
 
 - Contains `VersionInfo` class that loads version from `version.properties` at plugin startup
 - `getVersion()` method returns the version loaded from properties
@@ -332,7 +332,7 @@ For detailed implementation information, see `MAVEN_VERSION_MANAGEMENT.md`.
     - `delete_ghidra_script()` - Remove scripts safely with backups
   - Performance: 10x faster for bulk operations (100+ items)
   - Hybrid workflow: MCP tools for exploration, scripts for bulk automation
-- `src/main/java/com/xebyte/GhidraMCPPlugin.java` - Ghidra plugin (~10,900 lines)
+- `src/main/java/com/xebyte/MCP4GhidraPlugin.java` - Ghidra plugin (~10,900 lines)
   - 107 REST endpoints (105 analysis + 1 generation + 1 execution)
   - `runGhidraScriptWithCapture()` - Script discovery, validation, and error reporting
 - `pom.xml` - Maven build configuration with system-scoped Ghidra dependencies
@@ -412,7 +412,7 @@ When preparing a new release:
 
 ### Adding a New MCP Tool
 
-1. Add REST endpoint to Java plugin (`GhidraMCPPlugin.java`)
+1. Add REST endpoint to Java plugin (`MCP4GhidraPlugin.java`)
 2. Add MCP tool function to `bridge_mcp_ghidra.py` with `@mcp.tool()` decorator
 3. Implement input validation using validation functions
 4. Use `safe_get()` or `safe_post()` for HTTP calls

@@ -2,7 +2,7 @@
 Endpoint Catalog Consistency Tests.
 
 Verifies that the three endpoint sources stay in sync:
-1. Java plugin (GhidraMCPPlugin.java) - server.createContext() registrations
+1. Java plugin (MCP4GhidraPlugin.java) - server.createContext() registrations
 2. Python MCP bridge (bridge_mcp_ghidra.py) - safe_get/safe_post endpoint strings
 3. Endpoint specification (tests/endpoints.json) - documented endpoints
 
@@ -21,7 +21,7 @@ import pytest
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # Source file paths
-JAVA_PLUGIN_PATH = PROJECT_ROOT / "src" / "main" / "java" / "com" / "xebyte" / "GhidraMCPPlugin.java"
+JAVA_PLUGIN_PATH = PROJECT_ROOT / "src" / "main" / "java" / "com" / "xebyte" / "MCP4GhidraPlugin.java"
 JAVA_HEADLESS_PATH = PROJECT_ROOT / "src" / "main" / "java" / "com" / "xebyte" / "headless" / "GhidraMCPHeadlessServer.java"
 PYTHON_BRIDGE_PATH = PROJECT_ROOT / "bridge_mcp_ghidra.py"
 ENDPOINTS_JSON_PATH = PROJECT_ROOT / "tests" / "endpoints.json"

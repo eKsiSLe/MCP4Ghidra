@@ -22,7 +22,7 @@ Added 7 new MCP tool definitions (lines 3075-3385):
 6. **document_function_complete** - Atomic all-in-one documentation with rollback (replaces 15-20 calls)
 7. **search_functions_enhanced** - Advanced search with filtering, regex, and sorting
 
-### 2. `src/main/java/com/xebyte/GhidraMCPPlugin.java`
+### 2. `src/main/java/com/xebyte/MCP4GhidraPlugin.java`
 Added 7 new HTTP endpoint handlers and backend implementations:
 
 **Endpoint Handlers (lines 1137-1231):**

@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Plugin-Class: com.xebyte.GhidraMCPPlugin
+Plugin-Class: com.xebyte.MCP4GhidraPlugin
 Plugin-Name: MCP4Ghidra
 Plugin-Version: 2.0.0
 Plugin-Author: eKsiSLe

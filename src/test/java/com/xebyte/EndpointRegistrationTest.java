@@ -13,7 +13,7 @@ import java.util.Map;
  * Unit tests specifically for endpoint registration and HTTP server functionality.
  *
  * This test class focuses on validating that all endpoints defined in the
- * GhidraMCPPlugin.java are properly registered with the HTTP server.
+ * MCP4GhidraPlugin.java are properly registered with the HTTP server.
  */
 public class EndpointRegistrationTest extends TestCase {
 
@@ -180,7 +180,7 @@ public class EndpointRegistrationTest extends TestCase {
     public void testJavaSourceEndpointConsistency() {
         // These are the endpoints that have createContext() calls in the Java source
         String[] sourceEndpoints = {
-            // From startServer() method in GhidraMCPPlugin.java
+            // From startServer() method in MCP4GhidraPlugin.java
             "list_functions", "methods", "classes", "segments", "imports", "exports",
             "namespaces", "data", "strings", "searchFunctions", "decompile",
             "renameFunction", "renameData", "xrefs_to", "xrefs_from", "function_xrefs",

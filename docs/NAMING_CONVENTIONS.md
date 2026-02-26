@@ -63,7 +63,7 @@ Java files use **PascalCase** matching the public class name:
 
 ```java
 ✅ GOOD
-GhidraMCPPlugin.java          — Main plugin entry point
+MCP4GhidraPlugin.java          — Main plugin entry point
 ToolRegistry.java             — Tool registration system
 MCSProtocolHandler.java       — Protocol implementation
 
@@ -75,7 +75,7 @@ Ghidra-MCP-Plugin.java
 
 ### Class Naming (PascalCase)
 ```java
-public class GhidraMCPPlugin { }           ✅
+public class MCP4GhidraPlugin { }           ✅
 public class ToolRegistry { }               ✅
 public class MCSProtocolHandler { }         ✅
 ```
@@ -236,12 +236,12 @@ ghidra-mcp/
 ├── src/
 │   ├── main/java/
 │   │   └── com/xebyte/
-│   │       ├── GhidraMCPPlugin.java
+│   │       ├── MCP4GhidraPlugin.java
 │   │       ├── ToolRegistry.java
 │   │       └── ...
 │   └── test/java/
 │       └── com/xebyte/
-│           └── GhidraMCPPluginTest.java
+│           └── MCP4GhidraPluginTest.java
 ├── scripts/
 │   ├── deploy.sh
 │   ├── build.ps1
@@ -259,7 +259,7 @@ ghidra-mcp/
 |------|----------|---------|-----------|
 | **Markdown (root)** | UPPERCASE | `README.md` | Visibility, GitHub convention |
 | **Markdown (docs)** | UPPERCASE | `TOOL_REFERENCE.md` | Organization, consistency |
-| **Java files** | PascalCase | `GhidraMCPPlugin.java` | Java convention |
+| **Java files** | PascalCase | `MCP4GhidraPlugin.java` | Java convention |
 | **Java classes** | PascalCase | `class ToolRegistry` | Java convention |
 | **Java methods** | camelCase | `getTool()` | Java convention |
 | **Java constants** | UPPER_SNAKE_CASE | `MAX_SIZE` | Java convention |

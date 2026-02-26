@@ -38,7 +38,7 @@ import shutil
 REPO_ROOT = Path(__file__).parent.parent
 BRIDGE_FILE = REPO_ROOT / "bridge_mcp_ghidra.py"
 JAVA_PLUGIN = (
-    REPO_ROOT / "src" / "main" / "java" / "com" / "xebyte" / "GhidraMCPPlugin.java"
+    REPO_ROOT / "src" / "main" / "java" / "com" / "xebyte" / "MCP4GhidraPlugin.java"
 )
 DEPLOY_SCRIPT = REPO_ROOT / "ghidra-mcp-setup.ps1"
 STATE_FILE = REPO_ROOT / "workflows" / ".improvement_state.json"
@@ -292,7 +292,7 @@ class PythonBridgeModifier:
 
 
 class JavaPluginModifier:
-    """Handles modifications to GhidraMCPPlugin.java"""
+    """Handles modifications to MCP4GhidraPlugin.java"""
 
     def __init__(self, source_manager: SourceCodeManager):
         self.source_manager = source_manager

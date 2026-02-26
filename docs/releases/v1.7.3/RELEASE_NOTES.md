@@ -52,7 +52,7 @@ program.endTransaction(tx, success);
 
 ## Changes
 
-### src/main/java/com/xebyte/GhidraMCPPlugin.java
+### src/main/java/com/xebyte/MCP4GhidraPlugin.java
 
 **Line 9716** - Added missing success flag assignment:
 ```diff

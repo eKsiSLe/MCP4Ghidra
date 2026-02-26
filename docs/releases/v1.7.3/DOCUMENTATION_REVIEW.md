@@ -153,7 +153,7 @@ docs/
 ## Commit Readiness Checklist
 
 ### Code Changes ✅
-- [x] GhidraMCPPlugin.java - Transaction fix implemented (line 9716)
+- [x] MCP4GhidraPlugin.java - Transaction fix implemented (line 9716)
 - [x] pom.xml - Version updated to 1.7.3
 - [x] extension.properties - Version updated to 1.7.3
 
@@ -181,7 +181,7 @@ M  README.md
 M  bridge_mcp_ghidra.py
 M  docs/prompts/OPTIMIZED_FUNCTION_DOCUMENTATION.md
 M  pom.xml
-M  src/main/java/com/xebyte/GhidraMCPPlugin.java
+M  src/main/java/com/xebyte/MCP4GhidraPlugin.java
 M  src/main/resources/extension.properties
 ?? CODE_REVIEW_2025-10-13.md
 ?? DISASSEMBLE_BYTES_VERIFICATION.md
@@ -227,7 +227,7 @@ disassembled instructions from being persisted to Ghidra database.
 Added missing success flag assignment before transaction commit.
 
 Changes:
-- Fixed transaction commit in GhidraMCPPlugin.java (line 9716)
+- Fixed transaction commit in MCP4GhidraPlugin.java (line 9716)
 - Updated version to 1.7.3 across all configuration files
 - Added comprehensive documentation and test verification
 - Completed code review (13,666 lines reviewed, 4/5 rating)
@@ -248,7 +248,7 @@ Documentation:
 ```bash
 git add pom.xml
 git add src/main/resources/extension.properties
-git add src/main/java/com/xebyte/GhidraMCPPlugin.java
+git add src/main/java/com/xebyte/MCP4GhidraPlugin.java
 git add README.md
 git add CHANGELOG.md
 git add CLAUDE.md

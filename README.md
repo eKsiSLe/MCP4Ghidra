@@ -580,7 +580,7 @@ ghidra-mcp/
 ├── bridge_mcp_ghidra.py     # MCP server (Python, 179 tools)
 ├── src/main/java/           # Ghidra plugin + headless server (Java)
 │   └── com/xebyte/
-│       ├── GhidraMCPPlugin.java         # GUI plugin (147 endpoints)
+│       ├── MCP4GhidraPlugin.java         # GUI plugin (147 endpoints)
 │       ├── headless/                    # Headless server (172 endpoints)
 │       └── core/                        # Shared abstractions
 ├── ghidra_scripts/          # Automation scripts
@@ -762,7 +762,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 |--------|-------|
 | **Version** | 3.0.0 |
 | **MCP Tools** | 179 fully implemented |
-| **GUI Endpoints** | 147 (GhidraMCPPlugin) |
+| **GUI Endpoints** | 147 (MCP4GhidraPlugin) |
 | **Headless Endpoints** | 172 (GhidraMCPHeadlessServer) |
 | **Compilation** | ✅ 100% success |
 | **Batch Efficiency** | 93% API call reduction |

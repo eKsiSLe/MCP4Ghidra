@@ -20,7 +20,7 @@ AI/Automation Tools <-> MCP Bridge (bridge_mcp_ghidra.py) <-> Ghidra Plugin (Ghi
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| Ghidra Plugin | `src/main/java/com/xebyte/GhidraMCPPlugin.java` | HTTP server exposing 147 Ghidra API endpoints |
+| Ghidra Plugin | `src/main/java/com/xebyte/MCP4GhidraPlugin.java` | HTTP server exposing 147 Ghidra API endpoints |
 | MCP Bridge | `bridge_mcp_ghidra.py` | Translates MCP protocol to HTTP calls (179 tools) |
 | Headless Server | `src/main/java/com/xebyte/headless/` | Standalone server without Ghidra GUI (172 endpoints) |
 | Core Abstractions | `src/main/java/com/xebyte/core/` | Shared interfaces (ProgramProvider, ThreadingStrategy) |
@@ -59,7 +59,7 @@ http://127.0.0.1:8089
 ```
 ghidra-mcp/
 ├── src/main/java/com/xebyte/
-│   ├── GhidraMCPPlugin.java      # Main plugin with all endpoints
+│   ├── MCP4GhidraPlugin.java      # Main plugin with all endpoints
 │   ├── core/                      # Shared abstractions
 │   └── headless/                  # Headless server implementation
 ├── bridge_mcp_ghidra.py           # MCP protocol bridge
@@ -90,7 +90,7 @@ ghidra-mcp/
 - Transactions must be committed for Ghidra database changes
 
 ### Adding New Endpoints
-1. Add handler method in `GhidraMCPPlugin.java` (GUI plugin) and/or `HeadlessEndpointHandler.java`
+1. Add handler method in `MCP4GhidraPlugin.java` (GUI plugin) and/or `HeadlessEndpointHandler.java`
 2. Register in `createContextsForServer()` (GUI) and/or `registerEndpoints()` (headless)
 3. Add corresponding MCP tool in `bridge_mcp_ghidra.py`
 4. Add entry to `tests/endpoints.json` with path, method, category, description

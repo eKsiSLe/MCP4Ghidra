@@ -268,7 +268,7 @@ result = analyze_function_complete(
 - Lines added: ~350 (tool definitions + documentation)
 - No breaking changes to existing tools
 
-#### Java Plugin (`GhidraMCPPlugin.java`)
+#### Java Plugin (`MCP4GhidraPlugin.java`)
 - Added 7 new HTTP endpoint handlers
 - Added backend implementation for validation and analysis
 - Added comprehensive error handling

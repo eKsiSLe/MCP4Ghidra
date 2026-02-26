@@ -12,7 +12,7 @@ Comprehensive verification of the Ghidra MCP implementation confirms that **99 o
 ## Methodology
 
 1. **Extraction**: Extracted all `@mcp.tool()` decorated functions from `bridge_mcp_ghidra.py` (107 tools)
-2. **Endpoint Discovery**: Extracted all `server.createContext()` calls from `GhidraMCPPlugin.java` (120 endpoints)
+2. **Endpoint Discovery**: Extracted all `server.createContext()` calls from `MCP4GhidraPlugin.java` (120 endpoints)
 3. **Normalization**: Converted Python snake_case names to Java endpoint conventions
 4. **Comparison**: Used Unix `comm` utility to identify discrepancies (after fixing CRLF/LF line ending issues)
 5. **Analysis**: Manually verified each apparent discrepancy to distinguish naming mismatches from true gaps
@@ -93,7 +93,7 @@ def rename_data_smart(address: str, new_name: str) -> str:
 
 **Endpoint**: `readMemory`
 **Status**: ❌ **MISSING PYTHON WRAPPER**
-**Location**: `GhidraMCPPlugin.java` (line ~2800)
+**Location**: `MCP4GhidraPlugin.java` (line ~2800)
 
 **Java Implementation**:
 ```java
@@ -339,7 +339,7 @@ def safe_get_uncached(endpoint: str, params: dict = None, retries: int = 3) -> l
 **Verification**: ✅ **IMPLEMENTED** - Exponential backoff with manual retry + session-level retry
 
 ### Atomic Transactions ✅
-**Location**: `GhidraMCPPlugin.java` (document_function_complete endpoint)
+**Location**: `MCP4GhidraPlugin.java` (document_function_complete endpoint)
 
 ```java
 // Atomic transaction with rollback on failure

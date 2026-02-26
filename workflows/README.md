@@ -54,7 +54,7 @@ Or invoke the slash command: `/improve`
 - Record friction when tools are slow/broken/missing
 - Propose new tools that would help
 - Generate actual code for new tools
-- Modify `bridge_mcp_ghidra.py` or `GhidraMCPPlugin.java`
+- Modify `bridge_mcp_ghidra.py` or `MCP4GhidraPlugin.java`
 - Test and deploy changes
 
 ## Usage
@@ -159,7 +159,7 @@ The system can modify:
 - Modify existing tools
 - Remove unused tools
 
-### Java Plugin (`GhidraMCPPlugin.java`)
+### Java Plugin (`MCP4GhidraPlugin.java`)
 - Add new REST endpoints
 - Modify endpoint behavior
 

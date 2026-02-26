@@ -17,7 +17,7 @@ Successfully implemented 3 high-priority improvements to the Ghidra MCP server b
 
 **Solution Implemented**:
 
-#### Java Changes (GhidraMCPPlugin.java):
+#### Java Changes (MCP4GhidraPlugin.java):
 
 1. **Enhanced parseJsonArray** (lines 2673-2739):
    - Changed return type from `List<String>` to `List<Object>`
@@ -51,7 +51,7 @@ Successfully implemented 3 high-priority improvements to the Ghidra MCP server b
 - ✅ Reduces 17+ API calls to 1 per function
 
 **Files Modified**:
-- `src/main/java/com/xebyte/GhidraMCPPlugin.java` (7 changes, ~200 lines added/modified)
+- `src/main/java/com/xebyte/MCP4GhidraPlugin.java` (7 changes, ~200 lines added/modified)
 
 ---
 
@@ -61,7 +61,7 @@ Successfully implemented 3 high-priority improvements to the Ghidra MCP server b
 
 **Solution Implemented**:
 
-#### Java Changes (GhidraMCPPlugin.java):
+#### Java Changes (MCP4GhidraPlugin.java):
 
 1. **Added batch_create_labels endpoint** (lines 495-501):
    ```java
@@ -115,7 +115,7 @@ batch_create_labels([
 - ✅ Enables efficient function documentation workflow
 
 **Files Modified**:
-- `src/main/java/com/xebyte/GhidraMCPPlugin.java` (1 endpoint, 1 implementation method)
+- `src/main/java/com/xebyte/MCP4GhidraPlugin.java` (1 endpoint, 1 implementation method)
 - `bridge_mcp_ghidra.py` (1 new MCP tool)
 
 ---

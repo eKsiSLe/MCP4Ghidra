@@ -543,7 +543,7 @@ code = decompile_function(address='0x401000', offset=100, limit=100)
 
 ### Changed Files
 - `bridge_mcp_ghidra.py` (+585 lines) - 6 new MCP tools, enhanced field analysis
-- `src/main/java/com/xebyte/GhidraMCPPlugin.java` (+188 lines) - Struct analysis endpoints
+- `src/main/java/com/xebyte/MCP4GhidraPlugin.java` (+188 lines) - Struct analysis endpoints
 - `pom.xml` (Version 1.7.3 → 1.8.0)
 - `.gitignore` - Added `*.txt` for temporary files
 
@@ -566,7 +566,7 @@ code = decompile_function(address='0x401000', offset=100, limit=100)
 - ✅ Complete verification documented in `DISASSEMBLE_BYTES_VERIFICATION.md`
 
 ### Changed Files
-- `src/main/java/com/xebyte/GhidraMCPPlugin.java` (Line 9716: Added `success = true`)
+- `src/main/java/com/xebyte/MCP4GhidraPlugin.java` (Line 9716: Added `success = true`)
 - `pom.xml` (Version 1.7.2 → 1.7.3)
 - `src/main/resources/extension.properties` (Version 1.7.2 → 1.7.3)
 

@@ -183,7 +183,7 @@ int level = ValidateAndGetUnitLevel(pUnit);
 
 - `examples/D2Structs.h` - Original struct definitions
 - `bridge_mcp_ghidra.py` - Ghidra MCP bridge
-- `src/main/java/com/xebyte/GhidraMCPPlugin.java` - Plugin source
+- `src/main/java/com/xebyte/MCP4GhidraPlugin.java` - Plugin source
 
 ## Using These Docs with Ghidra
 

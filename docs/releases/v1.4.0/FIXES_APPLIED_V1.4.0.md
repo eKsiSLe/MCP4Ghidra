@@ -20,9 +20,9 @@ All **3 CRITICAL** and **4 out of 5 MAJOR** issues identified in CODE_REVIEW_V1.
 - Added proper exception handling for `InvocationTargetException` and `InterruptedException`
 
 **Files Modified**:
-- `GhidraMCPPlugin.java:5913-6062` - `analyzeStructFieldUsage()`
-- `GhidraMCPPlugin.java:6188-6291` - `getFieldAccessContext()`
-- `GhidraMCPPlugin.java:6300-6399` - `suggestFieldNames()`
+- `MCP4GhidraPlugin.java:5913-6062` - `analyzeStructFieldUsage()`
+- `MCP4GhidraPlugin.java:6188-6291` - `getFieldAccessContext()`
+- `MCP4GhidraPlugin.java:6300-6399` - `suggestFieldNames()`
 
 **Code Pattern**:
 ```java
@@ -51,7 +51,7 @@ return result.get();
 - Ensured null check before disposal
 
 **Files Modified**:
-- `GhidraMCPPlugin.java:5970-6051` - Added try-finally in `analyzeStructFieldUsage()`
+- `MCP4GhidraPlugin.java:5970-6051` - Added try-finally in `analyzeStructFieldUsage()`
 
 **Code Pattern**:
 ```java
@@ -78,7 +78,7 @@ try {
 - Created constants for limits (lines 74-90)
 - Validated before Swing EDT execution to fail fast
 
-**Constants Added** (`GhidraMCPPlugin.java:74-90`):
+**Constants Added** (`MCP4GhidraPlugin.java:74-90`):
 ```java
 private static final int MAX_FUNCTIONS_TO_ANALYZE = 100;
 private static final int MIN_FUNCTIONS_TO_ANALYZE = 1;
@@ -135,7 +135,7 @@ if not isinstance(struct_size, int) or struct_size < 0 or struct_size > 65536:
 - Improved comment skipping logic
 
 **Files Modified**:
-- `GhidraMCPPlugin.java:6101-6176` - Complete rewrite of `analyzeFieldUsageInCode()`
+- `MCP4GhidraPlugin.java:6101-6176` - Complete rewrite of `analyzeFieldUsageInCode()`
 
 **Key Improvements**:
 ```java
@@ -178,8 +178,8 @@ if (token.length() >= MIN_TOKEN_LENGTH &&
 - Return descriptive error message if limit exceeded
 
 **Files Modified**:
-- `GhidraMCPPlugin.java:5943-5948` - Validation in `analyzeStructFieldUsage()`
-- `GhidraMCPPlugin.java:6337-6343` - Validation in `suggestFieldNames()`
+- `MCP4GhidraPlugin.java:5943-5948` - Validation in `analyzeStructFieldUsage()`
+- `MCP4GhidraPlugin.java:6337-6343` - Validation in `suggestFieldNames()`
 
 **Code Pattern**:
 ```java
@@ -203,8 +203,8 @@ if (components.length > MAX_STRUCT_FIELDS) {
 - Added overflow protection for address arithmetic
 
 **Files Modified**:
-- `GhidraMCPPlugin.java:6215-6222` - Address overflow protection
-- `GhidraMCPPlugin.java:6251-6268` - Null checks for instruction and function lookups
+- `MCP4GhidraPlugin.java:6215-6222` - Address overflow protection
+- `MCP4GhidraPlugin.java:6251-6268` - Null checks for instruction and function lookups
 
 **Code Pattern**:
 ```java
@@ -238,7 +238,7 @@ if (instr != null) {
 - Used `ConsoleTaskMonitor` for better control
 
 **Files Modified**:
-- `GhidraMCPPlugin.java:6005-6006` - Added timeout parameter
+- `MCP4GhidraPlugin.java:6005-6006` - Added timeout parameter
 
 **Code Pattern**:
 ```java
@@ -370,7 +370,7 @@ Before deployment, the following tests should be performed:
 ## Files Modified
 
 ### Java Plugin
-- `src/main/java/com/xebyte/GhidraMCPPlugin.java`
+- `src/main/java/com/xebyte/MCP4GhidraPlugin.java`
   - Lines 52-55: Added imports (`AtomicReference`, `Pattern`)
   - Lines 74-90: Added constants (NEW)
   - Lines 5913-6062: Rewrote `analyzeStructFieldUsage()` with all fixes
@@ -435,7 +435,7 @@ VALIDATION:
 - Error messages: Descriptive with proper escaping
 
 FILES MODIFIED:
-- src/main/java/com/xebyte/GhidraMCPPlugin.java (~300 lines changed)
+- src/main/java/com/xebyte/MCP4GhidraPlugin.java (~300 lines changed)
 - bridge_mcp_ghidra.py (~10 lines added)
 - FIELD_ANALYSIS_IMPLEMENTATION.md (created)
 - CODE_REVIEW_V1.4.0.md (created)
@@ -474,7 +474,7 @@ Refs: FIELD_ANALYSIS_IMPLEMENTATION.md, CODE_REVIEW_V1.4.0.md
 
 3. **Commit**:
    ```bash
-   git add src/main/java/com/xebyte/GhidraMCPPlugin.java
+   git add src/main/java/com/xebyte/MCP4GhidraPlugin.java
    git add bridge_mcp_ghidra.py
    git add FIELD_ANALYSIS_IMPLEMENTATION.md
    git add CODE_REVIEW_V1.4.0.md
