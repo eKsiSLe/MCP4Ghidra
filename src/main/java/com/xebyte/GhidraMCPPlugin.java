@@ -44,6 +44,9 @@ import ghidra.program.model.pcode.HighVariable;
 import ghidra.program.model.data.DataType;
 import ghidra.program.model.data.DataTypeManager;
 import ghidra.program.model.data.PointerDataType;
+import docking.ActionContext;
+import docking.action.DockingAction;
+import docking.action.MenuData;
 
 import ghidra.framework.options.Options;
 
@@ -78,7 +81,7 @@ import java.util.regex.Pattern;
 // Load version from properties file (populated by Maven during build)
 class VersionInfo {
     private static String VERSION = "3.0.0"; // Default fallback
-    private static String APP_NAME = "GhidraMCP";
+    private static String APP_NAME = "MCP4Ghidra";
     private static String GHIDRA_VERSION = "unknown"; // Loaded from version.properties (Maven-filtered)
     private static String BUILD_TIMESTAMP = "dev"; // Will be replaced by Maven
     private static String BUILD_NUMBER = "0"; // Will be replaced by Maven
@@ -91,7 +94,7 @@ class VersionInfo {
                 Properties props = new Properties();
                 props.load(input);
                 VERSION = props.getProperty("app.version", "3.0.0");
-                APP_NAME = props.getProperty("app.name", "GhidraMCP");
+                APP_NAME = props.getProperty("app.name", "MCP4Ghidra");
                 GHIDRA_VERSION = props.getProperty("ghidra.version", "unknown");
                 BUILD_TIMESTAMP = props.getProperty("build.timestamp", "dev");
                 BUILD_NUMBER = props.getProperty("build.number", "0");
@@ -134,19 +137,24 @@ class VersionInfo {
     status = PluginStatus.RELEASED,
     packageName = ghidra.app.DeveloperPluginPackage.NAME,
     category = PluginCategoryNames.ANALYSIS,
-    shortDescription = "GhidraMCP - HTTP server plugin",
-    description = "GhidraMCP - Starts an embedded HTTP server to expose program data via REST API and MCP bridge. " +
-                  "Provides 144 endpoints for reverse engineering automation. " +
+    shortDescription = "MCP4Ghidra - HTTP server plugin",
+    description = "MCP4Ghidra - Starts an embedded HTTP server to expose program data via REST API and MCP bridge. " +
+                  "Provides 146 endpoints for reverse engineering automation. " +
                   "Port configurable via Tool Options. " +
                   "Features: function analysis, decompilation, symbol management, cross-references, label operations, " +
                   "high-performance batch data analysis, field-level structure analysis, advanced call graph analysis, " +
                   "malware analysis (IOC extraction, behavior detection, anti-analysis detection), and Ghidra script automation. " +
-                  "See https://github.com/bethington/ghidra-mcp for documentation and version history."
+                  "See project documentation for usage and version history."
 )
 public class GhidraMCPPlugin extends Plugin {
 
     private HttpServer server;
-    private static final String OPTION_CATEGORY_NAME = "GhidraMCP HTTP Server";
+    private DockingAction startServerAction;
+    private DockingAction stopServerAction;
+    private DockingAction restartServerAction;
+    private DockingAction serverStatusAction;
+    private DockingAction windowStatusAction;
+    private static final String OPTION_CATEGORY_NAME = "MCP4Ghidra HTTP Server";
     private static final String PORT_OPTION_NAME = "Server Port";
     private static final int DEFAULT_PORT = 8089;
 
@@ -187,6 +195,8 @@ public class GhidraMCPPlugin extends Plugin {
             "The network port number the embedded HTTP server will listen on. " +
             "Requires Ghidra restart or plugin reload to take effect after changing.");
 
+        setupActions();
+
         try {
             startServer();
             Msg.info(this, "GhidraMCPPlugin loaded successfully with HTTP server on port " +
@@ -198,9 +208,124 @@ public class GhidraMCPPlugin extends Plugin {
                 "Failed to start MCP server on port " + options.getInt(PORT_OPTION_NAME, DEFAULT_PORT) +
                 ".\n\nThe port may already be in use. Try:\n" +
                 "1. Restarting Ghidra\n" +
-                "2. Changing the port in Edit > Tool Options > GhidraMCP\n" +
+                "2. Changing the port in Edit > Tool Options > MCP4Ghidra\n" +
                 "3. Checking if another Ghidra instance is running\n\n" +
                 "Error: " + e.getMessage());
+        }
+
+        updateActionStates();
+    }
+
+    private int getConfiguredPort() {
+        Options options = tool.getOptions(OPTION_CATEGORY_NAME);
+        return options.getInt(PORT_OPTION_NAME, DEFAULT_PORT);
+    }
+
+    private synchronized boolean isServerRunning() {
+        return server != null;
+    }
+
+    private synchronized void stopServer() {
+        if (server == null) {
+            return;
+        }
+        server.stop(1);
+        server = null;
+    }
+
+    private void setupActions() {
+        startServerAction = new DockingAction("Start MCP Server", getName()) {
+            @Override
+            public void actionPerformed(ActionContext context) {
+                if (isServerRunning()) {
+                    Msg.showInfo(this, null, "MCP4Ghidra", "MCP server is already running on port " + getConfiguredPort() + ".");
+                    return;
+                }
+                try {
+                    startServer();
+                    Msg.showInfo(this, null, "MCP4Ghidra", "MCP server started on port " + getConfiguredPort() + ".");
+                } catch (IOException e) {
+                    Msg.showError(this, null, "MCP4Ghidra Server Error",
+                        "Failed to start MCP server on port " + getConfiguredPort() + ".\n\nError: " + e.getMessage());
+                } finally {
+                    updateActionStates();
+                }
+            }
+        };
+        startServerAction.setMenuBarData(new MenuData(new String[] {"Tools", "MCP4Ghidra", "Start MCP Server"}));
+        startServerAction.setDescription("Start the MCP4Ghidra HTTP server.");
+        tool.addAction(startServerAction);
+
+        stopServerAction = new DockingAction("Stop MCP Server", getName()) {
+            @Override
+            public void actionPerformed(ActionContext context) {
+                if (!isServerRunning()) {
+                    Msg.showInfo(this, null, "MCP4Ghidra", "MCP server is already stopped.");
+                    return;
+                }
+                stopServer();
+                Msg.showInfo(this, null, "MCP4Ghidra", "MCP server stopped.");
+                updateActionStates();
+            }
+        };
+        stopServerAction.setMenuBarData(new MenuData(new String[] {"Tools", "MCP4Ghidra", "Stop MCP Server"}));
+        stopServerAction.setDescription("Stop the MCP4Ghidra HTTP server.");
+        tool.addAction(stopServerAction);
+
+        restartServerAction = new DockingAction("Restart MCP Server", getName()) {
+            @Override
+            public void actionPerformed(ActionContext context) {
+                try {
+                    stopServer();
+                    startServer();
+                    Msg.showInfo(this, null, "MCP4Ghidra", "MCP server restarted on port " + getConfiguredPort() + ".");
+                } catch (IOException e) {
+                    Msg.showError(this, null, "MCP4Ghidra Server Error",
+                        "Failed to restart MCP server on port " + getConfiguredPort() + ".\n\nError: " + e.getMessage());
+                } finally {
+                    updateActionStates();
+                }
+            }
+        };
+        restartServerAction.setMenuBarData(new MenuData(new String[] {"Tools", "MCP4Ghidra", "Restart MCP Server"}));
+        restartServerAction.setDescription("Restart the MCP4Ghidra HTTP server.");
+        tool.addAction(restartServerAction);
+
+        serverStatusAction = new DockingAction("Show MCP Server Status", getName()) {
+            @Override
+            public void actionPerformed(ActionContext context) {
+                String status = isServerRunning() ? "running" : "stopped";
+                Msg.showInfo(this, null, "MCP4Ghidra Status",
+                    "MCP server is currently " + status + ".\nConfigured port: " + getConfiguredPort());
+            }
+        };
+        serverStatusAction.setMenuBarData(new MenuData(new String[] {"Tools", "MCP4Ghidra", "Show MCP Server Status"}));
+        serverStatusAction.setDescription("Show current MCP4Ghidra server status.");
+        tool.addAction(serverStatusAction);
+
+        windowStatusAction = new DockingAction("MCP4Ghidra Server Status", getName()) {
+            @Override
+            public void actionPerformed(ActionContext context) {
+                String status = isServerRunning() ? "running" : "stopped";
+                Msg.showInfo(this, null, "MCP4Ghidra Status",
+                    "MCP server is currently " + status + ".\nConfigured port: " + getConfiguredPort());
+            }
+        };
+        windowStatusAction.setMenuBarData(new MenuData(new String[] {"Window", "MCP4Ghidra", "Server Status"}));
+        windowStatusAction.setDescription("Show MCP4Ghidra server status from the Window menu.");
+        tool.addAction(windowStatusAction);
+    }
+
+    private void updateActionStates() {
+        boolean running = isServerRunning();
+        if (startServerAction != null) {
+            startServerAction.setEnabled(!running);
+        }
+        if (stopServerAction != null) {
+            stopServerAction.setEnabled(running);
+        }
+        if (restartServerAction != null) {
+            restartServerAction.setEnabled(running);
         }
     }
 
@@ -16591,16 +16716,15 @@ public class GhidraMCPPlugin extends Plugin {
 
     @Override
     public void dispose() {
-        if (server != null) {
+        if (isServerRunning()) {
             Msg.info(this, "Stopping GhidraMCP HTTP server...");
             try {
-                server.stop(1); // Stop with a small delay (e.g., 1 second) for connections to finish
+                stopServer(); // Stop with a small delay (e.g., 1 second) for connections to finish
                 // Give the server time to fully release the port
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            server = null; // Nullify the reference
             Msg.info(this, "GhidraMCP HTTP server stopped.");
         }
         super.dispose();

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Plugin-Class: com.xebyte.GhidraMCPPlugin
-Plugin-Name: GhidraMCP
+Plugin-Name: MCP4Ghidra
 Plugin-Version: 2.0.0
-Plugin-Author: Ben Ethington
-Plugin-Description: GhidraMCP - HTTP server plugin with 133 endpoints for reverse engineering automation
+Plugin-Author: eKsiSLe
+Plugin-Description: MCP4Ghidra - HTTP server plugin with 133 endpoints for reverse engineering automation

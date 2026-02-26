@@ -385,6 +385,7 @@ function Install-GhidraDependencies {
         @{ Artifact = "Utility";          RelPath = "Ghidra\Framework\Utility\lib\Utility.jar" },
         @{ Artifact = "Gui";              RelPath = "Ghidra\Framework\Gui\lib\Gui.jar" },
         @{ Artifact = "FileSystem";       RelPath = "Ghidra\Framework\FileSystem\lib\FileSystem.jar" },
+        @{ Artifact = "Help";             RelPath = "Ghidra\Framework\Help\lib\Help.jar" },
         @{ Artifact = "Graph";            RelPath = "Ghidra\Framework\Graph\lib\Graph.jar" },
         @{ Artifact = "DB";               RelPath = "Ghidra\Framework\DB\lib\DB.jar" },
         @{ Artifact = "Emulation";        RelPath = "Ghidra\Framework\Emulation\lib\Emulation.jar" },
@@ -439,20 +440,22 @@ function Invoke-CleanAction {
         }
     }
 
-    $ghidraUserBase = "$env:USERPROFILE\AppData\Roaming\ghidra"
-    if (Test-Path $ghidraUserBase) {
-        Get-ChildItem -Path $ghidraUserBase -Directory -Filter "ghidra_*" | ForEach-Object {
-            $extPath = Join-Path $_.FullName "Extensions\GhidraMCP"
-            if (Test-Path $extPath) {
-                if ($DryRun) {
-                    Write-LogInfo "[DRY RUN] Would remove: $extPath"
-                } else {
-                    if ($PSCmdlet.ShouldProcess($extPath, "Remove cached GhidraMCP extension")) {
-                        Remove-Item -Recurse -Force $extPath -ErrorAction SilentlyContinue
+    foreach ($ghidraUserBase in Get-UserGhidraBasePaths) {
+        if (-not (Test-Path $ghidraUserBase)) { continue }
+        Get-ChildItem -Path $ghidraUserBase -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -like "ghidra_*" -or $_.Name -like ".ghidra_*" } |
+            ForEach-Object {
+                $extPath = Join-Path $_.FullName "Extensions\GhidraMCP"
+                if (Test-Path $extPath) {
+                    if ($DryRun) {
+                        Write-LogInfo "[DRY RUN] Would remove: $extPath"
+                    } else {
+                        if ($PSCmdlet.ShouldProcess($extPath, "Remove cached GhidraMCP extension")) {
+                            Remove-Item -Recurse -Force $extPath -ErrorAction SilentlyContinue
+                        }
                     }
                 }
             }
-        }
     }
 
     # Remove locally installed Ghidra dependencies from Maven cache for this version
@@ -466,6 +469,7 @@ function Invoke-CleanAction {
         "Utility",
         "Gui",
         "FileSystem",
+        "Help",
         "Graph",
         "DB",
         "Emulation",
@@ -513,17 +517,44 @@ function Get-MavenPath {
 }
 
 function Get-PythonCommand {
-    $pythonCmd = Get-Command python -ErrorAction SilentlyContinue
-    if ($pythonCmd -and (Test-Path $pythonCmd.Source)) {
-        return @{ Command = $pythonCmd.Source; PrefixParameters = @() }
+    $candidates = @(
+        @{ Name = "python3"; PrefixParameters = @() },
+        @{ Name = "python"; PrefixParameters = @() },
+        @{ Name = "py"; PrefixParameters = @("-3") },
+        @{ Name = "py"; PrefixParameters = @() }
+    )
+
+    foreach ($candidate in $candidates) {
+        $cmd = Get-Command $candidate.Name -ErrorAction SilentlyContinue
+        if (-not $cmd -or -not (Test-Path $cmd.Source)) {
+            continue
+        }
+
+        try {
+            $versionOutput = & $cmd.Source @($candidate.PrefixParameters) --version 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                continue
+            }
+
+            $versionText = ($versionOutput | Out-String).Trim()
+            if ($versionText -notmatch 'Python\s+([0-9]+)\.') {
+                continue
+            }
+            if ([int]$Matches[1] -lt 3) {
+                continue
+            }
+
+            return @{
+                Command = $cmd.Source
+                PrefixParameters = $candidate.PrefixParameters
+                Version = $versionText
+            }
+        } catch {
+            continue
+        }
     }
 
-    $pyCmd = Get-Command py -ErrorAction SilentlyContinue
-    if ($pyCmd -and (Test-Path $pyCmd.Source)) {
-        return @{ Command = $pyCmd.Source; PrefixParameters = @() }
-    }
-
-    throw "Python executable not found on PATH"
+    throw "Python 3 executable not found on PATH (tried: python3, python, py -3)."
 }
 
 function Install-PythonPackages {
@@ -556,6 +587,56 @@ function Test-WriteAccess {
         return $true
     } catch {
         return $false
+    }
+}
+
+function Get-UserGhidraBasePaths {
+    $paths = @()
+    if ($env:APPDATA) {
+        $paths += (Join-Path $env:APPDATA "ghidra")
+    }
+    if ($env:USERPROFILE) {
+        $paths += (Join-Path $env:USERPROFILE ".ghidra")
+    }
+    return $paths | Select-Object -Unique
+}
+
+function Get-UserExtensionsCandidates {
+    param([Parameter(Mandatory = $true)][string]$ResolvedGhidraVersion)
+
+    $candidates = @()
+    foreach ($base in Get-UserGhidraBasePaths) {
+        $candidates += (Join-Path $base "ghidra_$ResolvedGhidraVersion`_PUBLIC\Extensions\Ghidra")
+        $candidates += (Join-Path $base ".ghidra_$ResolvedGhidraVersion`_PUBLIC\Extensions\Ghidra")
+    }
+    return $candidates | Select-Object -Unique
+}
+
+function Test-ExtensionArtifact {
+    param([Parameter(Mandatory = $true)][string]$ArtifactZipPath)
+
+    if (-not (Test-Path $ArtifactZipPath)) {
+        throw "Extension artifact not found: $ArtifactZipPath"
+    }
+
+    Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
+
+    $zip = [System.IO.Compression.ZipFile]::OpenRead($ArtifactZipPath)
+    try {
+        $entries = $zip.Entries | ForEach-Object { $_.FullName }
+        $hasExtensionProps = $entries -contains "GhidraMCP/extension.properties"
+        $hasManifest = $entries -contains "GhidraMCP/Module.manifest"
+        $hasPluginJar = $entries | Where-Object { $_ -like "GhidraMCP/lib/*.jar" } | Select-Object -First 1
+
+        if (-not $hasExtensionProps -or -not $hasManifest -or -not $hasPluginJar) {
+            $missing = @()
+            if (-not $hasExtensionProps) { $missing += "GhidraMCP/extension.properties" }
+            if (-not $hasManifest) { $missing += "GhidraMCP/Module.manifest" }
+            if (-not $hasPluginJar) { $missing += "GhidraMCP/lib/*.jar" }
+            throw "Invalid extension ZIP layout. Missing required entry(s): $($missing -join ', ')"
+        }
+    } finally {
+        $zip.Dispose()
     }
 }
 
@@ -614,6 +695,7 @@ function Invoke-PreflightChecks {
             "Ghidra\Framework\Utility\lib\Utility.jar",
             "Ghidra\Framework\Gui\lib\Gui.jar",
             "Ghidra\Framework\FileSystem\lib\FileSystem.jar",
+            "Ghidra\Framework\Help\lib\Help.jar",
             "Ghidra\Framework\Graph\lib\Graph.jar",
             "Ghidra\Framework\DB\lib\DB.jar",
             "Ghidra\Framework\Emulation\lib\Emulation.jar",
@@ -628,19 +710,35 @@ function Invoke-PreflightChecks {
         }
     }
 
-    # Write access checks
-    $extensionsDir = "$ResolvedGhidraPath\Extensions\Ghidra"
-    if (-not (Test-WriteAccess -PathToTest $extensionsDir)) {
-        $issues.Add("No write access to Ghidra extensions directory: $extensionsDir")
+    # Write access checks (require at least one writable deployment location)
+    $systemExtensionsDir = "$ResolvedGhidraPath\Extensions\Ghidra"
+    $userExtCandidates = Get-UserExtensionsCandidates -ResolvedGhidraVersion $ResolvedGhidraVersion
+
+    $canWriteSystemExtensions = Test-WriteAccess -PathToTest $systemExtensionsDir
+    $writableUserExt = @()
+    foreach ($candidate in $userExtCandidates) {
+        if (Test-WriteAccess -PathToTest $candidate) {
+            $writableUserExt += $candidate
+        }
+    }
+    $canWriteUserExtensions = $writableUserExt.Count -gt 0
+
+    if ($canWriteSystemExtensions) {
+        Write-LogSuccess "Write access OK (system extensions): $systemExtensionsDir"
     } else {
-        Write-LogSuccess "Write access OK: $extensionsDir"
+        Write-LogWarning "No write access to system extensions directory: $systemExtensionsDir"
     }
 
-    $userExtDir = "$env:USERPROFILE\AppData\Roaming\ghidra\ghidra_$ResolvedGhidraVersion`_PUBLIC\Extensions"
-    if (-not (Test-WriteAccess -PathToTest $userExtDir)) {
-        $issues.Add("No write access to user extension directory: $userExtDir")
+    if ($canWriteUserExtensions) {
+        Write-LogSuccess "Write access OK (user extensions): $($writableUserExt -join '; ')"
     } else {
-        Write-LogSuccess "Write access OK: $userExtDir"
+        Write-LogWarning "No write access to user extension candidates: $($userExtCandidates -join '; ')"
+    }
+
+    if (-not $canWriteSystemExtensions -and -not $canWriteUserExtensions) {
+        $issues.Add(
+            "No writable extension deployment directory found. Checked: $systemExtensionsDir and $($userExtCandidates -join '; ')"
+        )
     }
 
     # Optional strict network checks
@@ -749,25 +847,27 @@ if ($preDeployProcesses) {
 }
 
 # Clean up ALL cached GhidraMCP extensions from all Ghidra versions
-$ghidraUserBase = "$env:USERPROFILE\AppData\Roaming\ghidra"
-if (Test-Path $ghidraUserBase) {
-    $cleanedCount = 0
-    Get-ChildItem -Path $ghidraUserBase -Directory -Filter "ghidra_*" | ForEach-Object {
-        $extPath = Join-Path $_.FullName "Extensions\GhidraMCP"
-        if (Test-Path $extPath) {
-            try {
-                if ($PSCmdlet.ShouldProcess($extPath, "Remove cached GhidraMCP extension")) {
-                    Remove-Item -Recurse -Force $extPath -ErrorAction Stop
-                    $cleanedCount++
+$cleanedCount = 0
+foreach ($ghidraUserBase in Get-UserGhidraBasePaths) {
+    if (-not (Test-Path $ghidraUserBase)) { continue }
+    Get-ChildItem -Path $ghidraUserBase -Directory -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -like "ghidra_*" -or $_.Name -like ".ghidra_*" } |
+        ForEach-Object {
+            $extPath = Join-Path $_.FullName "Extensions\GhidraMCP"
+            if (Test-Path $extPath) {
+                try {
+                    if ($PSCmdlet.ShouldProcess($extPath, "Remove cached GhidraMCP extension")) {
+                        Remove-Item -Recurse -Force $extPath -ErrorAction Stop
+                        $cleanedCount++
+                    }
+                } catch {
+                    Write-LogWarning "Could not clean: $extPath - $($_.Exception.Message)"
                 }
-            } catch {
-                Write-LogWarning "Could not clean: $extPath - $($_.Exception.Message)"
             }
         }
-    }
-    if ($cleanedCount -gt 0) {
-        Write-LogInfo "Cleaned $cleanedCount cached GhidraMCP extension(s)"
-    }
+}
+if ($cleanedCount -gt 0) {
+    Write-LogInfo "Cleaned $cleanedCount cached GhidraMCP extension(s)"
 }
 
 # Build the extension (unless skipped)
@@ -827,27 +927,74 @@ if (-not (Test-Path $artifactPath)) {
     }
 }
 
+try {
+    Test-ExtensionArtifact -ArtifactZipPath $artifactPath
+    Write-LogSuccess "Artifact integrity check passed."
+} catch {
+    Write-LogError "Artifact validation failed: $($_.Exception.Message)"
+    Write-LogInfo "Rebuild with: mvn clean package assembly:single -DskipTests"
+    exit 1
+}
+
 Write-LogSuccess "Using artifact: $(Split-Path $artifactPath -Leaf) ($version)"
 
-# Find Ghidra Extensions directory
-$extensionsDir = "$GhidraPath\Extensions\Ghidra"
-if (-not (Test-Path $extensionsDir)) {
-    Write-LogInfo "Extensions directory doesn't exist, creating: $extensionsDir"
-    if ($PSCmdlet.ShouldProcess($extensionsDir, "Create extensions directory")) {
-        New-Item -ItemType Directory -Path $extensionsDir -Force | Out-Null
+# Resolve extension deployment directory (prefer system install, fallback to user profile)
+$systemExtensionsDir = "$GhidraPath\Extensions\Ghidra"
+$userExtensionsCandidates = Get-UserExtensionsCandidates -ResolvedGhidraVersion $GhidraVersion
+
+$extensionsDir = $systemExtensionsDir
+if (-not (Test-WriteAccess -PathToTest $systemExtensionsDir)) {
+    Write-LogWarning "No write access to system extensions dir, using user profile extension dir."
+    $extensionsDir = $null
+    foreach ($candidate in $userExtensionsCandidates) {
+        if (Test-WriteAccess -PathToTest $candidate) {
+            $extensionsDir = $candidate
+            break
+        }
     }
 }
 
-# Remove existing installations
-$existingPlugins = Get-ChildItem -Path $extensionsDir -Filter "GhidraMCP*.zip" -ErrorAction SilentlyContinue
+if (-not (Test-WriteAccess -PathToTest $extensionsDir)) {
+    Write-LogError "No writable extension directory available."
+    Write-LogError "Checked:"
+    Write-Host "  - $systemExtensionsDir" -ForegroundColor Red
+    foreach ($candidate in $userExtensionsCandidates) {
+        Write-Host "  - $candidate" -ForegroundColor Red
+    }
+    exit 1
+}
 
-if ($existingPlugins) {
-    Write-LogInfo "Removing existing GhidraMCP installations..."
+Write-LogInfo "Deploying extension archive to: $extensionsDir"
+
+# Remove existing plugin archives from both candidate roots.
+foreach ($root in (@($systemExtensionsDir) + $userExtensionsCandidates) | Select-Object -Unique) {
+    $existingPlugins = Get-ChildItem -Path $root -Filter "GhidraMCP*.zip" -ErrorAction SilentlyContinue
+    if (-not $existingPlugins) {
+        continue
+    }
+    Write-LogInfo "Removing existing GhidraMCP archives from: $root"
     foreach ($plugin in $existingPlugins) {
         if ($PSCmdlet.ShouldProcess($plugin.FullName, "Remove existing GhidraMCP plugin archive")) {
-            Remove-Item $plugin.FullName -Force
+            Remove-Item $plugin.FullName -Force -ErrorAction SilentlyContinue
             Write-LogSuccess "Removed: $($plugin.Name)"
         }
+    }
+}
+
+# Remove unpacked extension directory from both candidate roots.
+# Leaving stale unpacked content can cause "cannot overwrite" and stale runtime behavior.
+foreach ($root in (@($systemExtensionsDir) + $userExtensionsCandidates) | Select-Object -Unique) {
+    $unpackedExtensionPath = Join-Path $root "GhidraMCP"
+    if (-not (Test-Path $unpackedExtensionPath)) {
+        continue
+    }
+    try {
+        if ($PSCmdlet.ShouldProcess($unpackedExtensionPath, "Remove unpacked GhidraMCP extension directory")) {
+            Remove-Item -Recurse -Force $unpackedExtensionPath -ErrorAction Stop
+            Write-LogSuccess "Removed stale unpacked extension directory: $unpackedExtensionPath"
+        }
+    } catch {
+        Write-LogWarning "Could not remove unpacked extension directory: $unpackedExtensionPath - $($_.Exception.Message)"
     }
 }
 
@@ -864,74 +1011,8 @@ try {
     exit 1
 }
 
-# Also copy JAR to user's local Extensions directory for development/debugging
-$jarSourcePath = "$PSScriptRoot\target\GhidraMCP.jar"
-if (-not (Test-Path $jarSourcePath)) {
-    $versionedJarPath = "$PSScriptRoot\target\GhidraMCP-$version.jar"
-    if (Test-Path $versionedJarPath) {
-        $jarSourcePath = $versionedJarPath
-    }
-}
-if (Test-Path $jarSourcePath) {
-    # Detect Ghidra version from installation path
-    $ghidraVersionDir = $null
-    $ghidraUserBase = "$env:USERPROFILE\AppData\Roaming\ghidra"
-
-    if (Test-Path $ghidraUserBase) {
-        # Find the most recent ghidra version directory using semantic version sorting
-        # (String sorting incorrectly puts "12.0_" before "12.0.3_" because "_" > "." in ASCII)
-        $ghidraVersionDirs = Get-ChildItem -Path $ghidraUserBase -Directory -Filter "ghidra_*" |
-            ForEach-Object {
-                # Extract version numbers for proper numerical sorting
-                if ($_.Name -match "ghidra_([0-9]+)\.([0-9]+)(?:\.([0-9]+))?") {
-                    [PSCustomObject]@{
-                        Name = $_.Name
-                        Major = [int]$Matches[1]
-                        Minor = [int]$Matches[2]
-                        Patch = if ($Matches[3]) { [int]$Matches[3] } else { 0 }
-                    }
-                }
-            } |
-            Sort-Object Major, Minor, Patch -Descending
-        
-        if ($ghidraVersionDirs) {
-            $ghidraVersionDir = $ghidraVersionDirs[0].Name
-            Write-LogInfo "Detected Ghidra user config version: $ghidraVersionDir"
-        }
-    }
-
-    if (-not $ghidraVersionDir) {
-        # Fallback: extract version from Ghidra installation path
-        if ($GhidraPath -match "ghidra_([0-9.]+)") {
-            $ghidraVersionDir = "ghidra_$($Matches[1])_PUBLIC"
-        } else {
-            $ghidraVersionDir = "ghidra_12.0.3_PUBLIC"
-        }
-        Write-LogInfo "Using Ghidra version dir: $ghidraVersionDir"
-    }
-
-    $userExtensionsDir = "$ghidraUserBase\$ghidraVersionDir\Extensions\GhidraMCP\lib"
-
-    if (-not (Test-Path $userExtensionsDir)) {
-        Write-LogInfo "Creating user Extensions directory: $userExtensionsDir"
-        if ($PSCmdlet.ShouldProcess($userExtensionsDir, "Create user extension library directory")) {
-            New-Item -ItemType Directory -Path $userExtensionsDir -Force | Out-Null
-        }
-    }
-
-    try {
-        $jarDestinationPath = Join-Path $userExtensionsDir "GhidraMCP.jar"
-        if ($PSCmdlet.ShouldProcess($jarDestinationPath, "Copy plugin JAR to user extension directory")) {
-            Copy-Item $jarSourcePath $jarDestinationPath -Force
-            Write-LogSuccess "Installed: GhidraMCP.jar → $userExtensionsDir"
-        }
-    } catch {
-        Write-LogWarning "Failed to copy JAR to user Extensions: $($_.Exception.Message)"
-        Write-LogInfo "JAR copy is optional - plugin will work without it"
-    }
-} else {
-    Write-LogWarning "JAR file not found: $jarSourcePath"
-}
+# Do NOT copy loose JAR files into user extension folders.
+# Ghidra expects extension ZIP workflows; mixing ZIP + loose JAR causes stale/locked AppData states.
 
 # Copy Python MCP bridge to Ghidra root
 $bridgeSourcePath = "$PSScriptRoot\bridge_mcp_ghidra.py"
@@ -972,8 +1053,12 @@ if (Test-Path $bridgeSourcePath) {
 }
 
 # Check for user preferences directory
-$userDir = "$env:USERPROFILE\.ghidra"
-if (Test-Path $userDir) {
+$possibleUserDirs = @(
+    "$env:USERPROFILE\.ghidra",
+    (Join-Path $env:APPDATA "ghidra")
+) | Where-Object { $_ -and (Test-Path $_) }
+
+foreach ($userDir in $possibleUserDirs) {
     # Try to find and update plugin preferences
     $prefsPattern = "$userDir\*\preferences\*\plugins.xml"
     $prefsFiles = Get-ChildItem -Path $prefsPattern -Recurse -ErrorAction SilentlyContinue
@@ -1001,35 +1086,48 @@ if (Test-Path $userDir) {
     }
 }
 
+$pythonRunCommand = "python bridge_mcp_ghidra.py"
+$pipInstallCommand = "pip install -r requirements.txt"
+try {
+    $pyForDisplay = Get-PythonCommand
+    $prefix = if ($pyForDisplay.PrefixParameters -and $pyForDisplay.PrefixParameters.Count -gt 0) {
+        "$($pyForDisplay.PrefixParameters -join ' ') "
+    } else {
+        ""
+    }
+    $pythonRunCommand = "$($pyForDisplay.Command) $prefix" + "bridge_mcp_ghidra.py"
+    $pipInstallCommand = "$($pyForDisplay.Command) $prefix" + "-m pip install -r requirements.txt"
+} catch {
+    Write-LogWarning "Could not resolve Python command for usage output. Falling back to generic examples."
+}
+
 # Create quick reference message
 Write-Host ""
-Write-LogSuccess "GhidraMCP v$version Successfully Deployed!"
+Write-LogSuccess "MCP4Ghidra v$version Successfully Deployed!"
 Write-Host ""
 Write-LogInfo "Installation Locations:"
 Write-Host "   Plugin: $destinationPath"
-if ($userExtensionsDir) {
-    Write-Host "   JAR: $jarDestinationPath"
-}
+Write-Host "   Extension Root: $extensionsDir"
 Write-Host "   Python Bridge: $GhidraPath\bridge_mcp_ghidra.py"
 Write-Host "   Requirements: $GhidraPath\requirements.txt"
 Write-Host ""
 Write-LogInfo "Next Steps:"
 if ($NoAutoPrereqs) {
-    Write-Host "1. If needed (first time only), install Python dependencies: pip install -r requirements.txt"
+    Write-Host "1. If needed (first time only), install Python dependencies: $pipInstallCommand"
 } else {
     Write-Host "1. Python dependencies were auto-checked/installed."
 }
 Write-Host "2. Start Ghidra"
 Write-Host "3. If plugin isn't automatically enabled:"
-Write-Host "      - In CodeBrowser: File > Configure > Configure All Plugins > GhidraMCP"
+Write-Host "      - In CodeBrowser: File > Configure > Configure All Plugins > MCP4Ghidra"
 Write-Host "      - Check the checkbox to enable"
 Write-Host "      - Click OK and restart Ghidra"
 Write-Host "4. To configure the server port:"
-Write-Host "      - In CodeBrowser: Edit > Tool Options > GhidraMCP HTTP Server"
+Write-Host "      - In CodeBrowser: Edit > Tool Options > MCP4Ghidra HTTP Server"
 Write-Host ""
 Write-LogInfo "Usage:"
-Write-Host "   Ghidra: Tools > GhidraMCP > Start MCP Server"
-Write-Host "   Python: python bridge_mcp_ghidra.py (from project root or Ghidra directory)"
+Write-Host "   Ghidra: Tools > MCP4Ghidra > Start MCP Server"
+Write-Host "   Python: $pythonRunCommand (from project root or Ghidra directory)"
 Write-Host ""
 Write-LogInfo "Default Server: http://127.0.0.1:8089/"
 Write-Host ""

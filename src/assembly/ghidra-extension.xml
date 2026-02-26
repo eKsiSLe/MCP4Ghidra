@@ -27,12 +27,13 @@
             </includes>
             <outputDirectory>GhidraMCP</outputDirectory>
         </fileSet>
-        <!-- 3) Copy your built plugin JAR into GhidraMCP/lib -->
+        <!-- 3) Copy built plugin JAR into GhidraMCP/lib -->
         <fileSet>
             <directory>${project.build.directory}</directory>
             <includes>
-                <!-- Use the finalized JAR name from the maven-jar-plugin -->
+                <!-- Support both versioned and unversioned outputs -->
                 <include>${project.build.finalName}.jar</include>
+                <include>GhidraMCP.jar</include>
             </includes>
             <outputDirectory>GhidraMCP/lib</outputDirectory>
         </fileSet>

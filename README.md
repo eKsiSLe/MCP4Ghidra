@@ -162,13 +162,23 @@ Most Ghidra MCP implementations give you a handful of read-only tools and call i
 
 #### Option 1: Stdio Transport (Recommended for AI tools)
 ```bash
-python bridge_mcp_ghidra.py
+python3 bridge_mcp_ghidra.py
 ```
 
 #### Option 2: SSE Transport (Web/HTTP clients)
 ```bash
-python bridge_mcp_ghidra.py --transport sse --mcp-host 127.0.0.1 --mcp-port 8081
+python3 bridge_mcp_ghidra.py --transport sse --mcp-host 127.0.0.1 --mcp-port 8081
 ```
+
+Windows PowerShell equivalents:
+```powershell
+py -3 bridge_mcp_ghidra.py
+py -3 bridge_mcp_ghidra.py --transport sse --mcp-host 127.0.0.1 --mcp-port 8081
+```
+
+MCP client config templates:
+- `mcp-config.json` for macOS/Linux (`python3`)
+- `mcp-config.windows.json` for Windows (`py -3`)
 
 #### In Ghidra
 1. Start Ghidra and open a **CodeBrowser** window
@@ -176,6 +186,11 @@ python bridge_mcp_ghidra.py --transport sse --mcp-host 127.0.0.1 --mcp-port 8081
 3. Optional: configure custom port via **CodeBrowser > Edit > Tool Options > GhidraMCP HTTP Server**
 4. Start the server via **Tools > GhidraMCP > Start MCP Server**
 5. The server runs on `http://127.0.0.1:8089/` by default
+
+Important deployment note:
+- The setup script deploys only the extension ZIP and cleans stale `GhidraMCP` folders/ZIPs in both install-level and `%APPDATA%\ghidra\...\Extensions\Ghidra` paths.
+- This avoids mixed ZIP/JAR states that cause missing menus or "cannot overwrite" errors in Ghidra.
+- The deploy flow now validates ZIP contents before install (`GhidraMCP/extension.properties`, `GhidraMCP/Module.manifest`, `GhidraMCP/lib/*.jar`).
 
 #### Verify It's Working
 ```bash
@@ -613,7 +628,7 @@ Then rerun:
 .\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath "C:\path\to\ghidra_12.0.3_PUBLIC" -GhidraVersion "12.0.3"
 ```
 
-**Required Libraries (14 JARs, ~37MB):**
+**Required Libraries (15 JARs, ~38MB):**
 
 | Library | Source Path | Purpose |
 |---------|------------|---------|
@@ -628,6 +643,7 @@ Then rerun:
 | **Utility.jar** | `Framework/Utility/lib/` | Core utilities |
 | **Gui.jar** | `Framework/Gui/lib/` | GUI components |
 | **FileSystem.jar** | `Framework/FileSystem/lib/` | File system support |
+| **Help.jar** | `Framework/Help/lib/` | Help system APIs used by docking actions |
 | **Graph.jar** | `Framework/Graph/lib/` | Graph/call graph analysis |
 | **DB.jar** | `Framework/DB/lib/` | Database operations |
 | **Emulation.jar** | `Framework/Emulation/lib/` | P-code emulation |

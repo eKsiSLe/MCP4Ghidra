@@ -1352,13 +1352,13 @@ def configure_ghidra_defaults(
     to ensure_ghidra() or restart_ghidra().
 
     Args:
-        ghidra_path: Path to Ghidra installation (e.g., "F:\\ghidra_12.0.2_PUBLIC")
+        ghidra_path: Path to Ghidra installation (e.g., "F:\\ghidra_12.0.3_PUBLIC")
         project: Default project file (e.g., "F:\\GhidraProjects\\PD2.gpr")
         binary: Default binary to open (e.g., "D2Win.dll")
 
     Example:
         configure_ghidra_defaults(
-            ghidra_path=r"F:\ghidra_12.0.2_PUBLIC",
+            ghidra_path=r"F:\ghidra_12.0.3_PUBLIC",
             project=r"F:\GhidraProjects\PD2.gpr",
             binary="D2Win.dll"
         )

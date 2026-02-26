@@ -128,7 +128,7 @@ code = decompile_function(address='0x401000', offset=100, limit=100)
 
 ## v2.0.0 - 2026-02-03
 
-### Major Release - Security, Ghidra 12.0.2, Enhanced Documentation
+### Major Release - Security, Ghidra 12.0.3, Enhanced Documentation
 
 #### 🔒 Security
 - **Localhost binding**: HTTP server now binds to `127.0.0.1` instead of `0.0.0.0` in both GUI plugin and headless server — prevents accidental network exposure on shared networks
@@ -150,8 +150,8 @@ code = decompile_function(address='0x401000', offset=100, limit=100)
 - Auto-detection of Ghidra installation from common paths
 - Python bridge respects `GHIDRA_SERVER_URL` environment variable
 
-#### 🚀 Ghidra 12.0.2 Support
-- Updated all dependencies and paths for Ghidra 12.0.2
+#### 🚀 Ghidra 12.0.3 Support
+- Updated all dependencies and paths for Ghidra 12.0.3
 - Updated library dependency documentation (14 required JARs)
 
 #### 🛠️ Tool Count

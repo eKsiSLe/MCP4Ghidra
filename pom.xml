@@ -9,7 +9,7 @@
     <version>3.0.0</version>
     <name>Ghidra MCP Server</name>
     <description>Production-ready Model Context Protocol server for Ghidra reverse engineering platform. v3.0.0: 179 MCP tools, headless server parity, Ghidra Server integration, project lifecycle management, analysis control, and battle-tested AI documentation workflows.</description>
-    <url>https://github.com/bethington/ghidra-mcp</url>
+    <url>https://github.com/eKsiSLe/MCP4Ghidra</url>
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -29,15 +29,15 @@
     </licenses>
     <developers>
         <developer>
-            <id>bethington</id>
-            <name>Project Maintainer</name>
-            <url>https://github.com/bethington</url>
+            <id>eksisle</id>
+            <name>eKsiSLe</name>
+            <url>https://github.com/eKsiSLe</url>
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git://github.com/bethington/ghidra-mcp.git</connection>
-        <developerConnection>scm:git:ssh://github.com:bethington/ghidra-mcp.git</developerConnection>
-        <url>http://github.com/bethington/ghidra-mcp/tree/main</url>
+        <connection>scm:git:git://github.com/eKsiSLe/MCP4Ghidra.git</connection>
+        <developerConnection>scm:git:ssh://github.com:eKsiSLe/MCP4Ghidra.git</developerConnection>
+        <url>http://github.com/eKsiSLe/MCP4Ghidra/tree/main</url>
     </scm>
     <dependencies>
         <!-- Ghidra dependencies (installed locally via mvn install:install-file) -->
@@ -84,6 +84,11 @@
         <dependency>
             <groupId>ghidra</groupId>
             <artifactId>FileSystem</artifactId>
+            <version>${ghidra.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ghidra</groupId>
+            <artifactId>Help</artifactId>
             <version>${ghidra.version}</version>
         </dependency>
         <!-- JUnit (test only) -->

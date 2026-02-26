@@ -11,6 +11,7 @@ import argparse
 import logging
 import time
 import re
+import json
 from urllib.parse import urljoin, urlparse
 
 from mcp.server.fastmcp import FastMCP
@@ -88,8 +89,37 @@ logger = logging.getLogger(__name__)
 
 mcp = FastMCP("ghidra-mcp")
 
-# Initialize ghidra_server_url: env var > .env file > default
-ghidra_server_url = os.getenv("GHIDRA_SERVER_URL", DEFAULT_GHIDRA_SERVER)
+def _load_local_env_file() -> None:
+    """Load optional .env values from the bridge directory."""
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if not os.path.exists(env_path):
+        return
+
+    try:
+        with open(env_path, "r", encoding="utf-8") as env_file:
+            for raw_line in env_file:
+                line = raw_line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                key = key.strip()
+                value = value.strip().strip("'\"")
+                # Respect environment values already provided by the caller.
+                if key and key not in os.environ:
+                    os.environ[key] = value
+    except Exception as exc:
+        logger.warning(f"Failed to load .env file: {exc}")
+
+
+_load_local_env_file()
+
+# Initialize ghidra_server_url:
+# GHIDRA_SERVER_URL (preferred) > GHIDRA_SERVER (legacy) > default
+ghidra_server_url = (
+    os.getenv("GHIDRA_SERVER_URL")
+    or os.getenv("GHIDRA_SERVER")
+    or DEFAULT_GHIDRA_SERVER
+)
 
 
 # Enhanced error classes
@@ -8132,23 +8162,36 @@ def get_repository_file(repo: str, path: str) -> str:
 
 
 def main():
+    global ghidra_server_url
+
+    def _int_env(name: str, default: int) -> int:
+        raw = os.getenv(name)
+        if raw is None:
+            return default
+        try:
+            return int(raw)
+        except ValueError:
+            logger.warning(f"Invalid integer value for {name}: {raw!r}, using {default}")
+            return default
+
     parser = argparse.ArgumentParser(description="MCP server for Ghidra")
     parser.add_argument(
         "--ghidra-server",
         type=str,
-        default=DEFAULT_GHIDRA_SERVER,
-        help=f"Ghidra server URL, default: {DEFAULT_GHIDRA_SERVER}",
+        default=ghidra_server_url,
+        help=f"Ghidra server URL, default: {ghidra_server_url}",
     )
     parser.add_argument(
         "--mcp-host",
         type=str,
-        default="127.0.0.1",
-        help="Host to run MCP server on (only used for sse), default: 127.0.0.1",
+        default=os.getenv("MCP_HOST", "127.0.0.1"),
+        help="Host to run MCP server on (only used for sse), default: env MCP_HOST or 127.0.0.1",
     )
     parser.add_argument(
         "--mcp-port",
         type=int,
-        help="Port to run MCP server on (only used for sse), default: 8089",
+        default=_int_env("MCP_PORT", 8081),
+        help="Port to run MCP server on (only used for sse), default: env MCP_PORT or 8081",
     )
     parser.add_argument(
         "--transport",
@@ -8160,9 +8203,13 @@ def main():
     args = parser.parse_args()
 
     # Use the global variable to ensure it's properly updated
-    global ghidra_server_url
     if args.ghidra_server:
         ghidra_server_url = args.ghidra_server
+    if not validate_server_url(ghidra_server_url):
+        raise GhidraValidationError(
+            f"Invalid ghidra server URL: {ghidra_server_url}. "
+            "Only localhost/private-network addresses are allowed."
+        )
 
     if args.transport == "sse":
         try:
@@ -8178,10 +8225,7 @@ def main():
             else:
                 mcp.settings.host = "127.0.0.1"
 
-            if args.mcp_port:
-                mcp.settings.port = args.mcp_port
-            else:
-                mcp.settings.port = 8089
+            mcp.settings.port = args.mcp_port
 
             logger.info(f"Connecting to Ghidra server at {ghidra_server_url}")
             logger.info(

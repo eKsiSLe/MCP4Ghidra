@@ -50,7 +50,7 @@ logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
 # Default configuration
-DEFAULT_GHIDRA_PATH = r"F:\ghidra_12.0.2_PUBLIC"
+DEFAULT_GHIDRA_PATH = r"F:\ghidra_12.0.3_PUBLIC"
 DEFAULT_MCP_PORT = 8089  # GhidraMCP default port
 DEFAULT_MCP_HOST = "127.0.0.1"
 MCP_STARTUP_TIMEOUT = 120  # seconds to wait for MCP server after Ghidra starts
@@ -620,7 +620,7 @@ def configure_defaults(
 
     Example:
         configure_defaults(
-            ghidra_path=r"F:\\ghidra_12.0.2_PUBLIC",
+            ghidra_path=r"F:\\ghidra_12.0.3_PUBLIC",
             project=r"F:\\GhidraProjects\\PD2.gpr",
             binary="D2Win.dll"
         )

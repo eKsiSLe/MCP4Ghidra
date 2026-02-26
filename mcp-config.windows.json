@@ -1,8 +1,9 @@
 {
     "mcpServers": {
-        "MCP4Ghidra": {
-            "command": "python3",
+        "ghidra-mcp": {
+            "command": "py",
             "args": [
+                "-3",
                 "bridge_mcp_ghidra.py"
             ],
             "env": {
