@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# GhidraMCP Deployment Script for Linux (Ubuntu/Debian)
-# Automatically builds, installs, and configures the GhidraMCP plugin
+# MCP4Ghidra Deployment Script for macOS/Linux
+# Automatically builds, installs, and configures the MCP4Ghidra plugin
 # Target: Ghidra 12.0.3
 #
 # Usage:
@@ -53,7 +53,7 @@ VERBOSE=false
 # ============================================================================
 show_usage() {
     echo ""
-    echo -e "${MAGENTA}GhidraMCP Setup for Linux - Usage${NC}"
+    echo -e "${MAGENTA}MCP4Ghidra Setup for macOS/Linux - Usage${NC}"
     echo ""
     echo "Actions (choose one):"
     echo "  --setup-deps       Install required Ghidra JARs into local Maven repository"
@@ -298,7 +298,7 @@ install_ghidra_dependencies() {
     local -a artifact_names=(
         "Base" "Decompiler" "Docking" "Generic" "Project"
         "SoftwareModeling" "Utility" "Gui" "FileSystem" "Graph"
-        "DB" "Emulation" "PDB" "FunctionID"
+        "DB" "Emulation" "PDB" "FunctionID" "Help"
     )
     local -a artifact_paths=(
         "Ghidra/Features/Base/lib/Base.jar"
@@ -315,6 +315,7 @@ install_ghidra_dependencies() {
         "Ghidra/Framework/Emulation/lib/Emulation.jar"
         "Ghidra/Features/PDB/lib/PDB.jar"
         "Ghidra/Features/FunctionID/lib/FunctionID.jar"
+        "Ghidra/Framework/Help/lib/Help.jar"
     )
 
     local quiet_flag=""
@@ -370,20 +371,22 @@ invoke_clean_action() {
         fi
     fi
 
-    # Remove GhidraMCP from user config extensions
+    # Remove MCP4Ghidra/GhidraMCP from user config extensions
     local ghidra_config_base="$HOME/.config/ghidra"
     if [[ -d "$ghidra_config_base" ]]; then
         for version_dir in "$ghidra_config_base"/ghidra_*; do
             if [[ -d "$version_dir" ]]; then
-                local ext_path="${version_dir}/Extensions/GhidraMCP"
-                if [[ -d "$ext_path" ]]; then
-                    if $DRY_RUN; then
-                        log_info "[DRY RUN] Would remove: $ext_path"
-                    else
-                        rm -rf "$ext_path"
-                        log_info "Removed cached extension: $ext_path"
+                for ext_name in MCP4Ghidra GhidraMCP; do
+                    local ext_path="${version_dir}/Extensions/${ext_name}"
+                    if [[ -d "$ext_path" ]]; then
+                        if $DRY_RUN; then
+                            log_info "[DRY RUN] Would remove: $ext_path"
+                        else
+                            rm -rf "$ext_path"
+                            log_info "Removed cached extension: $ext_path"
+                        fi
                     fi
-                fi
+                done
             fi
         done
     fi
@@ -393,15 +396,17 @@ invoke_clean_action() {
         if [[ -d "$base_path" ]]; then
             for version_dir in "$base_path"/ghidra_*; do
                 if [[ -d "$version_dir" ]]; then
-                    local ext_path="${version_dir}/Extensions/GhidraMCP"
-                    if [[ -d "$ext_path" ]]; then
-                        if $DRY_RUN; then
-                            log_info "[DRY RUN] Would remove: $ext_path"
-                        else
-                            rm -rf "$ext_path"
-                            log_info "Removed cached extension: $ext_path"
+                    for ext_name in MCP4Ghidra GhidraMCP; do
+                        local ext_path="${version_dir}/Extensions/${ext_name}"
+                        if [[ -d "$ext_path" ]]; then
+                            if $DRY_RUN; then
+                                log_info "[DRY RUN] Would remove: $ext_path"
+                            else
+                                rm -rf "$ext_path"
+                                log_info "Removed cached extension: $ext_path"
+                            fi
                         fi
-                    fi
+                    done
                 fi
             done
         fi
@@ -411,7 +416,7 @@ invoke_clean_action() {
     local artifacts=(
         "Base" "Decompiler" "Docking" "Generic" "Project"
         "SoftwareModeling" "Utility" "Gui" "FileSystem" "Graph"
-        "DB" "Emulation" "PDB" "FunctionID"
+        "DB" "Emulation" "PDB" "FunctionID" "Help"
     )
 
     local m2_root="$HOME/.m2/repository/ghidra"
@@ -453,9 +458,19 @@ install_python_packages() {
     if ! $VERBOSE; then
         pip_args+=("-q" "--disable-pip-version-check")
     fi
+    local is_venv
+    is_venv=$("$python_cmd" -c 'import sys; print("1" if getattr(sys, "base_prefix", sys.prefix) != sys.prefix else "0")')
+    if [[ "$is_venv" != "1" ]]; then
+        pip_args+=("--user")
+        if "$python_cmd" -m pip install --help 2>/dev/null | grep -q -- "--break-system-packages"; then
+            pip_args+=("--break-system-packages")
+        fi
+    fi
     pip_args+=("-r" "$requirements_path")
 
-    run_cmd "Ensuring Python dependencies" "$python_cmd" "${pip_args[@]}"
+    if ! run_cmd "Ensuring Python dependencies" "$python_cmd" "${pip_args[@]}"; then
+        return 1
+    fi
     log_success "Python dependencies are ready."
 }
 
@@ -471,7 +486,7 @@ invoke_preflight_checks() {
     local maven_path
     maven_path=$(get_maven_path)
     if [[ -z "$maven_path" ]]; then
-        issues+=("Maven not found on PATH. Install with: sudo apt install maven")
+        issues+=("Maven not found on PATH. Install with Homebrew: brew install maven")
     else
         log_success "Maven found: $maven_path"
     fi
@@ -480,11 +495,11 @@ invoke_preflight_checks() {
     local python_cmd
     python_cmd=$(get_python_command)
     if [[ -z "$python_cmd" ]]; then
-        issues+=("Python executable not found on PATH. Install with: sudo apt install python3 python3-pip")
+        issues+=("Python executable not found on PATH. Install with Homebrew: brew install python")
     else
         log_success "Python found: $python_cmd"
         if ! "$python_cmd" -m pip --version &>/dev/null; then
-            issues+=("pip is not available. Install with: sudo apt install python3-pip")
+            issues+=("pip is not available. Reinstall Python with Homebrew: brew install python")
         else
             log_success "pip is available."
         fi
@@ -492,14 +507,14 @@ invoke_preflight_checks() {
 
     # Java
     if ! command -v java &>/dev/null; then
-        issues+=("Java not found on PATH (JDK 21 recommended). Install with: sudo apt install openjdk-21-jdk")
+        issues+=("Java not found on PATH (JDK 21 recommended). Install with Homebrew: brew install openjdk@21")
     else
         log_success "Java found: $(command -v java)"
     fi
 
     # unzip
     if ! command -v unzip &>/dev/null; then
-        issues+=("unzip not found. Install with: sudo apt install unzip")
+        issues+=("unzip not found. Install with Homebrew: brew install unzip")
     else
         log_success "unzip is available."
     fi
@@ -524,6 +539,7 @@ invoke_preflight_checks() {
             "Ghidra/Framework/Emulation/lib/Emulation.jar"
             "Ghidra/Features/PDB/lib/PDB.jar"
             "Ghidra/Features/FunctionID/lib/FunctionID.jar"
+            "Ghidra/Framework/Help/lib/Help.jar"
         )
         for rel in "${required_jars[@]}"; do
             local full="${resolved_ghidra_path}/${rel}"
@@ -662,8 +678,8 @@ fi
 # ============================================================================
 echo ""
 echo -e "${MAGENTA}======================================${NC}"
-echo -e "${MAGENTA}  GhidraMCP Automation Script v2.0   ${NC}"
-echo -e "${MAGENTA}  Target: Ghidra ${GHIDRA_VERSION} (Linux)   ${NC}"
+echo -e "${MAGENTA}  MCP4Ghidra Automation Script v2.0   ${NC}"
+echo -e "${MAGENTA}  Target: Ghidra ${GHIDRA_VERSION} (macOS/Linux)   ${NC}"
 echo -e "${MAGENTA}======================================${NC}"
 echo ""
 
@@ -691,7 +707,7 @@ if [[ "$ACTION" == "build-only" ]]; then
         log_error "Maven not found on PATH"
         exit 1
     fi
-    run_cmd "Building GhidraMCP extension" "$maven_path" clean package assembly:single -DskipTests
+    run_cmd "Building MCP4Ghidra extension" "$maven_path" clean package assembly:single -DskipTests
     log_success "Build-only action completed."
     exit 0
 fi
@@ -765,37 +781,39 @@ if [[ -n "$(get_ghidra_pids)" ]]; then
     fi
 fi
 
-# Clean up ALL cached GhidraMCP extensions
+# Clean up ALL cached MCP4Ghidra/GhidraMCP extensions
 ghidra_config_base="$HOME/.config/ghidra"
 if [[ -d "$ghidra_config_base" ]]; then
     cleaned_count=0
     for version_dir in "$ghidra_config_base"/ghidra_*; do
         if [[ -d "$version_dir" ]]; then
-            ext_path="${version_dir}/Extensions/GhidraMCP"
-            if [[ -d "$ext_path" ]]; then
-                if ! $DRY_RUN; then
-                    rm -rf "$ext_path" && cleaned_count=$((cleaned_count + 1))
-                else
-                    log_info "[DRY RUN] Would remove: $ext_path"
+            for ext_name in MCP4Ghidra GhidraMCP; do
+                ext_path="${version_dir}/Extensions/${ext_name}"
+                if [[ -d "$ext_path" ]]; then
+                    if ! $DRY_RUN; then
+                        rm -rf "$ext_path" && cleaned_count=$((cleaned_count + 1))
+                    else
+                        log_info "[DRY RUN] Would remove: $ext_path"
+                    fi
                 fi
-            fi
+            done
         fi
     done
     if [[ $cleaned_count -gt 0 ]]; then
-        log_info "Cleaned ${cleaned_count} cached GhidraMCP extension(s)"
+        log_info "Cleaned ${cleaned_count} cached MCP4Ghidra/GhidraMCP extension(s)"
     fi
 fi
 
 # Build the extension (unless skipped)
 if ! $SKIP_BUILD; then
-    log_info "Building GhidraMCP extension..."
+    log_info "Building MCP4Ghidra extension..."
     maven_path=$(get_maven_path)
     if [[ -z "$maven_path" ]]; then
         log_error "Maven not found on PATH"
         exit 1
     fi
     log_info "Found Maven at: $maven_path"
-    if ! run_cmd "Building GhidraMCP extension" "$maven_path" clean package assembly:single -DskipTests; then
+    if ! run_cmd "Building MCP4Ghidra extension" "$maven_path" clean package assembly:single -DskipTests; then
         log_error "Build failed"
         exit 1
     fi
@@ -818,6 +836,14 @@ fi
 artifact_path="${SCRIPT_DIR}/target/GhidraMCP-${version}.zip"
 
 if [[ ! -f "$artifact_path" ]]; then
+    # Support MCP4Ghidra artifact naming
+    renamed_versioned="${SCRIPT_DIR}/target/MCP4Ghidra-${version}.zip"
+    if [[ -f "$renamed_versioned" ]]; then
+        artifact_path="$renamed_versioned"
+    fi
+fi
+
+if [[ ! -f "$artifact_path" ]]; then
     # Support non-versioned artifact name
     non_versioned="${SCRIPT_DIR}/target/GhidraMCP.zip"
     if [[ -f "$non_versioned" ]]; then
@@ -826,8 +852,15 @@ if [[ ! -f "$artifact_path" ]]; then
 fi
 
 if [[ ! -f "$artifact_path" ]]; then
+    non_versioned="${SCRIPT_DIR}/target/MCP4Ghidra.zip"
+    if [[ -f "$non_versioned" ]]; then
+        artifact_path="$non_versioned"
+    fi
+fi
+
+if [[ ! -f "$artifact_path" ]]; then
     # Auto-detect latest artifact
-    artifact_path=$(ls -t "${SCRIPT_DIR}"/target/GhidraMCP*.zip 2>/dev/null | head -1 || true)
+    artifact_path=$(ls -t "${SCRIPT_DIR}"/target/GhidraMCP*.zip "${SCRIPT_DIR}"/target/MCP4Ghidra*.zip 2>/dev/null | head -1 || true)
     if [[ -n "$artifact_path" ]]; then
         log_info "Auto-detected latest artifact: $(basename "$artifact_path")"
     else
@@ -844,7 +877,7 @@ log_success "Using artifact: $(basename "$artifact_path") ($version)"
 # On Linux, Ghidra looks for extensions in:
 #   $HOME/.config/ghidra/ghidra_<VERSION>_PUBLIC/Extensions/
 # We extract the ZIP contents there, creating:
-#   $HOME/.config/ghidra/ghidra_<VERSION>_PUBLIC/Extensions/GhidraMCP/
+#   $HOME/.config/ghidra/ghidra_<VERSION>_PUBLIC/Extensions/MCP4Ghidra/
 # ============================================================================
 ghidra_public_version="ghidra_${GHIDRA_VERSION}_PUBLIC"
 user_extensions_dir="$HOME/.config/ghidra/${ghidra_public_version}/Extensions"
@@ -861,22 +894,31 @@ if [[ ! -d "$user_extensions_dir" ]]; then
     fi
 fi
 
-# Remove existing GhidraMCP extension
-if [[ -d "${user_extensions_dir}/GhidraMCP" ]]; then
-    if ! $DRY_RUN; then
-        rm -rf "${user_extensions_dir}/GhidraMCP"
-        log_success "Removed existing GhidraMCP extension"
-    else
-        log_info "[DRY RUN] Would remove: ${user_extensions_dir}/GhidraMCP"
+# Remove existing MCP4Ghidra/GhidraMCP extension
+for ext_name in MCP4Ghidra GhidraMCP; do
+    if [[ -d "${user_extensions_dir}/${ext_name}" ]]; then
+        if ! $DRY_RUN; then
+            rm -rf "${user_extensions_dir}/${ext_name}"
+            log_success "Removed existing ${ext_name} extension"
+        else
+            log_info "[DRY RUN] Would remove: ${user_extensions_dir}/${ext_name}"
+        fi
     fi
-fi
+done
 
 # Extract the ZIP to extensions directory
 if ! $DRY_RUN; then
     unzip -q -o "$artifact_path" -d "$user_extensions_dir"
-    log_success "Installed: $(basename "$artifact_path") → ${user_extensions_dir}/GhidraMCP/"
+    log_success "Installed: $(basename "$artifact_path") → ${user_extensions_dir}/"
 else
     log_info "[DRY RUN] Would extract: $(basename "$artifact_path") → ${user_extensions_dir}/"
+fi
+
+ext_dir_name="MCP4Ghidra"
+if [[ -d "${user_extensions_dir}/MCP4Ghidra" ]]; then
+    ext_dir_name="MCP4Ghidra"
+elif [[ -d "${user_extensions_dir}/GhidraMCP" ]]; then
+    ext_dir_name="GhidraMCP"
 fi
 
 # ============================================================================
@@ -884,7 +926,7 @@ fi
 # ============================================================================
 preferences_dir="$HOME/.config/ghidra/${ghidra_public_version}"
 preferences_file="${preferences_dir}/preferences"
-ext_import_dir="${user_extensions_dir}/GhidraMCP"
+ext_import_dir="${user_extensions_dir}/${ext_dir_name}"
 pref_key="LastExtensionImportDirectory"
 pref_line="${pref_key}=${ext_import_dir}"
 
@@ -895,7 +937,11 @@ if ! $DRY_RUN; then
         # Check if the key already exists in the file
         if grep -q "^${pref_key}=" "$preferences_file" 2>/dev/null; then
             # Update existing line
-            sed -i "s|^${pref_key}=.*|${pref_line}|" "$preferences_file"
+            if sed --version >/dev/null 2>&1; then
+                sed -i "s|^${pref_key}=.*|${pref_line}|" "$preferences_file"
+            else
+                sed -i '' "s|^${pref_key}=.*|${pref_line}|" "$preferences_file"
+            fi
             log_success "Updated ${pref_key} in preferences"
         else
             # Append the line
@@ -921,8 +967,8 @@ if [[ -d "$ghidra_ext_dir" ]] || test_write_access "$(dirname "$ghidra_ext_dir")
     if ! $DRY_RUN; then
         mkdir -p "$ghidra_ext_dir" 2>/dev/null || true
         if [[ -w "$ghidra_ext_dir" ]]; then
-            # Remove existing GhidraMCP archives
-            rm -f "${ghidra_ext_dir}"/GhidraMCP*.zip 2>/dev/null || true
+            # Remove existing MCP4Ghidra/GhidraMCP archives
+            rm -f "${ghidra_ext_dir}"/GhidraMCP*.zip "${ghidra_ext_dir}"/MCP4Ghidra*.zip 2>/dev/null || true
             cp "$artifact_path" "$ghidra_ext_dir/"
             log_success "Also installed ZIP to Ghidra directory: $ghidra_ext_dir/"
         fi
@@ -961,10 +1007,10 @@ fi
 # Summary
 # ============================================================================
 echo ""
-log_success "GhidraMCP v${version} Successfully Deployed!"
+log_success "MCP4Ghidra v${version} Successfully Deployed!"
 echo ""
 log_info "Installation Locations:"
-echo "   Extension:    ${user_extensions_dir}/GhidraMCP/"
+echo "   Extension:    ${user_extensions_dir}/${ext_dir_name}/"
 echo "   Preferences:  ${preferences_file}"
 if [[ -f "${GHIDRA_PATH}/bridge_mcp_ghidra.py" ]]; then
     echo "   Python Bridge: ${GHIDRA_PATH}/bridge_mcp_ghidra.py"
@@ -978,14 +1024,14 @@ else
 fi
 echo "2. Start Ghidra"
 echo "3. If plugin isn't automatically enabled:"
-echo "      - In CodeBrowser: File > Configure > Configure All Plugins > GhidraMCP"
+echo "      - In CodeBrowser: File > Configure > Configure All Plugins > MCP4Ghidra"
 echo "      - Check the checkbox to enable"
 echo "      - Click OK and restart Ghidra"
 echo "4. To configure the server port:"
-echo "      - In CodeBrowser: Edit > Tool Options > GhidraMCP HTTP Server"
+echo "      - In CodeBrowser: Edit > Tool Options > MCP4Ghidra HTTP Server"
 echo ""
 log_info "Usage:"
-echo "   Ghidra: Tools > GhidraMCP > Start MCP Server"
+echo "   Ghidra: Tools > MCP4Ghidra > Start MCP Server"
 echo "   Python: python3 bridge_mcp_ghidra.py (from project root or Ghidra directory)"
 echo ""
 log_info "Default Server: http://127.0.0.1:8089/"
@@ -1005,8 +1051,8 @@ if [[ "$version" =~ ^2\. ]]; then
 fi
 
 # Verify installation
-if [[ -d "${user_extensions_dir}/GhidraMCP" ]]; then
-    file_size=$(du -sh "${user_extensions_dir}/GhidraMCP" 2>/dev/null | cut -f1)
+if [[ -d "${user_extensions_dir}/${ext_dir_name}" ]]; then
+    file_size=$(du -sh "${user_extensions_dir}/${ext_dir_name}" 2>/dev/null | cut -f1)
     log_success "Installation verified: ${file_size}"
 
     if ! $SKIP_RESTART; then
