@@ -18,16 +18,16 @@ Version safety checks enforce consistency between:
 - version inferred from -GhidraPath (if present)
 
 .EXAMPLE
-.\ghidra-mcp-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
 
 .EXAMPLE
-.\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
 
 .EXAMPLE
-.\ghidra-mcp-setup.ps1 -BuildOnly
+.\mcp4ghidra-setup.ps1 -BuildOnly
 
 .EXAMPLE
-.\ghidra-mcp-setup.ps1 -Help
+.\mcp4ghidra-setup.ps1 -Help
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
@@ -85,13 +85,13 @@ function Show-Usage {
     Write-Host "  -Help            Show this help text"
     Write-Host ""
     Write-Host "Examples:"
-    Write-Host "  .\ghidra-mcp-setup.ps1 -Deploy -GhidraPath 'C:\ghidra_12.0.3_PUBLIC'"
-    Write-Host "  .\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath 'C:\ghidra_12.0.3_PUBLIC'"
-    Write-Host "  .\ghidra-mcp-setup.ps1 -Preflight -GhidraPath 'C:\ghidra_12.0.3_PUBLIC'"
-    Write-Host "  .\ghidra-mcp-setup.ps1 -BuildOnly"
-    Write-Host "  .\ghidra-mcp-setup.ps1 -Clean"
+    Write-Host "  .\mcp4ghidra-setup.ps1 -Deploy -GhidraPath 'C:\ghidra_12.0.3_PUBLIC'"
+    Write-Host "  .\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath 'C:\ghidra_12.0.3_PUBLIC'"
+    Write-Host "  .\mcp4ghidra-setup.ps1 -Preflight -GhidraPath 'C:\ghidra_12.0.3_PUBLIC'"
+    Write-Host "  .\mcp4ghidra-setup.ps1 -BuildOnly"
+    Write-Host "  .\mcp4ghidra-setup.ps1 -Clean"
     Write-Host ""
-    Write-Host "Tip: For comment-based help, run: Get-Help .\ghidra-mcp-setup.ps1 -Detailed"
+    Write-Host "Tip: For comment-based help, run: Get-Help .\mcp4ghidra-setup.ps1 -Detailed"
     Write-Host ""
 }
 
@@ -229,7 +229,7 @@ if ($pathGhidraVersion -and $pathGhidraVersion -ne $GhidraVersion) {
 if (-not $GhidraPath -and ($SetupDeps -or -not $BuildOnly -and -not $Clean)) {
     Write-LogError "Ghidra installation not found."
     Write-LogInfo "Set GHIDRA_PATH in .env file, or pass -GhidraPath parameter:"
-    Write-Host "  .\ghidra-mcp-setup.ps1 -Deploy -GhidraPath 'C:\path\to\ghidra_${GhidraVersion}_PUBLIC'"
+    Write-Host "  .\mcp4ghidra-setup.ps1 -Deploy -GhidraPath 'C:\path\to\ghidra_${GhidraVersion}_PUBLIC'"
     Write-Host ""
     Write-LogInfo "Or create a .env file from the template:"
     Write-Host "  Copy-Item .env.template .env"
@@ -788,7 +788,7 @@ if ($BuildOnly) {
 if ($SetupDeps) {
     if (-not (Test-Path "$GhidraPath\ghidraRun.bat")) {
         Write-LogError "Ghidra not found at: $GhidraPath"
-        Write-LogInfo "Please specify the correct path: .\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath 'C:\path\to\ghidra'"
+        Write-LogInfo "Please specify the correct path: .\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath 'C:\path\to\ghidra'"
         exit 1
     }
 
@@ -804,7 +804,7 @@ if ($actionCount -eq 0) {
 # Validate Ghidra path first
 if (-not (Test-Path "$GhidraPath\ghidraRun.bat")) {
     Write-LogError "Ghidra not found at: $GhidraPath"
-    Write-LogInfo "Please specify the correct path: .\ghidra-mcp-setup.ps1 -GhidraPath 'C:\path\to\ghidra'"
+    Write-LogInfo "Please specify the correct path: .\mcp4ghidra-setup.ps1 -GhidraPath 'C:\path\to\ghidra'"
     exit 1
 }
 Write-LogSuccess "Found Ghidra at: $GhidraPath"

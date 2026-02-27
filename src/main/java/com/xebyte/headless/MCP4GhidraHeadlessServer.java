@@ -47,7 +47,7 @@ import java.util.*;
  *   java -jar GhidraMCPHeadless.jar --port 8089 --project /path/to/project
  *   java -jar GhidraMCPHeadless.jar --port 8089 --file /path/to/binary.exe
  */
-public class GhidraMCPHeadlessServer implements GhidraLaunchable {
+public class MCP4GhidraHeadlessServer implements GhidraLaunchable {
 
     private static final String VERSION = "1.9.4-headless";
     private static final int DEFAULT_PORT = 8089;
@@ -67,7 +67,7 @@ public class GhidraMCPHeadlessServer implements GhidraLaunchable {
     private GhidraServerManager serverManager;
 
     public static void main(String[] args) {
-        GhidraMCPHeadlessServer server = new GhidraMCPHeadlessServer();
+        MCP4GhidraHeadlessServer server = new MCP4GhidraHeadlessServer();
         try {
             server.launch(new GhidraApplicationLayout(), args);
         } catch (Exception e) {

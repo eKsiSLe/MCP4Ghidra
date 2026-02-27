@@ -391,7 +391,7 @@ git clone https://github.com/YOUR-USERNAME/ghidra-mcp.git
 cd ghidra-mcp
 
 # 2. Install Ghidra libraries to local Maven repo
-.\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath "C:\path\to\ghidra"  # Windows
+.\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath "C:\path\to\ghidra"  # Windows
 
 # 3. Build plugin
 mvn clean package

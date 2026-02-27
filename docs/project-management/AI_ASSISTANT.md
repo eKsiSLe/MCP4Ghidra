@@ -44,7 +44,7 @@ Ghidra MCP Server is a production-ready Model Context Protocol (MCP) server that
 
 ### Critical Architecture Details
 
-- **Ghidra libraries must be installed first**: Before building, run `ghidra-mcp-setup.ps1 -SetupDeps` on Windows to install JARs from your Ghidra installation into local Maven repo
+- **Ghidra libraries must be installed first**: Before building, run `mcp4ghidra-setup.ps1 -SetupDeps` on Windows to install JARs from your Ghidra installation into local Maven repo
 - **Plugin loads at Ghidra startup**: The Java plugin starts automatically when Ghidra launches if properly installed
 - **REST API is stateful**: All operations work on the currently open program in Ghidra's CodeBrowser
 - **MCP bridge is stateless**: Each MCP tool call translates to one or more HTTP requests
@@ -55,7 +55,7 @@ Ghidra MCP Server is a production-ready Model Context Protocol (MCP) server that
 
 ```bash
 # 1. Install Ghidra libraries (required before first build)
-.\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath "C:\path\to\ghidra"
+.\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath "C:\path\to\ghidra"
 
 # 2. Install Python dependencies
 pip install -r requirements.txt
@@ -97,7 +97,7 @@ pytest tests/ --cov=src --cov-report=html
 Automated installation (recommended):
 ```powershell
 # Windows - automatically detects version and Ghidra installation
-.\ghidra-mcp-setup.ps1
+.\mcp4ghidra-setup.ps1
 ```
 
 Manual installation:
@@ -272,7 +272,7 @@ git push --tags
 
 # 6. Deploy
 # Copy target/GhidraMCP-NEW_VERSION.zip to release/distribution
-# Or use: .\ghidra-mcp-setup.ps1
+# Or use: .\mcp4ghidra-setup.ps1
 ```
 
 ### Key Principles
@@ -559,7 +559,7 @@ set_function_prototype(
 ## Troubleshooting
 
 ### Build fails with missing Ghidra JARs
-Run `ghidra-mcp-setup.ps1 -SetupDeps` to install JARs from Ghidra installation to local Maven repository
+Run `mcp4ghidra-setup.ps1 -SetupDeps` to install JARs from Ghidra installation to local Maven repository
 
 ### Plugin doesn't appear in Ghidra
 Verify JAR is in `<ghidra>/Extensions/Ghidra/` and restart Ghidra completely

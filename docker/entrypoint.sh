@@ -120,5 +120,5 @@ exec java \
     -Dghidra.home=${GHIDRA_HOME} \
     -Dapplication.name=GhidraMCP \
     -classpath "${CLASSPATH}" \
-    com.xebyte.headless.GhidraMCPHeadlessServer \
+    com.xebyte.headless.MCP4GhidraHeadlessServer \
     ${ARGS}

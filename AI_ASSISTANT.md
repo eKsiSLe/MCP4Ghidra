@@ -29,13 +29,13 @@ AI/Automation Tools <-> MCP Bridge (bridge_mcp_ghidra.py) <-> Ghidra Plugin (Ghi
 
 ```powershell
 # Build and deploy (recommended — handles Maven, deps, and Ghidra restart)
-.\ghidra-mcp-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
 
 # Build only (no deploy)
-.\ghidra-mcp-setup.ps1 -BuildOnly
+.\mcp4ghidra-setup.ps1 -BuildOnly
 
 # First-time dependency setup (install Ghidra JARs into local Maven repo)
-.\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
 ```
 
 > **Note (Windows):** Maven (`mvn`) must be in your PATH or invoked via the setup script.
@@ -68,7 +68,7 @@ ghidra-mcp/
 │   ├── prompts/                   # Analysis workflow prompts
 │   ├── releases/                  # Release documentation
 │   └── project-management/        # Project-level docs
-├── ghidra-mcp-setup.ps1            # Deployment script
+├── mcp4ghidra-setup.ps1            # Deployment script
 └── functions-process.ps1          # Batch function processing
 ```
 
@@ -125,7 +125,7 @@ Located in `ghidra_scripts/`. Execute via:
 
 - **Plugin not loading**: Check `docs/troubleshooting/TROUBLESHOOTING_PLUGIN_LOAD.md`
 - **Connection issues**: Verify Ghidra is running with plugin enabled on port 8089
-- **Build failures**: Install Ghidra JARs to local Maven repo (run `ghidra-mcp-setup.ps1 -SetupDeps`)
+- **Build failures**: Install Ghidra JARs to local Maven repo (run `mcp4ghidra-setup.ps1 -SetupDeps`)
 
 ## Version History
 

@@ -39,5 +39,5 @@ You are a coding agent working on **ghidra-mcp**, a Model Context Protocol serve
 - Build: `mvn clean package assembly:single -DskipTests`
 - Quick compile: `mvn clean compile -q`
 - Test (Python): `pytest tests/unit/ -v --no-cov`
-- Deploy: `.\ghidra-mcp-setup.ps1`
+- Deploy: `.\mcp4ghidra-setup.ps1`
 - Version bump: `.\bump-version.ps1 -New X.Y.Z`

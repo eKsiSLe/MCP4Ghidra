@@ -22,7 +22,7 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # Source file paths
 JAVA_PLUGIN_PATH = PROJECT_ROOT / "src" / "main" / "java" / "com" / "xebyte" / "MCP4GhidraPlugin.java"
-JAVA_HEADLESS_PATH = PROJECT_ROOT / "src" / "main" / "java" / "com" / "xebyte" / "headless" / "GhidraMCPHeadlessServer.java"
+JAVA_HEADLESS_PATH = PROJECT_ROOT / "src" / "main" / "java" / "com" / "xebyte" / "headless" / "MCP4GhidraHeadlessServer.java"
 PYTHON_BRIDGE_PATH = PROJECT_ROOT / "bridge_mcp_ghidra.py"
 ENDPOINTS_JSON_PATH = PROJECT_ROOT / "tests" / "endpoints.json"
 

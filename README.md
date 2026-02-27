@@ -60,7 +60,7 @@ A production MCP server/extension pair for Ghidra with **179 MCP tools**.
 
 ### Installation
 
-> Recommended for Windows: use `ghidra-mcp-setup.ps1` as the primary entry point.
+> Recommended for Windows: use `mcp4ghidra-setup.ps1` as the primary entry point.
 > It handles prerequisite setup + build + deployment in one command.
 >
 > **Important:** `-SetupDeps` installs Maven/Ghidra JAR dependencies only.
@@ -74,31 +74,31 @@ A production MCP server/extension pair for Ghidra with **179 MCP tools**.
 
 2. **Recommended: run environment preflight first:**
    ```powershell
-   .\ghidra-mcp-setup.ps1 -Preflight -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+   .\mcp4ghidra-setup.ps1 -Preflight -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
    ```
 
 3. **Build and deploy to Ghidra (single command):**
    ```powershell
-   .\ghidra-mcp-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+   .\mcp4ghidra-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
    ```
 
 4. **Optional strict/manual mode** (advanced):
    ```powershell
    # Skip automatic prerequisite setup
-   .\ghidra-mcp-setup.ps1 -Deploy -NoAutoPrereqs -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+   .\mcp4ghidra-setup.ps1 -Deploy -NoAutoPrereqs -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
    ```
 
 5. **Show script help**:
    ```powershell
-   .\ghidra-mcp-setup.ps1 -Help
+   .\mcp4ghidra-setup.ps1 -Help
    # or
-   Get-Help .\ghidra-mcp-setup.ps1 -Detailed
+   Get-Help .\mcp4ghidra-setup.ps1 -Detailed
    ```
 
 6. **Optional build-only mode** (advanced/troubleshooting):
    ```powershell
    # Preferred: script-managed build-only
-   .\ghidra-mcp-setup.ps1 -BuildOnly
+   .\mcp4ghidra-setup.ps1 -BuildOnly
    ```
 
    ```bash
@@ -269,7 +269,7 @@ curl http://127.0.0.1:8089/get_version
 **Solution:**
 ```powershell
 # Windows (recommended)
-.\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
 
 # Or manual install (see install-ghidra-deps.sh)
 ```
@@ -519,7 +519,7 @@ See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 - **bridge_mcp_ghidra.py** — Python MCP server that translates MCP protocol to HTTP calls (179 tools)
 - **GhidraMCP.jar** — Ghidra plugin that exposes analysis capabilities via HTTP (147 GUI endpoints)
-- **GhidraMCPHeadlessServer** — Standalone headless server — 172 endpoints, no GUI required
+- **MCP4GhidraHeadlessServer** — Standalone headless server — 172 endpoints, no GUI required
 - **ghidra_scripts/** — Collection of automation scripts for common tasks
 
 ## 🔧 Development
@@ -527,10 +527,10 @@ See [CHANGELOG.md](CHANGELOG.md) for version history.
 ### Building from Source
 ```bash
 # Recommended: one command does setup + build + deploy
-.\ghidra-mcp-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
 
 # Optional: build only (no deploy)
-.\ghidra-mcp-setup.ps1 -BuildOnly
+.\mcp4ghidra-setup.ps1 -BuildOnly
 
 # Version bump (updates all 7 project files atomically)
 .\bump-version.ps1 -New X.Y.Z
@@ -561,22 +561,22 @@ Quick examples:
 
 ```powershell
 # Standard deploy (recommended)
-.\ghidra-mcp-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
 
 # First-time dependency setup only
-.\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
 
 # Build only
-.\ghidra-mcp-setup.ps1 -BuildOnly
+.\mcp4ghidra-setup.ps1 -BuildOnly
 
 # Preflight checks only
-.\ghidra-mcp-setup.ps1 -Preflight -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -Preflight -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
 
 # Strict preflight (fails on warnings)
-.\ghidra-mcp-setup.ps1 -Preflight -StrictPreflight -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -Preflight -StrictPreflight -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
 
 # Show command help
-.\ghidra-mcp-setup.ps1 -Help
+.\mcp4ghidra-setup.ps1 -Help
 ```
 
 ### Project Structure
@@ -622,15 +622,15 @@ If you see a version mismatch error, align all three values:
 Then rerun:
 
 ```powershell
-.\ghidra-mcp-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC" -GhidraVersion "12.0.3"
+.\mcp4ghidra-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC" -GhidraVersion "12.0.3"
 ```
 
 ```powershell
 # Windows
-.\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath "C:\path\to\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath "C:\path\to\ghidra_12.0.3_PUBLIC"
 
 # Optional version override
-.\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath "C:\path\to\ghidra_12.0.3_PUBLIC" -GhidraVersion "12.0.3"
+.\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath "C:\path\to\ghidra_12.0.3_PUBLIC" -GhidraVersion "12.0.3"
 ```
 
 **Required Libraries (15 JARs, ~38MB):**
@@ -656,7 +656,7 @@ Then rerun:
 > **Note**: Libraries are NOT included in the repository (see `.gitignore`). You must install them from your Ghidra installation before building.
 
 > **Script roles**:
-> - `ghidra-mcp-setup.ps1`: unified automation script (`-SetupDeps`, `-BuildOnly`, `-Deploy`, `-Clean`)
+> - `mcp4ghidra-setup.ps1`: unified automation script (`-SetupDeps`, `-BuildOnly`, `-Deploy`, `-Clean`)
 > - default `-Deploy` behavior: auto-setup prerequisites, then build and deploy
 > - use `-NoAutoPrereqs` for strict/manual prerequisite management
 
@@ -768,7 +768,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 | **Version** | 3.0.0 |
 | **MCP Tools** | 179 fully implemented |
 | **GUI Endpoints** | 147 (MCP4GhidraPlugin) |
-| **Headless Endpoints** | 172 (GhidraMCPHeadlessServer) |
+| **Headless Endpoints** | 172 (MCP4GhidraHeadlessServer) |
 | **Compilation** | ✅ 100% success |
 | **Batch Efficiency** | 93% API call reduction |
 | **AI Workflows** | 7 proven documentation workflows |
