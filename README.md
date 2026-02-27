@@ -1,26 +1,24 @@
-# Ghidra MCP Server
+# MCP4Ghidra
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Java Version](https://img.shields.io/badge/Java-21%20LTS-orange.svg)](https://openjdk.java.net/projects/jdk/21/)
 [![Ghidra Version](https://img.shields.io/badge/Ghidra-12.0.3-green.svg)](https://ghidra-sre.org/)
 [![Version](https://img.shields.io/badge/Version-3.0.0-brightgreen.svg)](CHANGELOG.md)
 
-> If you find this useful, please ⭐ star the repo — it helps others discover it!
+MCP4Ghidra exposes Ghidra analysis and editing capabilities through MCP.
+It supports interactive GUI use and automation workflows.
 
-A production-ready Model Context Protocol (MCP) server that bridges Ghidra's powerful reverse engineering capabilities with modern AI tools and automation frameworks. **179 MCP tools**, battle-tested AI workflows, and the most comprehensive Ghidra-MCP integration available.
+A production MCP server/extension pair for Ghidra with **179 MCP tools**.
 
-## Why Ghidra MCP?
+## Scope
 
-Most Ghidra MCP implementations give you a handful of read-only tools and call it a day. This project is different — it was built by a reverse engineer who uses it daily on real binaries, not as a demo.
+- 179 MCP tools covering analysis and write operations.
+- Batch/atomic operations to reduce call overhead and partial writes.
+- Cross-binary matching and documentation propagation.
+- Ghidra Server + headless workflow support.
+- GUI and non-GUI execution paths.
 
-- **179 MCP tools** — 3x more than any competing implementation. Not just read operations — full write access for renaming, typing, commenting, structure creation, and script execution.
-- **Battle-tested AI workflows** — Proven documentation workflows (V5) refined across hundreds of functions. Includes step-by-step prompts, Hungarian notation reference, batch processing guides, and orphaned code discovery.
-- **Production-grade reliability** — Atomic transactions, batch operations (93% API call reduction), configurable timeouts, and graceful error handling. No silent failures.
-- **Cross-binary documentation transfer** — SHA-256 function hash matching propagates documentation across binary versions automatically. Document once, apply everywhere.
-- **Full Ghidra Server integration** — Connect to shared Ghidra servers, manage repositories, version control, checkout/checkin workflows, and multi-user collaboration.
-- **Headless and GUI modes** — Run with or without the Ghidra GUI. Docker-ready for CI/CD pipelines and automated analysis at scale.
-
-## 🌟 Features
+## Features
 
 ### Core MCP Integration
 - **Full MCP Compatibility** — Complete implementation of Model Context Protocol
@@ -51,7 +49,7 @@ Most Ghidra MCP implementations give you a handful of read-only tools and call i
 - **Project & Version Control** — Create projects, manage files, Ghidra Server integration
 - **Analysis Control** — List, configure, and trigger Ghidra analyzers programmatically
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -108,50 +106,57 @@ Most Ghidra MCP implementations give you a handful of read-only tools and call i
    mvn clean package assembly:single -DskipTests
    ```
 
-### Installation (Linux — Ubuntu/Debian)
+### Installation (macOS/Linux)
 
-> Use `ghidra-mcp-setup.sh` as the primary entry point on Linux.
+> Use `mcp4ghidra-setup.sh` as the primary entry point on macOS/Linux.
 > It handles prerequisite setup, Maven dependency installation, building, and deployment.
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/bethington/ghidra-mcp.git
-   cd ghidra-mcp
+   git clone https://github.com/eKsiSLe/MCP4Ghidra.git
+   cd MCP4Ghidra
    ```
 
 2. **Install system prerequisites** (if not already installed):
    ```bash
+   # macOS (Homebrew)
+   brew install openjdk@21 maven python curl jq unzip
+   ```
+
+   ```bash
+   # Linux (Ubuntu/Debian)
    sudo apt update && sudo apt install -y openjdk-21-jdk maven python3 python3-pip curl jq unzip
    ```
 
 3. **Run environment preflight:**
    ```bash
-   ./ghidra-mcp-setup.sh --preflight --ghidra-path ~/ghidra_12.0.3_PUBLIC
+   ./mcp4ghidra-setup.sh --preflight --ghidra-path ~/ghidra_12.0.3_PUBLIC
    ```
 
 4. **Build and deploy to Ghidra (single command):**
    ```bash
-   ./ghidra-mcp-setup.sh --deploy --ghidra-path ~/ghidra_12.0.3_PUBLIC
+   ./mcp4ghidra-setup.sh --deploy --ghidra-path ~/ghidra_12.0.3_PUBLIC
    ```
 
    This will:
    - Install Ghidra JAR dependencies into your local `~/.m2/repository`
-   - Build `GhidraMCP-<version>.zip` with Maven
+   - Build the extension ZIP with Maven
    - Extract the extension to `~/.config/ghidra/ghidra_<version>_PUBLIC/Extensions/`
    - Update `preferences` with `LastExtensionImportDirectory`
    - Install Python requirements
 
 5. **Optional: setup only Maven dependencies:**
    ```bash
-   ./ghidra-mcp-setup.sh --setup-deps --ghidra-path ~/ghidra_12.0.3_PUBLIC
+   ./mcp4ghidra-setup.sh --setup-deps --ghidra-path ~/ghidra_12.0.3_PUBLIC
    ```
+   Compatibility note: `--prerequisites` is accepted as an alias and maps to `--setup-deps`.
 
 6. **Show script help:**
    ```bash
-   ./ghidra-mcp-setup.sh --help
+   ./mcp4ghidra-setup.sh --help
    ```
 
-> **Linux paths:** The extension is installed to `$HOME/.config/ghidra/ghidra_<version>_PUBLIC/Extensions/GhidraMCP/`.
+> **macOS/Linux paths:** The extension is installed to `$HOME/.config/ghidra/ghidra_<version>_PUBLIC/Extensions/`.
 > Ghidra config files are in `$HOME/.config/ghidra/ghidra_<version>_PUBLIC/`.
 
 > **Additional helper scripts** (Linux equivalents of the PowerShell utilities):
@@ -182,9 +187,9 @@ MCP client config templates:
 
 #### In Ghidra
 1. Start Ghidra and open a **CodeBrowser** window
-2. In **CodeBrowser**, enable the plugin via **File > Configure > Configure All Plugins > GhidraMCP**
-3. Optional: configure custom port via **CodeBrowser > Edit > Tool Options > GhidraMCP HTTP Server**
-4. Start the server via **Tools > GhidraMCP > Start MCP Server**
+2. In **CodeBrowser**, enable the plugin via **File > Configure > Configure All Plugins > MCP4Ghidra**
+3. Optional: configure custom port via **CodeBrowser > Edit > Tool Options > MCP4Ghidra HTTP Server**
+4. Start the server via **Tools > MCP4Ghidra > Start MCP Server**
 5. The server runs on `http://127.0.0.1:8089/` by default
 
 Important deployment note:
@@ -204,13 +209,13 @@ curl http://127.0.0.1:8089/get_version
 
 ## ❓ Troubleshooting
 
-### "GhidraMCP" menu not appearing in Tools
+### "MCP4Ghidra" menu not appearing in Tools
 
 **Cause:** Plugin not enabled or installed incorrectly.
 
 **Solution:**
-1. Verify extension is installed: **File > Install Extensions** — GhidraMCP should be listed
-2. Enable the plugin: **File > Configure > Configure All Plugins > GhidraMCP** (check the box)
+1. Verify extension is installed: **File > Install Extensions** — MCP4Ghidra should be listed
+2. Enable the plugin: **File > Configure > Configure All Plugins > MCP4Ghidra** (check the box)
 3. **Restart Ghidra** after installation/enabling
 
 ### Server not responding / Connection refused
@@ -218,8 +223,8 @@ curl http://127.0.0.1:8089/get_version
 **Cause:** Server not started or wrong port.
 
 **Solution:**
-1. Ensure you started the server: **Tools > GhidraMCP > Start MCP Server**
-2. Check configured port: **Edit > Tool Options > GhidraMCP HTTP Server**
+1. Ensure you started the server: **Tools > MCP4Ghidra > Start MCP Server**
+2. Check configured port: **Edit > Tool Options > MCP4Ghidra HTTP Server**
 3. Check if port is in use:
    ```bash
    # Linux/macOS
@@ -253,7 +258,7 @@ curl http://127.0.0.1:8089/get_version
 **Cause:** JAR file in wrong location.
 
 **Solution:**
-1. Manual install location: `~/.ghidra/ghidra_12.0.3_PUBLIC/Extensions/GhidraMCP/lib/GhidraMCP.jar`
+1. Manual install location: `~/.ghidra/ghidra_12.0.3_PUBLIC/Extensions/<extension-folder>/lib/`
 2. Or use: **File > Install Extensions > Add** and select the ZIP file
 3. Ensure JAR/ZIP was built for your Ghidra version
 

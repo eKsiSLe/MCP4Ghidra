@@ -4,12 +4,12 @@
 # Target: Ghidra 12.0.3
 #
 # Usage:
-#   ./ghidra-mcp-setup.sh --deploy --ghidra-path /opt/ghidra_12.0.3_PUBLIC
-#   ./ghidra-mcp-setup.sh --setup-deps --ghidra-path /opt/ghidra_12.0.3_PUBLIC
-#   ./ghidra-mcp-setup.sh --build-only
-#   ./ghidra-mcp-setup.sh --clean
-#   ./ghidra-mcp-setup.sh --preflight --ghidra-path /opt/ghidra_12.0.3_PUBLIC
-#   ./ghidra-mcp-setup.sh --help
+#   ./mcp4ghidra-setup.sh --deploy --ghidra-path /opt/ghidra_12.0.3_PUBLIC
+#   ./mcp4ghidra-setup.sh --setup-deps --ghidra-path /opt/ghidra_12.0.3_PUBLIC
+#   ./mcp4ghidra-setup.sh --build-only
+#   ./mcp4ghidra-setup.sh --clean
+#   ./mcp4ghidra-setup.sh --preflight --ghidra-path /opt/ghidra_12.0.3_PUBLIC
+#   ./mcp4ghidra-setup.sh --help
 
 set -euo pipefail
 
@@ -57,6 +57,7 @@ show_usage() {
     echo ""
     echo "Actions (choose one):"
     echo "  --setup-deps       Install required Ghidra JARs into local Maven repository"
+    echo "  --prerequisites    Alias for --setup-deps (compatibility)"
     echo "  --build-only       Build project artifacts only"
     echo "  --deploy           Full end-user flow: Python deps + Maven deps + build + deploy (default)"
     echo "  --clean            Remove build output, local extension cache, and local Ghidra Maven jars"
@@ -75,11 +76,11 @@ show_usage() {
     echo "  --help, -h            Show this help text"
     echo ""
     echo "Examples:"
-    echo "  ./ghidra-mcp-setup.sh --deploy --ghidra-path /opt/ghidra_12.0.3_PUBLIC"
-    echo "  ./ghidra-mcp-setup.sh --setup-deps --ghidra-path /opt/ghidra_12.0.3_PUBLIC"
-    echo "  ./ghidra-mcp-setup.sh --preflight --ghidra-path /opt/ghidra_12.0.3_PUBLIC"
-    echo "  ./ghidra-mcp-setup.sh --build-only"
-    echo "  ./ghidra-mcp-setup.sh --clean"
+    echo "  ./mcp4ghidra-setup.sh --deploy --ghidra-path /opt/ghidra_12.0.3_PUBLIC"
+    echo "  ./mcp4ghidra-setup.sh --setup-deps --ghidra-path /opt/ghidra_12.0.3_PUBLIC"
+    echo "  ./mcp4ghidra-setup.sh --preflight --ghidra-path /opt/ghidra_12.0.3_PUBLIC"
+    echo "  ./mcp4ghidra-setup.sh --build-only"
+    echo "  ./mcp4ghidra-setup.sh --clean"
     echo ""
 }
 
@@ -89,6 +90,11 @@ show_usage() {
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --setup-deps)       ACTION="setup-deps"; shift ;;
+        --prerequisites)
+            ACTION="setup-deps"
+            log_warning "--prerequisites is deprecated on .sh; using --setup-deps"
+            shift
+            ;;
         --build-only)       ACTION="build-only"; shift ;;
         --deploy)           ACTION="deploy"; shift ;;
         --clean)            ACTION="clean"; shift ;;
@@ -469,6 +475,26 @@ install_python_packages() {
     pip_args+=("-r" "$requirements_path")
 
     if ! run_cmd "Ensuring Python dependencies" "$python_cmd" "${pip_args[@]}"; then
+        # Homebrew Python (PEP 668) and some managed environments can still reject installs.
+        # Fall back to a project-local virtual environment for deterministic behavior.
+        if [[ "$is_venv" != "1" ]]; then
+            local venv_dir="${SCRIPT_DIR}/venv"
+            log_warning "Global/user pip install failed. Falling back to project virtualenv: ${venv_dir}"
+            if ! run_cmd "Creating project virtualenv" "$python_cmd" -m venv "$venv_dir"; then
+                return 1
+            fi
+            local vpy="${venv_dir}/bin/python"
+            local -a venv_pip_args=("-m" "pip" "install")
+            if ! $VERBOSE; then
+                venv_pip_args+=("-q" "--disable-pip-version-check")
+            fi
+            venv_pip_args+=("-r" "$requirements_path")
+            if ! run_cmd "Installing Python dependencies in virtualenv" "$vpy" "${venv_pip_args[@]}"; then
+                return 1
+            fi
+            log_success "Python dependencies installed in virtualenv: ${venv_dir}"
+            return 0
+        fi
         return 1
     fi
     log_success "Python dependencies are ready."
@@ -625,8 +651,10 @@ if [[ -z "$GHIDRA_PATH" ]]; then
     GHIDRA_PATH="${GHIDRA_PATH:-}"
 fi
 if [[ -z "$GHIDRA_PATH" ]]; then
-    # Auto-detect from common Linux installation paths
+    # Auto-detect from common macOS/Linux installation paths
     common_paths=(
+        "/Applications/ghidra_${GHIDRA_VERSION}_PUBLIC"
+        "$HOME/Applications/ghidra_${GHIDRA_VERSION}_PUBLIC"
         "/opt/ghidra_${GHIDRA_VERSION}_PUBLIC"
         "$HOME/ghidra_${GHIDRA_VERSION}_PUBLIC"
         "/usr/local/ghidra_${GHIDRA_VERSION}_PUBLIC"
@@ -660,7 +688,7 @@ fi
 if [[ -z "$GHIDRA_PATH" && "$ACTION" != "build-only" && "$ACTION" != "clean" ]]; then
     log_error "Ghidra installation not found."
     log_info "Set GHIDRA_PATH in .env file, or pass --ghidra-path parameter:"
-    echo "  ./ghidra-mcp-setup.sh --deploy --ghidra-path '/opt/ghidra_${GHIDRA_VERSION}_PUBLIC'"
+    echo "  ./mcp4ghidra-setup.sh --deploy --ghidra-path '/opt/ghidra_${GHIDRA_VERSION}_PUBLIC'"
     echo ""
     log_info "Or create a .env file from the template:"
     echo "  cp .env.template .env"
@@ -718,7 +746,7 @@ fi
 if [[ "$ACTION" == "setup-deps" ]]; then
     if [[ ! -f "${GHIDRA_PATH}/ghidraRun" ]]; then
         log_error "Ghidra not found at: $GHIDRA_PATH"
-        log_info "Please specify the correct path: ./ghidra-mcp-setup.sh --setup-deps --ghidra-path '/path/to/ghidra'"
+        log_info "Please specify the correct path: ./mcp4ghidra-setup.sh --setup-deps --ghidra-path '/path/to/ghidra'"
         exit 1
     fi
 
@@ -738,7 +766,7 @@ fi
 # Validate Ghidra path
 if [[ ! -f "${GHIDRA_PATH}/ghidraRun" ]]; then
     log_error "Ghidra not found at: $GHIDRA_PATH"
-    log_info "Please specify the correct path: ./ghidra-mcp-setup.sh --ghidra-path '/path/to/ghidra'"
+    log_info "Please specify the correct path: ./mcp4ghidra-setup.sh --ghidra-path '/path/to/ghidra'"
     exit 1
 fi
 log_success "Found Ghidra at: $GHIDRA_PATH"
