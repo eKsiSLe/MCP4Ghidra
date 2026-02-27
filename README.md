@@ -5,7 +5,7 @@
 [![Ghidra Version](https://img.shields.io/badge/Ghidra-12.0.3-green.svg)](https://ghidra-sre.org/)
 [![Version](https://img.shields.io/badge/Version-3.0.1-brightgreen.svg)](CHANGELOG.md)
 
-MCP4Ghidra is built/forked from @bethington's GhidraMCP (forked form LaurieWired) and also exposes Ghidra analysis and editing capabilities through MCP.
+MCP4Ghidra is built/forked from @bethington's GhidraMCP (forked from LaurieWired) and also exposes Ghidra analysis and editing capabilities through MCP.
 This version actually supports the interactive GUI and just like @bethington's also adds automation workflows.
 
 A production MCP server/extension pair for Ghidra with **179 MCP tools**.
@@ -784,5 +784,6 @@ See [CHANGELOG.md](CHANGELOG.md) for version history and release notes.
 - **Model Context Protocol** - For the standardized AI integration framework
 - **Contributors** - For testing, feedback, and improvements
  
+
 
 
