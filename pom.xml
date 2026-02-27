@@ -6,9 +6,9 @@
     <groupId>com.xebyte</groupId>
     <artifactId>GhidraMCP</artifactId>
     <packaging>jar</packaging>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <name>Ghidra MCP Server</name>
-    <description>Production-ready Model Context Protocol server for Ghidra reverse engineering platform. v3.0.0: 179 MCP tools, headless server parity, Ghidra Server integration, project lifecycle management, analysis control, and battle-tested AI documentation workflows.</description>
+    <description>Production-ready Model Context Protocol server for Ghidra reverse engineering platform. v3.0.1: 179 MCP tools, headless server parity, Ghidra Server integration, project lifecycle management, analysis control, and battle-tested AI documentation workflows.</description>
     <url>https://github.com/eKsiSLe/MCP4Ghidra</url>
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
