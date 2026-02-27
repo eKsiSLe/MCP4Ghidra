@@ -5,8 +5,8 @@
 [![Ghidra Version](https://img.shields.io/badge/Ghidra-12.0.3-green.svg)](https://ghidra-sre.org/)
 [![Version](https://img.shields.io/badge/Version-3.0.0-brightgreen.svg)](CHANGELOG.md)
 
-MCP4Ghidra exposes Ghidra analysis and editing capabilities through MCP.
-It supports interactive GUI use and automation workflows.
+MCP4Ghidra is built/forked from @bethington's GhidraMCP (forked form LaurieWired) and also exposes Ghidra analysis and editing capabilities through MCP.
+This version actually supports the interactive GUI and just like @bethington's also adds automation workflows.
 
 A production MCP server/extension pair for Ghidra with **179 MCP tools**.
 
@@ -779,17 +779,10 @@ See [CHANGELOG.md](CHANGELOG.md) for version history and release notes.
 
 ## 🙏 Acknowledgments
 
+- @bethington for making a great plugin that works with tons of patience, but whose installation (and guide) are surprisingly broken.
 - **Ghidra Team** - For the incredible reverse engineering platform
 - **Model Context Protocol** - For the standardized AI integration framework
 - **Contributors** - For testing, feedback, and improvements
+ 
 
----
 
-## 🔗 Related Projects
-
-- [re-universe](https://github.com/bethington/re-universe) — Ghidra BSim PostgreSQL platform for large-scale binary similarity analysis. Pairs perfectly with GhidraMCP for AI-driven reverse engineering workflows.
-- [cheat-engine-server-python](https://github.com/bethington/cheat-engine-server-python) — MCP server for dynamic memory analysis and debugging.
-
----
-
-**Ready for production deployment with enterprise-grade reliability and comprehensive binary analysis capabilities.**
