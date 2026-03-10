@@ -19,7 +19,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DocumentFunctionWithClaude extends GhidraScript {
+public class DocumentFunctionWithAI extends GhidraScript {
     
     private static final String PLATE_COMMENT_PROMPT = 
         "First, call get_current_function() function to retrieve the function at the current cursor position in Ghidra.\n\n" +

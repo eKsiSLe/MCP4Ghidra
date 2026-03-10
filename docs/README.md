@@ -7,7 +7,7 @@ This directory contains all project documentation organized by category for easy
 ```text
 docs/
 ├── project-management/     # Project administration and reports
-│   ├── CLAUDE.md          # Claude AI interaction notes
+│   ├── AI_ASSISTANT.md          # Claude AI interaction notes
 │   └── CLEANUP_FINAL_REPORT.md  # Project cleanup documentation
 │
 ├── prompts/               # AI prompting workflows and guides

@@ -50,7 +50,7 @@
 | `LICENSE` | ✅ Keep | Legal standard | - |
 | **Project Core** ||||
 | `START_HERE.md` | `getting-started.md` | More descriptive, kebab-case | High |
-| `CLAUDE.md` | `ai-assistant-guide.md` | Generic, descriptive | Medium |
+| `AI_ASSISTANT.md` | `ai-assistant-guide.md` | Generic, descriptive | Medium |
 | `DOCUMENTATION_INDEX.md` | `docs-index.md` | Shorter, kebab-case | High |
 | `PROJECT_STRUCTURE.md` | `project-structure.md` | Consistent casing | Medium |
 | **Configuration** ||||
@@ -142,7 +142,7 @@ mv DOCUMENTATION_INDEX.md docs-index.md
 
 ```bash
 # Rename to kebab-case
-mv CLAUDE.md ai-assistant-guide.md
+mv AI_ASSISTANT.md ai-assistant-guide.md
 mv PROJECT_STRUCTURE.md project-structure.md
 mv NAMING_CONVENTIONS.md naming-conventions.md
 mv IMPROVEMENTS_QUICK_REFERENCE.md improvements-quick-ref.md

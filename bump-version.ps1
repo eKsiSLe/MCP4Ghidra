@@ -5,12 +5,12 @@ Bump the GhidraMCP plugin version across all source files.
 .DESCRIPTION
 Updates the plugin version string in every file that contains it:
   - pom.xml                                          (<version> tag + description)
-  - src/main/java/com/xebyte/GhidraMCPPlugin.java   (fallback strings)
+  - src/main/java/com/xebyte/MCP4GhidraPlugin.java   (fallback strings)
   - src/main/java/com/xebyte/headless/HeadlessEndpointHandler.java (VERSION)
-  - src/main/java/com/xebyte/headless/GhidraMCPHeadlessServer.java (VERSION)
-  - ghidra-mcp-setup.ps1                             ($PluginVersion)
+  - src/main/java/com/xebyte/headless/MCP4GhidraHeadlessServer.java (VERSION)
+  - mcp4ghidra-setup.ps1                             ($PluginVersion)
   - tests/endpoints.json
-  - CLAUDE.md                                        (**Version**: line)
+  - AI_ASSISTANT.md                                        (**Version**: line)
   - README.md                                        (version table + badge)
   - AGENTS.md                                        (**Version**: line)
   - docs/releases/README.md                          ((Latest) heading + footer)
@@ -68,18 +68,18 @@ $rules = @(
     @{ File = 'pom.xml';                                                       Pat = '(<version>)' + [regex]::Escape($Old) + '(</version>)'; Rep = ('${1}' + $New + '${2}') },
     # pom.xml - version mention in <description>
     @{ File = 'pom.xml';                                                       Pat = 'v' + [regex]::Escape($Old) + ':';                        Rep = ('v' + $New + ':') },
-    # GhidraMCPPlugin.java - two fallback string literals "2.0.x"
-    @{ File = 'src\main\java\com\xebyte\GhidraMCPPlugin.java';                 Pat = '"' + [regex]::Escape($Old) + '"';                        Rep = ('"' + $New + '"') },
+    # MCP4GhidraPlugin.java - two fallback string literals "2.0.x"
+    @{ File = 'src\main\java\com\xebyte\MCP4GhidraPlugin.java';                 Pat = '"' + [regex]::Escape($Old) + '"';                        Rep = ('"' + $New + '"') },
     # HeadlessEndpointHandler.java - VERSION = "X.Y.Z-headless"
     @{ File = 'src\main\java\com\xebyte\headless\HeadlessEndpointHandler.java'; Pat = '"' + [regex]::Escape($Old) + '-headless"';               Rep = ('"' + $New + '-headless"') },
-    # GhidraMCPHeadlessServer.java - VERSION = "X.Y.Z-headless"
-    @{ File = 'src\main\java\com\xebyte\headless\GhidraMCPHeadlessServer.java'; Pat = '"' + [regex]::Escape($Old) + '-headless"';               Rep = ('"' + $New + '-headless"') },
-    # ghidra-mcp-setup.ps1 - $PluginVersion = "2.0.x"
-    @{ File = 'ghidra-mcp-setup.ps1';                                          Pat = '\$PluginVersion\s*=\s*"' + [regex]::Escape($Old) + '"';  Rep = ('$PluginVersion = "' + $New + '"') },
+    # MCP4GhidraHeadlessServer.java - VERSION = "X.Y.Z-headless"
+    @{ File = 'src\main\java\com\xebyte\headless\MCP4GhidraHeadlessServer.java'; Pat = '"' + [regex]::Escape($Old) + '-headless"';               Rep = ('"' + $New + '-headless"') },
+    # mcp4ghidra-setup.ps1 - $PluginVersion = "2.0.x"
+    @{ File = 'mcp4ghidra-setup.ps1';                                          Pat = '\$PluginVersion\s*=\s*"' + [regex]::Escape($Old) + '"';  Rep = ('$PluginVersion = "' + $New + '"') },
     # tests/endpoints.json - "version": "2.0.x"
     @{ File = 'tests\endpoints.json';                                          Pat = '"version":\s*"' + [regex]::Escape($Old) + '"';           Rep = ('"version": "' + $New + '"') },
-    # CLAUDE.md - **Version**: 2.0.x
-    @{ File = 'CLAUDE.md';                                                     Pat = '\*\*Version\*\*:\s*' + [regex]::Escape($Old);            Rep = ('**Version**: ' + $New) },
+    # AI_ASSISTANT.md - **Version**: 2.0.x
+    @{ File = 'AI_ASSISTANT.md';                                                     Pat = '\*\*Version\*\*:\s*' + [regex]::Escape($Old);            Rep = ('**Version**: ' + $New) },
     # README.md - | **Version** | 2.0.x |
     @{ File = 'README.md';                                                     Pat = '\|\s*\*\*Version\*\*\s*\|\s*' + [regex]::Escape($Old) + '\s*\|'; Rep = ('| **Version** | ' + $New + ' |') },
     # README.md - badge Version-X.Y.Z-brightgreen

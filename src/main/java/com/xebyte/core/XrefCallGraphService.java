@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Service for cross-reference and call graph operations: xrefs to/from, function callees/callers,
  * call graph traversal, cycle detection, path finding, and bulk xref analysis.
- * Extracted from GhidraMCPPlugin as part of v4.0.0 refactor.
+ * Extracted from MCP4GhidraPlugin as part of v4.0.0 refactor.
  */
 public class XrefCallGraphService {
 

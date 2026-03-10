@@ -91,7 +91,7 @@ jobs:
         echo "✅ Java compilation successful"
         ls -la target/GhidraMCP-*.zip 2>/dev/null || echo "No zip artifact (assembly may use different name)"
         ls -la target/*.jar 2>/dev/null | head -5
-        # Note: All Java tests (EndpointRegistrationTest, GhidraMCPPluginTest) are integration
+        # Note: All Java tests (EndpointRegistrationTest, MCP4GhidraPluginTest) are integration
         # tests that require a running Ghidra instance with the plugin loaded. They cannot run
         # in CI. Compilation verification is the CI gate for Java changes.
     

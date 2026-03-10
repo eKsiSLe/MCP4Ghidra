@@ -25,7 +25,7 @@
    - Complete chronological history maintained
    - Cross-references to release notes documents
 
-3. **CLAUDE.md** ✅
+3. **AI_ASSISTANT.md** ✅
    - Updated current version: 1.7.0 → 1.7.3
    - Updated ZIP file name in build output section
    - Updated deployment instructions
@@ -78,7 +78,7 @@
 
 ### ✅ Correct Version References (v1.7.3)
 - README.md: Badge, compatibility statement, ZIP file, production status
-- CLAUDE.md: Current version, build output, deployment
+- AI_ASSISTANT.md: Current version, build output, deployment
 - CHANGELOG.md: Latest entry
 - pom.xml: Project version
 - extension.properties: Plugin version
@@ -100,7 +100,7 @@
 ```
 ├── CHANGELOG.md                           ✅ Updated (v1.7.3 entry)
 ├── README.md                              ✅ Updated (v1.7.3 references)
-├── CLAUDE.md                              ✅ Updated (v1.7.3 version)
+├── AI_ASSISTANT.md                              ✅ Updated (v1.7.3 version)
 ├── V1.7.3_RELEASE_NOTES.md                ✅ New
 ├── V1.7.2_RELEASE_NOTES.md                ✅ Existing
 ├── V1.7.0_RELEASE_NOTES.md                ✅ Existing
@@ -145,7 +145,7 @@ docs/
 
 ### Build References ✅
 - README.md ZIP filename matches pom.xml version ✅
-- CLAUDE.md ZIP filename matches pom.xml version ✅
+- AI_ASSISTANT.md ZIP filename matches pom.xml version ✅
 - Deployment instructions reference correct version ✅
 
 ---
@@ -153,14 +153,14 @@ docs/
 ## Commit Readiness Checklist
 
 ### Code Changes ✅
-- [x] GhidraMCPPlugin.java - Transaction fix implemented (line 9716)
+- [x] MCP4GhidraPlugin.java - Transaction fix implemented (line 9716)
 - [x] pom.xml - Version updated to 1.7.3
 - [x] extension.properties - Version updated to 1.7.3
 
 ### Documentation ✅
 - [x] README.md - Updated to v1.7.3
 - [x] CHANGELOG.md - v1.7.3 entry added
-- [x] CLAUDE.md - Updated to v1.7.3
+- [x] AI_ASSISTANT.md - Updated to v1.7.3
 - [x] V1.7.3_RELEASE_NOTES.md - Created
 - [x] DISASSEMBLE_BYTES_VERIFICATION.md - Created
 - [x] CODE_REVIEW_2025-10-13.md - Created
@@ -176,12 +176,12 @@ docs/
 Modified files ready for commit:
 ```
 M  CHANGELOG.md
-M  CLAUDE.md
+M  AI_ASSISTANT.md
 M  README.md
 M  bridge_mcp_ghidra.py
 M  docs/prompts/OPTIMIZED_FUNCTION_DOCUMENTATION.md
 M  pom.xml
-M  src/main/java/com/xebyte/GhidraMCPPlugin.java
+M  src/main/java/com/xebyte/MCP4GhidraPlugin.java
 M  src/main/resources/extension.properties
 ?? CODE_REVIEW_2025-10-13.md
 ?? DISASSEMBLE_BYTES_VERIFICATION.md
@@ -227,7 +227,7 @@ disassembled instructions from being persisted to Ghidra database.
 Added missing success flag assignment before transaction commit.
 
 Changes:
-- Fixed transaction commit in GhidraMCPPlugin.java (line 9716)
+- Fixed transaction commit in MCP4GhidraPlugin.java (line 9716)
 - Updated version to 1.7.3 across all configuration files
 - Added comprehensive documentation and test verification
 - Completed code review (13,666 lines reviewed, 4/5 rating)
@@ -241,17 +241,17 @@ Documentation:
 - V1.7.3_RELEASE_NOTES.md - Complete release documentation
 - DISASSEMBLE_BYTES_VERIFICATION.md - Test verification report
 - CODE_REVIEW_2025-10-13.md - Comprehensive code review
-- Updated README.md, CHANGELOG.md, CLAUDE.md to v1.7.3
+- Updated README.md, CHANGELOG.md, AI_ASSISTANT.md to v1.7.3
 ```
 
 ### Files to Commit (Core)
 ```bash
 git add pom.xml
 git add src/main/resources/extension.properties
-git add src/main/java/com/xebyte/GhidraMCPPlugin.java
+git add src/main/java/com/xebyte/MCP4GhidraPlugin.java
 git add README.md
 git add CHANGELOG.md
-git add CLAUDE.md
+git add AI_ASSISTANT.md
 git add V1.7.3_RELEASE_NOTES.md
 git add DISASSEMBLE_BYTES_VERIFICATION.md
 git add CODE_REVIEW_2025-10-13.md

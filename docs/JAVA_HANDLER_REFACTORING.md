@@ -2,7 +2,7 @@
 
 ## Current State
 
-The `GhidraMCPPlugin.java` file is **13,821 lines** with inline lambda handlers for 100+ endpoints. This makes maintenance difficult and testing challenging.
+The `MCP4GhidraPlugin.java` file is **13,821 lines** with inline lambda handlers for 100+ endpoints. This makes maintenance difficult and testing challenging.
 
 ## Proposed Architecture
 
@@ -150,7 +150,7 @@ public class ListFunctionsHandler extends AbstractHandler {
 
 ### Phase 4: Remove Old Code
 1. Remove inline lambdas
-2. Clean up GhidraMCPPlugin.java
+2. Clean up MCP4GhidraPlugin.java
 3. Final testing
 
 ## Testing Considerations

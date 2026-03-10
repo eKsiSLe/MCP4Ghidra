@@ -32,7 +32,7 @@ Successfully implemented **ALL** missing data structure management functionality
 
 ## 🏗️ TECHNICAL ARCHITECTURE
 
-### Java Plugin Enhancements (GhidraMCPPlugin.java)
+### Java Plugin Enhancements (MCP4GhidraPlugin.java)
 ```java
 // NEW ENDPOINTS IMPLEMENTED:
 - /delete_data_type - Remove data types safely

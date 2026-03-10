@@ -25,7 +25,7 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 # Source file paths
 POM_XML = PROJECT_ROOT / "pom.xml"
 JAVA_PLUGIN = (
-    PROJECT_ROOT / "src" / "main" / "java" / "com" / "xebyte" / "GhidraMCPPlugin.java"
+    PROJECT_ROOT / "src" / "main" / "java" / "com" / "xebyte" / "MCP4GhidraPlugin.java"
 )
 JAVA_HEADLESS = (
     PROJECT_ROOT
@@ -35,14 +35,14 @@ JAVA_HEADLESS = (
     / "com"
     / "xebyte"
     / "headless"
-    / "GhidraMCPHeadlessServer.java"
+    / "MCP4GhidraHeadlessServer.java"
 )
 PYTHON_BRIDGE = PROJECT_ROOT / "bridge_mcp_ghidra.py"
 ENDPOINTS_JSON = PROJECT_ROOT / "tests" / "endpoints.json"
-CLAUDE_MD = PROJECT_ROOT / "CLAUDE.md"
+CLAUDE_MD = PROJECT_ROOT / "AI_ASSISTANT.md"
 README_MD = PROJECT_ROOT / "README.md"
 AGENTS_MD = PROJECT_ROOT / "AGENTS.md"
-SETUP_PS1 = PROJECT_ROOT / "ghidra-mcp-setup.ps1"
+SETUP_PS1 = PROJECT_ROOT / "mcp4ghidra-setup.ps1"
 EXT_PROPERTIES = PROJECT_ROOT / "src" / "main" / "resources" / "extension.properties"
 VER_PROPERTIES = PROJECT_ROOT / "src" / "main" / "resources" / "version.properties"
 BUMP_VERSION_PS1 = PROJECT_ROOT / "bump-version.ps1"
@@ -146,7 +146,7 @@ class TestVersionConsistency:
         assert re.match(r"^\d+\.\d+\.\d+$", self.version)
 
     def test_java_plugin_fallback_version(self):
-        """GhidraMCPPlugin.java fallback VERSION should match pom.xml."""
+        """MCP4GhidraPlugin.java fallback VERSION should match pom.xml."""
         content = JAVA_PLUGIN.read_text(encoding="utf-8")
         matches = re.findall(r'"(\d+\.\d+\.\d+)"', content)
         for m in matches:
@@ -155,7 +155,7 @@ class TestVersionConsistency:
             # Only check version-like strings that look like our version pattern
             # (not Ghidra version or other constants)
         fallback = re.search(r'VERSION\s*=\s*"(\d+\.\d+\.\d+)"', content)
-        assert fallback, "VERSION fallback string not found in GhidraMCPPlugin.java"
+        assert fallback, "VERSION fallback string not found in MCP4GhidraPlugin.java"
         assert (
             fallback.group(1) == self.version
         ), f"Java VERSION fallback {fallback.group(1)} != pom.xml {self.version}"
@@ -168,11 +168,11 @@ class TestVersionConsistency:
         ), f"endpoints.json version {data.get('version')} != pom.xml {self.version}"
 
     def test_claude_md_version(self):
-        """CLAUDE.md should reference the current version."""
+        """AI_ASSISTANT.md should reference the current version."""
         content = CLAUDE_MD.read_text(encoding="utf-8")
         assert (
             f"**Version**: {self.version}" in content
-        ), f"CLAUDE.md missing '**Version**: {self.version}'"
+        ), f"AI_ASSISTANT.md missing '**Version**: {self.version}'"
 
     def test_readme_version_badge(self):
         """README.md version badge should match pom.xml."""
@@ -198,13 +198,13 @@ class TestVersionConsistency:
         ), f"AGENTS.md missing '**Version**: {self.version}'"
 
     def test_setup_script_version(self):
-        """ghidra-mcp-setup.ps1 $PluginVersion should match pom.xml."""
+        """mcp4ghidra-setup.ps1 $PluginVersion should match pom.xml."""
         content = SETUP_PS1.read_text(encoding="utf-8")
         match = re.search(r'\$PluginVersion\s*=\s*"(\d+\.\d+\.\d+)"', content)
-        assert match, "$PluginVersion not found in ghidra-mcp-setup.ps1"
+        assert match, "$PluginVersion not found in mcp4ghidra-setup.ps1"
         assert (
             match.group(1) == self.version
-        ), f"ghidra-mcp-setup.ps1 version {match.group(1)} != pom.xml {self.version}"
+        ), f"mcp4ghidra-setup.ps1 version {match.group(1)} != pom.xml {self.version}"
 
     def test_releases_readme_latest(self):
         """docs/releases/README.md should mark current version as Latest."""
@@ -244,15 +244,15 @@ class TestEndpointCounts:
     """Endpoint counts in code and docs should match actual registrations."""
 
     def test_gui_endpoint_count_constant(self):
-        """ENDPOINT_COUNT in GhidraMCPPlugin.java should match total endpoints (direct + registry)."""
+        """ENDPOINT_COUNT in MCP4GhidraPlugin.java should match total endpoints (direct + registry)."""
         content = JAVA_PLUGIN.read_text(encoding="utf-8")
         match = re.search(r"ENDPOINT_COUNT\s*=\s*(\d+)", content)
-        assert match, "ENDPOINT_COUNT constant not found in GhidraMCPPlugin.java"
+        assert match, "ENDPOINT_COUNT constant not found in MCP4GhidraPlugin.java"
         declared = int(match.group(1))
         actual = count_total_endpoints(JAVA_PLUGIN)
         assert declared == actual, (
             f"ENDPOINT_COUNT ({declared}) != actual endpoints ({actual}). "
-            f"Update ENDPOINT_COUNT in GhidraMCPPlugin.java."
+            f"Update ENDPOINT_COUNT in MCP4GhidraPlugin.java."
         )
 
     def test_endpoints_json_total(self):
@@ -401,7 +401,7 @@ class TestJavaConsistency:
             r"/\*.*?\*/", "", code_only, flags=re.DOTALL
         )  # block comments
         assert "_mcp_inline_" not in code_only, (
-            "GhidraMCPPlugin.java still uses _mcp_inline_ prefix in code. "
+            "MCP4GhidraPlugin.java still uses _mcp_inline_ prefix in code. "
             "Should use unique class names to avoid OSGi cache collisions."
         )
 
@@ -549,10 +549,10 @@ class TestBumpVersionScript:
         # Files that the bump script MUST cover
         required_files = [
             "pom.xml",
-            "GhidraMCPPlugin.java",
-            "ghidra-mcp-setup.ps1",
+            "MCP4GhidraPlugin.java",
+            "mcp4ghidra-setup.ps1",
             "endpoints.json",
-            "CLAUDE.md",
+            "AI_ASSISTANT.md",
             "README.md",
             "AGENTS.md",
             "releases\\README.md",  # docs/releases/README.md in Windows path

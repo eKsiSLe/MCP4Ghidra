@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Service for function-related operations: decompilation, renaming, prototype management,
  * variable typing, and function creation/deletion.
- * Extracted from GhidraMCPPlugin as part of v4.0.0 refactor.
+ * Extracted from MCP4GhidraPlugin as part of v4.0.0 refactor.
  */
 public class FunctionService {
 

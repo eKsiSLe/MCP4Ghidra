@@ -12,7 +12,7 @@ Version 1.7.2 fixes a critical off-by-one bug in the new `disassemble_bytes` end
 
 ### Critical: Off-By-One Error in disassemble_bytes (v1.7.2)
 
-**Issue**: `GhidraMCPPlugin.java:9648`
+**Issue**: `MCP4GhidraPlugin.java:9648`
 The `disassemble_bytes` endpoint had an off-by-one error when calculating the end address from a length parameter:
 
 ```java
@@ -56,7 +56,7 @@ curl -X POST http://127.0.0.1:8089/disassemble_bytes \
 
 ## 📋 Changes
 
-### Java Plugin (GhidraMCPPlugin.java)
+### Java Plugin (MCP4GhidraPlugin.java)
 
 **Line 9648** - Fixed end address calculation:
 ```java
@@ -83,9 +83,9 @@ Reason: Disassembly operations on large ranges can take significant time, especi
 Updated version strings in all locations:
 - `pom.xml`: `<version>1.7.2</version>`
 - `src/main/resources/extension.properties`: `version=1.7.2`
-- `GhidraMCPPlugin.java:64`: `shortDescription = "GhidraMCP v1.7.2"`
-- `GhidraMCPPlugin.java:65`: `description = "GhidraMCP v1.7.2"`
-- `GhidraMCPPlugin.java:4807`: `"plugin_version": "1.7.2"`
+- `MCP4GhidraPlugin.java:64`: `shortDescription = "GhidraMCP v1.7.2"`
+- `MCP4GhidraPlugin.java:65`: `description = "GhidraMCP v1.7.2"`
+- `MCP4GhidraPlugin.java:4807`: `"plugin_version": "1.7.2"`
 
 ## 🧪 Testing
 
@@ -149,7 +149,7 @@ See `KNOWN_ISSUES.md` for full details.
 mvn clean package assembly:single -DskipTests
 
 # Deploy to Ghidra
-.\ghidra-mcp-setup.ps1
+.\mcp4ghidra-setup.ps1
 ```
 
 ### Manual Installation

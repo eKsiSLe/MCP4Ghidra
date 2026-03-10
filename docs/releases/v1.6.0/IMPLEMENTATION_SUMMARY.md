@@ -22,7 +22,7 @@ Added 7 new MCP tool definitions (lines 3075-3385):
 6. **document_function_complete** - Atomic all-in-one documentation with rollback (replaces 15-20 calls)
 7. **search_functions_enhanced** - Advanced search with filtering, regex, and sorting
 
-### 2. `src/main/java/com/xebyte/GhidraMCPPlugin.java`
+### 2. `src/main/java/com/xebyte/MCP4GhidraPlugin.java`
 Added 7 new HTTP endpoint handlers and backend implementations:
 
 **Endpoint Handlers (lines 1137-1231):**
@@ -112,12 +112,12 @@ Added 7 new HTTP endpoint handlers and backend implementations:
 - **New in v1.6.0**: 7 tools (batch_rename_variables, validate_function_prototype, validate_data_type_exists, can_rename_at_address, analyze_function_complete, document_function_complete, search_functions_enhanced)
 
 ## Next Steps
-1. Deploy updated plugin to Ghidra using `ghidra-mcp-setup.ps1`
+1. Deploy updated plugin to Ghidra using `mcp4ghidra-setup.ps1`
 2. Restart Ghidra to load new endpoints
 3. Test Python MCP bridge with new tools
 4. Run integration tests to verify all endpoints
 5. Document new tools in API_REFERENCE.md
-6. Update CLAUDE.md with v1.6.0 features
+6. Update AI_ASSISTANT.md with v1.6.0 features
 
 ## Code Quality
 - Follows existing patterns from v1.5.0 implementation

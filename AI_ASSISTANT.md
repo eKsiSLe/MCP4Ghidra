@@ -20,7 +20,7 @@ AI/Automation Tools <-> MCP Bridge (bridge_mcp_ghidra.py) <-> Ghidra Plugin (Ghi
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| Ghidra Plugin | `src/main/java/com/xebyte/GhidraMCPPlugin.java` | HTTP server + endpoint wiring, delegates to services |
+| Ghidra Plugin | `src/main/java/com/xebyte/MCP4GhidraPlugin.java` | HTTP server + endpoint wiring, delegates to services |
 | MCP Bridge | `bridge_mcp_ghidra.py` | Dynamic MCP tool registration from `/mcp/schema` + 22 static complex tools |
 | Headless Server | `src/main/java/com/xebyte/headless/` | Standalone server without Ghidra GUI |
 | Service Layer | `src/main/java/com/xebyte/core/` | 12 annotated service classes with `@McpTool`/`@Param` (~15K lines) |
@@ -52,13 +52,13 @@ Services use constructor injection: `ProgramProvider` + `ThreadingStrategy`. GUI
 
 ```powershell
 # Build and deploy (recommended — handles Maven, deps, and Ghidra restart)
-.\ghidra-mcp-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
 
 # Build only (no deploy)
-.\ghidra-mcp-setup.ps1 -BuildOnly
+.\mcp4ghidra-setup.ps1 -BuildOnly
 
 # First-time dependency setup (install Ghidra JARs into local Maven repo)
-.\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
 ```
 
 > **Note (Windows):** Maven (`mvn`) must be in your PATH or invoked via the setup script.
@@ -82,7 +82,7 @@ http://127.0.0.1:8089
 ```
 ghidra-mcp/
 ├── src/main/java/com/xebyte/
-│   ├── GhidraMCPPlugin.java      # Main plugin with all endpoints
+│   ├── MCP4GhidraPlugin.java      # Main plugin with all endpoints
 │   ├── core/                      # Shared service layer (12 services)
 │   └── headless/                  # Headless server implementation
 ├── bridge_mcp_ghidra.py           # MCP protocol bridge
@@ -91,7 +91,7 @@ ghidra-mcp/
 │   ├── prompts/                   # Analysis workflow prompts
 │   ├── releases/                  # Release documentation
 │   └── project-management/        # Project-level docs
-├── ghidra-mcp-setup.ps1            # Deployment script
+├── mcp4ghidra-setup.ps1            # Deployment script
 └── functions-process.ps1          # Batch function processing
 ```
 
@@ -150,7 +150,7 @@ Located in `ghidra_scripts/`. Execute via:
 
 - **Plugin not loading**: Check `docs/troubleshooting/TROUBLESHOOTING_PLUGIN_LOAD.md`
 - **Connection issues**: Verify Ghidra is running with plugin enabled on port 8089
-- **Build failures**: Install Ghidra JARs to local Maven repo (run `ghidra-mcp-setup.ps1 -SetupDeps`)
+- **Build failures**: Install Ghidra JARs to local Maven repo (run `mcp4ghidra-setup.ps1 -SetupDeps`)
 
 ## Version History
 

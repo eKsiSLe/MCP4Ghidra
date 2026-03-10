@@ -296,7 +296,7 @@ batch_set_variable_types(
 
 ### Java Plugin Changes
 
-**File**: `src/main/java/com/xebyte/GhidraMCPPlugin.java`
+**File**: `src/main/java/com/xebyte/MCP4GhidraPlugin.java`
 **Lines Added**: ~770 lines
 **New Endpoints**: 9
 **Version Updated**: 1.4.0 → 1.5.0
@@ -511,7 +511,7 @@ API calls required:
 ## Files Modified
 
 ### Core Implementation
-- ✅ `src/main/java/com/xebyte/GhidraMCPPlugin.java` (+770 lines)
+- ✅ `src/main/java/com/xebyte/MCP4GhidraPlugin.java` (+770 lines)
 - ✅ `bridge_mcp_ghidra.py` (+220 lines)
 - ✅ `pom.xml` (version updated)
 

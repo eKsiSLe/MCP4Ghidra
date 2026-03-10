@@ -78,7 +78,7 @@ public class BatchDocumentFunctionsAllBinaries extends GhidraScript {
     private int minThreshold = 0;                         // Functions BELOW this need work
     private int maxScore = 99;                            // Maximum score to include (skip 100%)
 
-    // Scoring penalties (subtractive from 100) - matches GhidraMCPPlugin.java
+    // Scoring penalties (subtractive from 100) - matches MCP4GhidraPlugin.java
     private static final int PENALTY_FUN_NAME = 30;           // FUN_* or thunk_FUN_*
     private static final int PENALTY_NO_SIGNATURE = 20;       // No function signature
     private static final int PENALTY_NO_CALLING_CONV = 10;    // No calling convention
@@ -376,7 +376,7 @@ public class BatchDocumentFunctionsAllBinaries extends GhidraScript {
     }
 
     private int analyzeFunction(Function func, Program program, DecompInterface decompiler, List<String> issues) {
-        // Start at 100, subtract penalties - matches GhidraMCPPlugin.java approach
+        // Start at 100, subtract penalties - matches MCP4GhidraPlugin.java approach
         int score = 100;
         String funcName = func.getName();
 

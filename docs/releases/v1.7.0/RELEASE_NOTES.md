@@ -234,7 +234,7 @@ print("Use disassembly for accurate analysis.")
 
 ## Files Modified
 
-- `src/main/java/com/xebyte/GhidraMCPPlugin.java`: Added 4 new endpoints
+- `src/main/java/com/xebyte/MCP4GhidraPlugin.java`: Added 4 new endpoints
 - `bridge_mcp_ghidra.py`: Added 4 new MCP tools
 - `pom.xml`: Version 1.7.0
 - `src/main/resources/extension.properties`: Version 1.7.0

@@ -144,7 +144,7 @@ Priority: Medium - helpful for malware analysis
        return safe_get(endpoint, {"param1": param1, "param2": param2})
    ```
 
-2. Add Java endpoint in `GhidraMCPPlugin.java`:
+2. Add Java endpoint in `MCP4GhidraPlugin.java`:
    ```java
    @Override
    public void processEvent(PluginEvent event) {
@@ -217,7 +217,7 @@ git commit -m "docs: Clarify batch operation performance benefits"
 
 ## Code Style & Standards
 
-### Java (GhidraMCPPlugin.java)
+### Java (MCP4GhidraPlugin.java)
 
 ```java
 // Use clear naming
@@ -276,7 +276,7 @@ def my_tool(param: str, optional: int = 0) -> dict:
 
 ### Java Tests
 ```java
-// src/test/java/com/xebyte/GhidraMCPPluginTest.java
+// src/test/java/com/xebyte/MCP4GhidraPluginTest.java
 
 @Test
 public void testDecompileFunction() {
@@ -391,7 +391,7 @@ git clone https://github.com/YOUR-USERNAME/ghidra-mcp.git
 cd ghidra-mcp
 
 # 2. Install Ghidra libraries to local Maven repo
-.\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath "C:\path\to\ghidra"  # Windows
+.\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath "C:\path\to\ghidra"  # Windows
 
 # 3. Build plugin
 mvn clean package

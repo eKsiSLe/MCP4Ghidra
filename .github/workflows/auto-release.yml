@@ -172,8 +172,8 @@ jobs:
       run: |
         VERSION="${{ needs.check-version.outputs.new-version }}"
         MCP_TOOLS=$(grep -c '@mcp.tool()' bridge_mcp_ghidra.py 2>/dev/null || echo "unknown")
-        GUI_EPS=$(grep -c 'createContext(' src/main/java/com/xebyte/GhidraMCPPlugin.java 2>/dev/null || echo "unknown")
-        HEADLESS_EPS=$(grep -c 'createContext(' src/main/java/com/xebyte/headless/GhidraMCPHeadlessServer.java 2>/dev/null || echo "unknown")
+        GUI_EPS=$(grep -c 'createContext(' src/main/java/com/xebyte/MCP4GhidraPlugin.java 2>/dev/null || echo "unknown")
+        HEADLESS_EPS=$(grep -c 'createContext(' src/main/java/com/xebyte/headless/MCP4GhidraHeadlessServer.java 2>/dev/null || echo "unknown")
 
         # Get commits since last tag
         LAST_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")

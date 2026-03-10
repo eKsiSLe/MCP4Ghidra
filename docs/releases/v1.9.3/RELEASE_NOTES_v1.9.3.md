@@ -110,7 +110,7 @@ cd ghidra-mcp
 mvn clean package
 
 # Deploy to Ghidra
-.\ghidra-mcp-setup.ps1
+.\mcp4ghidra-setup.ps1
 ```
 
 ## Next Steps

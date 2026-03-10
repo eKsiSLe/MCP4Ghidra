@@ -18,7 +18,7 @@ ghidra-mcp/
 │   └── README.md                      # Project overview
 │
 ├── 🔨 Build & Deployment (Root)
-│   ├── ghidra-mcp-setup.ps1           # Unified script: setup deps, build, deploy, clean
+│   ├── mcp4ghidra-setup.ps1           # Unified script: setup deps, build, deploy, clean
 │   ├── clean-install.ps1             # Clean installation script
 │   └── cleanup.ps1                   # Cleanup build artifacts
 │
@@ -37,7 +37,7 @@ ghidra-mcp/
 │   ├── CHANGELOG.md                  # Version history
 │   ├── CONTRIBUTING.md               # Contribution guidelines
 │   ├── LICENSE                       # Project license
-│   ├── CLAUDE.md                     # Claude AI integration guide
+│   ├── AI_ASSISTANT.md                     # Claude AI integration guide
 │   ├── NAMING_CONVENTIONS.md         # Naming standards
 │   ├── IMPROVEMENTS.md               # Project improvements log
 │   ├── IMPROVEMENTS_QUICK_REFERENCE.md  # Quick reference
@@ -215,7 +215,7 @@ Essential files that define the project and should remain at root level:
 
 ### Build & Deployment (Keep in Root)
 Scripts frequently used during development:
-- `ghidra-mcp-setup.ps1`
+- `mcp4ghidra-setup.ps1`
 - `clean-install.ps1`
 - `cleanup.ps1`
 
@@ -307,7 +307,7 @@ README.md
 CHANGELOG.md
 CONTRIBUTING.md
 DOCUMENTATION_INDEX.md
-CLAUDE.md
+AI_ASSISTANT.md
 NAMING_CONVENTIONS.md
 ```
 
@@ -354,7 +354,7 @@ After moving files:
 | Task | Location |
 |------|----------|
 | Start MCP server | `bridge_mcp_ghidra.py` |
-| Deploy plugin | `ghidra-mcp-setup.ps1` |
+| Deploy plugin | `mcp4ghidra-setup.ps1` |
 | Run tests | `pytest tests/` |
 | Extract functions | `scripts/functions-extract.ps1` |
 | Process data | `scripts/data-process.ps1` |

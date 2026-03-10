@@ -7,7 +7,7 @@
 
 ## Problem
 
-`GhidraMCPPlugin.java` is 16,945 lines containing 149 HTTP endpoints and 257 private helper methods. `HeadlessEndpointHandler.java` duplicates ~6,000 lines of the same business logic for headless mode. This makes the codebase difficult to navigate, test, and extend.
+`MCP4GhidraPlugin.java` is 16,945 lines containing 149 HTTP endpoints and 257 private helper methods. `HeadlessEndpointHandler.java` duplicates ~6,000 lines of the same business logic for headless mode. This makes the codebase difficult to navigate, test, and extend.
 
 ## Solution
 
@@ -17,14 +17,14 @@ Extract shared business logic into 10 service classes under `com.xebyte.core`. T
 
 ### Before
 ```
-GhidraMCPPlugin.java (16,945 lines)  ──>  HTTP Server (149 endpoints)
+MCP4GhidraPlugin.java (16,945 lines)  ──>  HTTP Server (149 endpoints)
 HeadlessEndpointHandler.java (6,452 lines)  ──>  HTTP Server (173 endpoints)
                                     ~6,000 lines duplicated
 ```
 
 ### After
 ```
-GhidraMCPPlugin.java (~1,200 lines)     ──>  HTTP Server (149 endpoints)
+MCP4GhidraPlugin.java (~1,200 lines)     ──>  HTTP Server (149 endpoints)
     └── delegates to shared services          │
 HeadlessEndpointHandler.java (~300 lines) ──>  HTTP Server (173 endpoints)
     └── delegates to shared services          │
@@ -91,7 +91,7 @@ Each phase is independently buildable and testable.
 The key migration for write operations:
 
 ```java
-// BEFORE (manual SwingUtilities + transaction in GhidraMCPPlugin.java):
+// BEFORE (manual SwingUtilities + transaction in MCP4GhidraPlugin.java):
 SwingUtilities.invokeAndWait(() -> {
     int tx = program.startTransaction("Rename function");
     boolean success = false;
@@ -116,7 +116,7 @@ return threadingStrategy.executeWrite(program, "Rename function", () -> {
 
 | Metric | Before | After |
 |---|---|---|
-| `GhidraMCPPlugin.java` | 16,945 lines | ~1,200 lines |
+| `MCP4GhidraPlugin.java` | 16,945 lines | ~1,200 lines |
 | `HeadlessEndpointHandler.java` | 6,452 lines | ~300 lines |
 | Duplicated code | ~6,000 lines | 0 |
 | Total Java lines | ~24,400 | ~10,350 |
