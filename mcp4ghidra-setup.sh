@@ -4,12 +4,12 @@
 # Target: Ghidra 12.0.3
 #
 # Usage:
-#   ./ghidra-mcp-setup.sh --deploy --ghidra-path /opt/ghidra_12.0.3_PUBLIC
-#   ./ghidra-mcp-setup.sh --setup-deps --ghidra-path /opt/ghidra_12.0.3_PUBLIC
-#   ./ghidra-mcp-setup.sh --build-only
-#   ./ghidra-mcp-setup.sh --clean
-#   ./ghidra-mcp-setup.sh --preflight --ghidra-path /opt/ghidra_12.0.3_PUBLIC
-#   ./ghidra-mcp-setup.sh --help
+#   ./mcp4ghidra-setup.sh --deploy --ghidra-path /opt/ghidra_12.0.3_PUBLIC
+#   ./mcp4ghidra-setup.sh --setup-deps --ghidra-path /opt/ghidra_12.0.3_PUBLIC
+#   ./mcp4ghidra-setup.sh --build-only
+#   ./mcp4ghidra-setup.sh --clean
+#   ./mcp4ghidra-setup.sh --preflight --ghidra-path /opt/ghidra_12.0.3_PUBLIC
+#   ./mcp4ghidra-setup.sh --help
 
 set -euo pipefail
 
@@ -75,11 +75,11 @@ show_usage() {
     echo "  --help, -h            Show this help text"
     echo ""
     echo "Examples:"
-    echo "  ./ghidra-mcp-setup.sh --deploy --ghidra-path /opt/ghidra_12.0.3_PUBLIC"
-    echo "  ./ghidra-mcp-setup.sh --setup-deps --ghidra-path /opt/ghidra_12.0.3_PUBLIC"
-    echo "  ./ghidra-mcp-setup.sh --preflight --ghidra-path /opt/ghidra_12.0.3_PUBLIC"
-    echo "  ./ghidra-mcp-setup.sh --build-only"
-    echo "  ./ghidra-mcp-setup.sh --clean"
+    echo "  ./mcp4ghidra-setup.sh --deploy --ghidra-path /opt/ghidra_12.0.3_PUBLIC"
+    echo "  ./mcp4ghidra-setup.sh --setup-deps --ghidra-path /opt/ghidra_12.0.3_PUBLIC"
+    echo "  ./mcp4ghidra-setup.sh --preflight --ghidra-path /opt/ghidra_12.0.3_PUBLIC"
+    echo "  ./mcp4ghidra-setup.sh --build-only"
+    echo "  ./mcp4ghidra-setup.sh --clean"
     echo ""
 }
 
@@ -656,7 +656,7 @@ fi
 if [[ -z "$GHIDRA_PATH" && "$ACTION" != "build-only" && "$ACTION" != "clean" ]]; then
     log_error "Ghidra installation not found."
     log_info "Set GHIDRA_PATH in .env file, or pass --ghidra-path parameter:"
-    echo "  ./ghidra-mcp-setup.sh --deploy --ghidra-path '/opt/ghidra_${GHIDRA_VERSION}_PUBLIC'"
+    echo "  ./mcp4ghidra-setup.sh --deploy --ghidra-path '/opt/ghidra_${GHIDRA_VERSION}_PUBLIC'"
     echo ""
     log_info "Or create a .env file from the template:"
     echo "  cp .env.template .env"
@@ -714,7 +714,7 @@ fi
 if [[ "$ACTION" == "setup-deps" ]]; then
     if [[ ! -f "${GHIDRA_PATH}/ghidraRun" ]]; then
         log_error "Ghidra not found at: $GHIDRA_PATH"
-        log_info "Please specify the correct path: ./ghidra-mcp-setup.sh --setup-deps --ghidra-path '/path/to/ghidra'"
+        log_info "Please specify the correct path: ./mcp4ghidra-setup.sh --setup-deps --ghidra-path '/path/to/ghidra'"
         exit 1
     fi
 
@@ -734,7 +734,7 @@ fi
 # Validate Ghidra path
 if [[ ! -f "${GHIDRA_PATH}/ghidraRun" ]]; then
     log_error "Ghidra not found at: $GHIDRA_PATH"
-    log_info "Please specify the correct path: ./ghidra-mcp-setup.sh --ghidra-path '/path/to/ghidra'"
+    log_info "Please specify the correct path: ./mcp4ghidra-setup.sh --ghidra-path '/path/to/ghidra'"
     exit 1
 fi
 log_success "Found Ghidra at: $GHIDRA_PATH"

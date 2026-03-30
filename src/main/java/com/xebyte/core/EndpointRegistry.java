@@ -4,7 +4,7 @@ import java.util.*;
 
 /**
  * Declarative endpoint registry that maps HTTP paths to service method calls.
- * Shared between GUI ({@code GhidraMCPPlugin}) and headless ({@code GhidraMCPHeadlessServer}) modes.
+ * Shared between GUI ({@code MCP4GhidraPlugin}) and headless ({@code MCP4GhidraHeadlessServer}) modes.
  *
  * <p>Only includes endpoints whose handler logic lives entirely in the service layer.
  * GUI-only endpoints ({@code /get_current_address}, {@code /get_current_function},

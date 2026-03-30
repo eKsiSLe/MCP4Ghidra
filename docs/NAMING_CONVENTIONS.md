@@ -63,7 +63,7 @@ Java files use **PascalCase** matching the public class name:
 
 ```java
 ✅ GOOD
-GhidraMCPPlugin.java          — Main plugin entry point
+MCP4GhidraPlugin.java          — Main plugin entry point
 ToolRegistry.java             — Tool registration system
 MCSProtocolHandler.java       — Protocol implementation
 
@@ -75,7 +75,7 @@ Ghidra-MCP-Plugin.java
 
 ### Class Naming (PascalCase)
 ```java
-public class GhidraMCPPlugin { }           ✅
+public class MCP4GhidraPlugin { }           ✅
 public class ToolRegistry { }               ✅
 public class MCSProtocolHandler { }         ✅
 ```
@@ -158,7 +158,7 @@ PowerShell and Bash scripts use lowercase with separators:
 
 ```
 ✅ GOOD
-ghidra-mcp-setup.ps1
+mcp4ghidra-setup.ps1
 run_tests.sh
 build-docker.sh
 
@@ -236,12 +236,12 @@ ghidra-mcp/
 ├── src/
 │   ├── main/java/
 │   │   └── com/xebyte/
-│   │       ├── GhidraMCPPlugin.java
+│   │       ├── MCP4GhidraPlugin.java
 │   │       ├── ToolRegistry.java
 │   │       └── ...
 │   └── test/java/
 │       └── com/xebyte/
-│           └── GhidraMCPPluginTest.java
+│           └── MCP4GhidraPluginTest.java
 ├── scripts/
 │   ├── deploy.sh
 │   ├── build.ps1
@@ -259,7 +259,7 @@ ghidra-mcp/
 |------|----------|---------|-----------|
 | **Markdown (root)** | UPPERCASE | `README.md` | Visibility, GitHub convention |
 | **Markdown (docs)** | UPPERCASE | `TOOL_REFERENCE.md` | Organization, consistency |
-| **Java files** | PascalCase | `GhidraMCPPlugin.java` | Java convention |
+| **Java files** | PascalCase | `MCP4GhidraPlugin.java` | Java convention |
 | **Java classes** | PascalCase | `class ToolRegistry` | Java convention |
 | **Java methods** | camelCase | `getTool()` | Java convention |
 | **Java constants** | UPPER_SNAKE_CASE | `MAX_SIZE` | Java convention |
@@ -267,7 +267,7 @@ ghidra-mcp/
 | **Python classes** | PascalCase | `class GhidraBridge` | PEP 8 convention |
 | **Python functions** | snake_case | `get_xrefs()` | PEP 8 convention |
 | **Python constants** | UPPER_SNAKE_CASE | `API_VERSION` | PEP 8 convention |
-| **Shell scripts** | kebab-case | `ghidra-mcp-setup.ps1` | Shell convention |
+| **Shell scripts** | kebab-case | `mcp4ghidra-setup.ps1` | Shell convention |
 | **Config files** | lowercase.ext | `mcp-config.json` | Convention |
 | **Logs** | snake_case_date | `build_log_20251105.txt` | Readability |
 
@@ -296,7 +296,7 @@ For existing files that don't follow conventions:
 
 | Current | Recommended | Action | Priority |
 |---------|-------------|--------|----------|
-| `CLAUDE.md` | `ARCHITECTURE.md` | Rename when restructuring | Low |
+| `AI_ASSISTANT.md` | `ARCHITECTURE.md` | Rename when restructuring | Low |
 | `ordinal_fix_log_*.txt` | Archive to `logs/` folder | Organize existing logs | Low |
 | Old reports | Archive or consolidate | Move to `archive/` | Low |
 | Examples `.py` files | Already `snake_case` ✅ | No action | — |

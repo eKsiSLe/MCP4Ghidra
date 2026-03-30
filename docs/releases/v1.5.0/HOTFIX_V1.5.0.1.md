@@ -8,13 +8,13 @@
 When attempting to enable the GhidraMCP plugin in Ghidra v11.4.2, users encountered:
 
 ```
-Error constructing plugin: class com.xebyte.GhidraMCPPlugin
+Error constructing plugin: class com.xebyte.MCP4GhidraPlugin
 ghidra.framework.plugintool.util.PluginException: Error constructing plugin
 
 Caused by: java.lang.IllegalArgumentException: cannot add context to list
     at jdk.httpserver/sun.net.httpserver.ContextList.add(ContextList.java:37)
-    at com.xebyte.GhidraMCPPlugin.startServer(GhidraMCPPlugin.java:1064)
-    at com.xebyte.GhidraMCPPlugin.<init>(GhidraMCPPlugin.java:107)
+    at com.xebyte.MCP4GhidraPlugin.startServer(MCP4GhidraPlugin.java:1064)
+    at com.xebyte.MCP4GhidraPlugin.<init>(MCP4GhidraPlugin.java:107)
 ```
 
 ## Root Cause
@@ -29,7 +29,7 @@ The HTTP server was attempting to create contexts (URL endpoints) that already e
 
 ### 1. Enhanced Port Binding Error Handling
 
-**File**: `src/main/java/com/xebyte/GhidraMCPPlugin.java`
+**File**: `src/main/java/com/xebyte/MCP4GhidraPlugin.java`
 **Lines**: 127-135
 
 ```java
@@ -51,7 +51,7 @@ try {
 
 ### 2. Improved Cleanup on Disposal
 
-**File**: `src/main/java/com/xebyte/GhidraMCPPlugin.java`
+**File**: `src/main/java/com/xebyte/MCP4GhidraPlugin.java`
 **Lines**: 7721-7736
 
 ```java
@@ -80,13 +80,13 @@ public void dispose() {
 
 ### 3. Better User Feedback on Startup Errors
 
-**File**: `src/main/java/com/xebyte/GhidraMCPPlugin.java`
+**File**: `src/main/java/com/xebyte/MCP4GhidraPlugin.java`
 **Lines**: 106-120
 
 ```java
 try {
     startServer();
-    Msg.info(this, "GhidraMCPPlugin loaded successfully with HTTP server on port " +
+    Msg.info(this, "MCP4GhidraPlugin loaded successfully with HTTP server on port " +
         options.getInt(PORT_OPTION_NAME, DEFAULT_PORT));
 }
 catch (IOException e) {
@@ -170,7 +170,7 @@ ZIP:  F:\ghidra_11.4.2\Extensions\Ghidra\GhidraMCP-1.5.0.zip
 After enabling the plugin, you should see in the Ghidra console:
 
 ```
-GhidraMCPPlugin loaded successfully with HTTP server on port 8089
+MCP4GhidraPlugin loaded successfully with HTTP server on port 8089
 ```
 
 Test connectivity:
@@ -187,9 +187,9 @@ Expected response:
 
 | File | Change | Impact |
 |------|--------|--------|
-| GhidraMCPPlugin.java | Enhanced error handling | Better user experience |
-| GhidraMCPPlugin.java | Improved cleanup | Prevents port locking |
-| GhidraMCPPlugin.java | Added delay on dispose | Ensures clean shutdown |
+| MCP4GhidraPlugin.java | Enhanced error handling | Better user experience |
+| MCP4GhidraPlugin.java | Improved cleanup | Prevents port locking |
+| MCP4GhidraPlugin.java | Added delay on dispose | Ensures clean shutdown |
 
 ## Version History
 

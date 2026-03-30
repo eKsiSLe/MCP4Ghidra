@@ -26,7 +26,7 @@ import java.util.*;
  * functions across binaries compiled by different compilers. All methods
  * are static, stateless, and thread-safe.
  *
- * Used by both GhidraMCPPlugin (GUI) and HeadlessEndpointHandler.
+ * Used by both MCP4GhidraPlugin (GUI) and HeadlessEndpointHandler.
  */
 public class BinaryComparisonService {
 
@@ -820,7 +820,7 @@ public class BinaryComparisonService {
 
     /**
      * Normalize an instruction for comparison (address-independent).
-     * Mirrors the normalization logic in GhidraMCPPlugin.computeNormalizedFunctionHash().
+     * Mirrors the normalization logic in MCP4GhidraPlugin.computeNormalizedFunctionHash().
      */
     static String normalizeInstruction(Instruction instr, AddressSetView funcBody, Address funcStart, Program program) {
         StringBuilder sb = new StringBuilder();

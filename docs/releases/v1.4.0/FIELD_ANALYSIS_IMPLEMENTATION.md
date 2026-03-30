@@ -135,7 +135,7 @@ Implemented three new MCP tools to enable automated field-level analysis of stru
 
 ## Code Changes
 
-### Java Plugin (GhidraMCPPlugin.java)
+### Java Plugin (MCP4GhidraPlugin.java)
 
 **Added Endpoints** (lines 828-860):
 - `/analyze_struct_field_usage` - Comprehensive field analysis
@@ -252,7 +252,7 @@ create_struct("RefinedStructName", [
 ## Documentation Updates
 
 - [x] ENHANCED_ANALYSIS_PROMPT.md - Added v1.4.0 tools and examples
-- [x] GhidraMCPPlugin.java - Updated version to 1.4.0
+- [x] MCP4GhidraPlugin.java - Updated version to 1.4.0
 - [x] bridge_mcp_ghidra.py - Added comprehensive tool docstrings
 - [ ] README.md - Should be updated with v1.4.0 features
 - [ ] docs/API_REFERENCE.md - Should be updated with new endpoints

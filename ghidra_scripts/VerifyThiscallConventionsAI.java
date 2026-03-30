@@ -26,7 +26,7 @@ import ghidra.program.model.symbol.*;
 import java.io.*;
 import java.util.*;
 
-public class VerifyThiscallConventionsClaude extends GhidraScript {
+public class VerifyThiscallConventionsAI extends GhidraScript {
 
     @Override
     public void run() throws Exception {

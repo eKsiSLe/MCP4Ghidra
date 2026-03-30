@@ -33,8 +33,8 @@ Complete version history for the Ghidra MCP Server project.
 
 - **Fixed POST endpoint data format** (#66): `safe_post()` was sending form-urlencoded data while the Java server expected JSON. Changed to send `json=data` instead of `data=data`, fixing `rename_function_by_address` and all other POST-based endpoints.
 - **Added segment:offset address support** (#65): Bridge now accepts segment-prefixed addresses (e.g., `mem:20de`, `code:00169d`) used by non-x86/segmented architectures. Updated `sanitize_address()`, `validate_hex_address()`, and `normalize_address()` to pass through segment-qualified addresses without incorrect `0x` prefixing.
-- **Relaxed Ghidra version compatibility check** (#64): Setup scripts (`ghidra-mcp-setup.ps1` and `ghidra-mcp-setup.sh`) now warn instead of error when deploying to a Ghidra installation with a different patch version (e.g., building with 12.0.3 and deploying to 12.0.4). Major.minor mismatches still block deployment.
-- **Fixed Linux phantom process detection** (#63): Tightened `get_ghidra_pids()` regex in `ghidra-mcp-setup.sh` to match only the Java class name pattern (`ghidra.GhidraRun`/`ghidra.GhidraLauncher`), removing overly broad alternatives that caused false positives.
+- **Relaxed Ghidra version compatibility check** (#64): Setup scripts (`mcp4ghidra-setup.ps1` and `mcp4ghidra-setup.sh`) now warn instead of error when deploying to a Ghidra installation with a different patch version (e.g., building with 12.0.3 and deploying to 12.0.4). Major.minor mismatches still block deployment.
+- **Fixed Linux phantom process detection** (#63): Tightened `get_ghidra_pids()` regex in `mcp4ghidra-setup.sh` to match only the Java class name pattern (`ghidra.GhidraRun`/`ghidra.GhidraLauncher`), removing overly broad alternatives that caused false positives.
 - **Fixed FrontEndProgramProvider multi-version bugs**: Fixed consumer reference leak on cache overwrite, `pathToName` not cleared in `releaseAll()`, and `getAllOpenPrograms()` deduplicating by name instead of identity (hiding same-named programs from different versions).
 - **Reduced MCP response token usage ~30-40%**: Optimized JSON response payloads across service endpoints.
 
@@ -128,8 +128,8 @@ Complete version history for the Ghidra MCP Server project.
 ### Major Release -- Service Layer Architecture Refactor
 
 #### Architecture Refactor
-- **Monolith decomposition**: Extracted shared business logic from `GhidraMCPPlugin.java` (16,945 lines) into 12 focused service classes under `com.xebyte.core/`
-- **Plugin reduced 69%**: `GhidraMCPPlugin.java` went from 16,945 to 5,273 lines (server lifecycle, HTTP wiring, and GUI-only endpoints remain)
+- **Monolith decomposition**: Extracted shared business logic from `MCP4GhidraPlugin.java` (16,945 lines) into 12 focused service classes under `com.xebyte.core/`
+- **Plugin reduced 69%**: `MCP4GhidraPlugin.java` went from 16,945 to 5,273 lines (server lifecycle, HTTP wiring, and GUI-only endpoints remain)
 - **Headless reduced 67%**: `HeadlessEndpointHandler.java` went from 6,452 to 2,153 lines by delegating to the same shared services
 - **Zero breaking changes**: All HTTP endpoint paths, parameter names, and JSON response formats are unchanged. The MCP bridge and all clients work without modification
 
@@ -185,7 +185,7 @@ Complete version history for the Ghidra MCP Server project.
 - **Fixed ENDPOINT_COUNT** -- Corrected from 146 to 149 to match actual `createContext` registration count
 - **Centralized version in extension.properties** -- Description now uses `${project.version}` Maven filtering instead of hardcoded version string
 - **Expanded bump-version.ps1** -- Now covers 11 files (up from 7): added README badge, AGENTS.md, docs/releases/README.md. Extension.properties is now Maven-dynamic.
-- **Version consistency audit** -- Fixed stale 3.0.0 references across ghidra-mcp-setup.ps1, tests/endpoints.json, README.md, AGENTS.md, and docs/releases/README.md
+- **Version consistency audit** -- Fixed stale 3.0.0 references across mcp4ghidra-setup.ps1, tests/endpoints.json, README.md, AGENTS.md, and docs/releases/README.md
 
 ---
 
@@ -671,14 +671,14 @@ code = decompile_function(address='0x401000', offset=100, limit=100)
   - Installed in x86win.cspec
 
 ### Bug Fixes
-- Ã¢Å“â€¦ **Fixed DocumentFunctionWithClaude.java** - Windows compatibility
+- Ã¢Å“â€¦ **Fixed DocumentFunctionWithAI.java** - Windows compatibility
   - Resolved "claude: CreateProcess error=2" 
   - Now uses full path: `%APPDATA%\npm\claude.cmd`
   - Changed keybinding from Ctrl+Shift+D to Ctrl+Shift+P
 
 ### New Files & Tools
 - Ã¢Å“â€¦ **ghidra_scripts/** - Example Ghidra scripts
-  - `DocumentFunctionWithClaude.java` - AI-assisted function documentation
+  - `DocumentFunctionWithAI.java` - AI-assisted function documentation
   - `ClearCallReturnOverrides.java` - Clean orphaned flow overrides
 - Ã¢Å“â€¦ **mcp-config.json** - Claude MCP configuration template
 - Ã¢Å“â€¦ **mcp_function_processor.py** - Batch function processing automation
@@ -746,7 +746,7 @@ code = decompile_function(address='0x401000', offset=100, limit=100)
 
 ### Changed Files
 - `bridge_mcp_ghidra.py` (+585 lines) - 6 new MCP tools, enhanced field analysis
-- `src/main/java/com/xebyte/GhidraMCPPlugin.java` (+188 lines) - Struct analysis endpoints
+- `src/main/java/com/xebyte/MCP4GhidraPlugin.java` (+188 lines) - Struct analysis endpoints
 - `pom.xml` (Version 1.7.3 Ã¢â€ â€™ 1.8.0)
 - `.gitignore` - Added `*.txt` for temporary files
 
@@ -769,7 +769,7 @@ code = decompile_function(address='0x401000', offset=100, limit=100)
 - Ã¢Å“â€¦ Complete verification documented in `DISASSEMBLE_BYTES_VERIFICATION.md`
 
 ### Changed Files
-- `src/main/java/com/xebyte/GhidraMCPPlugin.java` (Line 9716: Added `success = true`)
+- `src/main/java/com/xebyte/MCP4GhidraPlugin.java` (Line 9716: Added `success = true`)
 - `pom.xml` (Version 1.7.2 Ã¢â€ â€™ 1.7.3)
 - `src/main/resources/extension.properties` (Version 1.7.2 Ã¢â€ â€™ 1.7.3)
 

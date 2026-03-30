@@ -130,7 +130,7 @@ pytest tests/integration/test_all_endpoints.py -v
 ┌─────────────────────────────────────────────────────────────┐
 │                     Docker Container                         │
 │  ┌────────────────────────────────────────────────────────┐ │
-│  │              GhidraMCPHeadlessServer                    │ │
+│  │              MCP4GhidraHeadlessServer                    │ │
 │  │  ┌──────────────────┐  ┌─────────────────────────────┐ │ │
 │  │  │ HeadlessProgram  │  │ HeadlessEndpointHandler     │ │ │
 │  │  │    Provider      │  │   (127 REST endpoints)      │ │ │

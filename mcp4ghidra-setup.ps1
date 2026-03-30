@@ -18,16 +18,16 @@ Version safety checks enforce consistency between:
 - version inferred from -GhidraPath (if present)
 
 .EXAMPLE
-.\ghidra-mcp-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -Deploy -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
 
 .EXAMPLE
-.\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
+.\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath "C:\ghidra_12.0.3_PUBLIC"
 
 .EXAMPLE
-.\ghidra-mcp-setup.ps1 -BuildOnly
+.\mcp4ghidra-setup.ps1 -BuildOnly
 
 .EXAMPLE
-.\ghidra-mcp-setup.ps1 -Help
+.\mcp4ghidra-setup.ps1 -Help
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
@@ -89,13 +89,13 @@ function Show-Usage {
     Write-Host "  -Help            Show this help text"
     Write-Host ""
     Write-Host "Examples:"
-    Write-Host "  .\ghidra-mcp-setup.ps1 -Deploy -GhidraPath 'C:\ghidra_12.0.3_PUBLIC'"
-    Write-Host "  .\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath 'C:\ghidra_12.0.3_PUBLIC'"
-    Write-Host "  .\ghidra-mcp-setup.ps1 -Preflight -GhidraPath 'C:\ghidra_12.0.3_PUBLIC'"
-    Write-Host "  .\ghidra-mcp-setup.ps1 -BuildOnly"
-    Write-Host "  .\ghidra-mcp-setup.ps1 -Clean"
+    Write-Host "  .\mcp4ghidra-setup.ps1 -Deploy -GhidraPath 'C:\ghidra_12.0.3_PUBLIC'"
+    Write-Host "  .\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath 'C:\ghidra_12.0.3_PUBLIC'"
+    Write-Host "  .\mcp4ghidra-setup.ps1 -Preflight -GhidraPath 'C:\ghidra_12.0.3_PUBLIC'"
+    Write-Host "  .\mcp4ghidra-setup.ps1 -BuildOnly"
+    Write-Host "  .\mcp4ghidra-setup.ps1 -Clean"
     Write-Host ""
-    Write-Host "Tip: For comment-based help, run: Get-Help .\ghidra-mcp-setup.ps1 -Detailed"
+    Write-Host "Tip: For comment-based help, run: Get-Help .\mcp4ghidra-setup.ps1 -Detailed"
     Write-Host ""
 }
 
@@ -241,7 +241,7 @@ if ($pathGhidraVersion -and $pathGhidraVersion -ne $GhidraVersion) {
 if (-not $GhidraPath -and ($SetupDeps -or -not $BuildOnly -and -not $Clean)) {
     Write-LogError "Ghidra installation not found."
     Write-LogInfo "Set GHIDRA_PATH in .env file, or pass -GhidraPath parameter:"
-    Write-Host "  .\ghidra-mcp-setup.ps1 -Deploy -GhidraPath 'C:\path\to\ghidra_${GhidraVersion}_PUBLIC'"
+    Write-Host "  .\mcp4ghidra-setup.ps1 -Deploy -GhidraPath 'C:\path\to\ghidra_${GhidraVersion}_PUBLIC'"
     Write-Host ""
     Write-LogInfo "Or create a .env file from the template:"
     Write-Host "  Copy-Item .env.template .env"
@@ -704,7 +704,7 @@ if ($BuildOnly) {
 if ($SetupDeps) {
     if (-not (Test-Path "$GhidraPath\ghidraRun.bat")) {
         Write-LogError "Ghidra not found at: $GhidraPath"
-        Write-LogInfo "Please specify the correct path: .\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath 'C:\path\to\ghidra'"
+        Write-LogInfo "Please specify the correct path: .\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath 'C:\path\to\ghidra'"
         exit 1
     }
 
@@ -720,7 +720,7 @@ if ($actionCount -eq 0) {
 # Validate Ghidra path first
 if (-not (Test-Path "$GhidraPath\ghidraRun.bat")) {
     Write-LogError "Ghidra not found at: $GhidraPath"
-    Write-LogInfo "Please specify the correct path: .\ghidra-mcp-setup.ps1 -GhidraPath 'C:\path\to\ghidra'"
+    Write-LogInfo "Please specify the correct path: .\mcp4ghidra-setup.ps1 -GhidraPath 'C:\path\to\ghidra'"
     exit 1
 }
 Write-LogSuccess "Found Ghidra at: $GhidraPath"
@@ -999,9 +999,9 @@ if (Test-Path $bridgeSourcePath) {
 # Patches FrontEndTool.xml to explicitly include the plugin class in the Utility package
 $ghidraUserDir = "$env:APPDATA\ghidra"
 if (Test-Path $ghidraUserDir) {
-    $pluginClass = "com.xebyte.GhidraMCPPlugin"
+    $pluginClass = "com.xebyte.MCP4GhidraPlugin"
 
-    # --- Step 1: Patch FrontEndTool.xml to auto-load GhidraMCPPlugin ---
+    # --- Step 1: Patch FrontEndTool.xml to auto-load MCP4GhidraPlugin ---
     $frontEndFiles = Get-ChildItem -Path "$ghidraUserDir\*\FrontEndTool.xml" -ErrorAction SilentlyContinue
 
     foreach ($feFile in $frontEndFiles) {
@@ -1023,7 +1023,7 @@ if (Test-Path $ghidraUserDir) {
 
             # Check if plugin is already included in the Utility package
             if ($feContent -match [regex]::Escape($pluginClass)) {
-                Write-LogSuccess "GhidraMCPPlugin already configured in FrontEnd: $($feFile.FullName)"
+                Write-LogSuccess "MCP4GhidraPlugin already configured in FrontEnd: $($feFile.FullName)"
             } elseif ($feContent -match '<PACKAGE NAME="Utility"\s*/>') {
                 # Utility package exists as self-closing tag - expand it with INCLUDE
                 $feContent = $feContent -replace '<PACKAGE NAME="Utility"\s*/>', @"
@@ -1032,12 +1032,12 @@ if (Test-Path $ghidraUserDir) {
             </PACKAGE>
 "@
                 $modified = $true
-                Write-LogSuccess "Added GhidraMCPPlugin to FrontEnd Utility package: $($feFile.FullName)"
+                Write-LogSuccess "Added MCP4GhidraPlugin to FrontEnd Utility package: $($feFile.FullName)"
             } elseif ($feContent -match '<PACKAGE NAME="Utility">') {
                 # Utility package exists as block - add INCLUDE inside it
                 $feContent = $feContent -replace '(<PACKAGE NAME="Utility">)', "`$1`n                <INCLUDE CLASS=`"$pluginClass`" />"
                 $modified = $true
-                Write-LogSuccess "Added GhidraMCPPlugin to existing FrontEnd Utility block: $($feFile.FullName)"
+                Write-LogSuccess "Added MCP4GhidraPlugin to existing FrontEnd Utility block: $($feFile.FullName)"
             } else {
                 # No Utility package at all (unusual) - add the whole block
                 $feContent = $feContent -replace '(<ROOT_NODE)', @"
@@ -1047,11 +1047,11 @@ if (Test-Path $ghidraUserDir) {
             `$1
 "@
                 $modified = $true
-                Write-LogSuccess "Added Utility package with GhidraMCPPlugin to FrontEnd config: $($feFile.FullName)"
+                Write-LogSuccess "Added Utility package with MCP4GhidraPlugin to FrontEnd config: $($feFile.FullName)"
             }
 
             if ($modified) {
-                if ($PSCmdlet.ShouldProcess($feFile.FullName, "Patch FrontEnd config for GhidraMCPPlugin")) {
+                if ($PSCmdlet.ShouldProcess($feFile.FullName, "Patch FrontEnd config for MCP4GhidraPlugin")) {
                     Set-Content -Path $feFile.FullName -Value $feContent -Encoding UTF8 -NoNewline
                 }
             }
@@ -1070,7 +1070,7 @@ if (Test-Path $ghidraUserDir) {
 
             if ($tcdContent -match [regex]::Escape($pluginClass)) {
                 # Remove the GhidraMCP PACKAGE block from CodeBrowser
-                $removePattern = '\s*<PACKAGE NAME="GhidraMCP">\s*<INCLUDE CLASS="com\.xebyte\.GhidraMCPPlugin"\s*/>\s*</PACKAGE>'
+                $removePattern = '\s*<PACKAGE NAME="GhidraMCP">\s*<INCLUDE CLASS="com\.xebyte\.MCP4GhidraPlugin"\s*/>\s*</PACKAGE>'
                 $newContent = $tcdContent -replace $removePattern, ''
 
                 if ($newContent -ne $tcdContent) {
@@ -1189,7 +1189,7 @@ if (Test-Path $destinationPath) {
 
         # Programmatic server authentication via env var.
         # Password resolution order: -ServerPassword param > GHIDRA_SERVER_PASSWORD env var > .ghidra-cred file
-        # The GhidraMCPPlugin constructor reads GHIDRA_SERVER_PASSWORD and registers a
+        # The MCP4GhidraPlugin constructor reads GHIDRA_SERVER_PASSWORD and registers a
         # ClientAuthenticator that handles server auth without GUI dialogs.
         $resolvedPassword = $ServerPassword
         if (-not $resolvedPassword) {

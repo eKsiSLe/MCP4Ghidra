@@ -200,7 +200,7 @@ Get type suggestions based on memory content:
 ## Technical Implementation
 
 ### Java Plugin Changes
-- **File**: `src/main/java/com/xebyte/GhidraMCPPlugin.java`
+- **File**: `src/main/java/com/xebyte/MCP4GhidraPlugin.java`
 - **Lines Added**: ~770 lines
 - **New Endpoints**: 9 REST endpoints
 - **Thread Safety**: All operations use `SwingUtilities.invokeAndWait()`

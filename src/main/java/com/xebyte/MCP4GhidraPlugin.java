@@ -104,7 +104,7 @@ class VersionInfo {
     private static final int ENDPOINT_COUNT = 177;
 
     static {
-        try (InputStream input = GhidraMCPPlugin.class
+        try (InputStream input = MCP4GhidraPlugin.class
                 .getResourceAsStream("/version.properties")) {
             if (input != null) {
                 Properties props = new Properties();
@@ -162,7 +162,7 @@ class VersionInfo {
                   "malware analysis (IOC extraction, behavior detection, anti-analysis detection), and Ghidra script automation. " +
                   "See https://github.com/bethington/ghidra-mcp for documentation and version history."
 )
-public class GhidraMCPPlugin extends Plugin implements ApplicationLevelPlugin {
+public class MCP4GhidraPlugin extends Plugin implements ApplicationLevelPlugin {
 
     // Static singleton: one HTTP server shared across all CodeBrowser windows (fixes #35)
     private static HttpServer server;
@@ -223,7 +223,7 @@ public class GhidraMCPPlugin extends Plugin implements ApplicationLevelPlugin {
     private final com.xebyte.core.MalwareSecurityService malwareSecurityService;
     private final com.xebyte.core.ProgramScriptService programScriptService;
 
-    public GhidraMCPPlugin(PluginTool tool) {
+    public MCP4GhidraPlugin(PluginTool tool) {
         super(tool);
         instanceCount++;
 

@@ -1,4 +1,4 @@
-# Multi-Program Support Analysis for GhidraMCPPlugin.java
+# Multi-Program Support Analysis for MCP4GhidraPlugin.java
 
 Generated: December 10, 2025
 

@@ -22,7 +22,7 @@
 - Changed `version=1.9.2` to `version=${project.version}`
 - Maven automatically updates this during build
 
-### 4. Modified Java Plugin (`GhidraMCPPlugin.java`)
+### 4. Modified Java Plugin (`MCP4GhidraPlugin.java`)
 - Added `VersionInfo` class that reads from `version.properties` at runtime
 - Plugin loads version dynamically from properties file
 - Falls back to default if file not found
@@ -31,7 +31,7 @@
 
 ### 5. Removed Version Hardcoding from Documentation
 - **README.md**: Removed version badge, kept feature descriptions
-- **CLAUDE.md**: Changed "Current Version: 1.9.2" to "Current Version: Configured in pom.xml"
+- **AI_ASSISTANT.md**: Changed "Current Version: 1.9.2" to "Current Version: Configured in pom.xml"
 - **docs/TOOL_REFERENCE.md**: Removed version from header
 - **docs/PERFORMANCE_BASELINES.md**: Removed version from header
 - **START_HERE.md**: Removed version references
@@ -60,7 +60,7 @@
 | `pom.xml` | **Single source of truth** | Manual (once per release) |
 | `version.properties` | Java runtime properties | Maven (automatic) |
 | `extension.properties` | Ghidra extension metadata | Maven (automatic) |
-| `GhidraMCPPlugin.java` | Plugin version in APIs | Reads from properties |
+| `MCP4GhidraPlugin.java` | Plugin version in APIs | Reads from properties |
 | Documentation | Conceptual descriptions | Never (no versions) |
 
 ---
@@ -73,10 +73,10 @@
 ```bash
 # Edit 20+ files:
 pom.xml
-GhidraMCPPlugin.java
+MCP4GhidraPlugin.java
 extension.properties
 README.md
-CLAUDE.md
+AI_ASSISTANT.md
 docs/TOOL_REFERENCE.md
 docs/PERFORMANCE_BASELINES.md
 docs/ERROR_CODES.md
@@ -109,7 +109,7 @@ git tag v1.9.3
 
 ✅ **These files no longer hardcode versions**:
 - README.md
-- CLAUDE.md
+- AI_ASSISTANT.md
 - DOCUMENTATION_INDEX.md
 - docs/TOOL_REFERENCE.md
 - docs/PERFORMANCE_BASELINES.md

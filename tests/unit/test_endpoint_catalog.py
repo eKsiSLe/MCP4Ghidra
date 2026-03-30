@@ -43,9 +43,9 @@ def extract_annotated_paths() -> set[str]:
 
 
 def extract_gui_only_paths() -> set[str]:
-    """Extract GUI-only endpoint paths from GhidraMCPPlugin.java."""
+    """Extract GUI-only endpoint paths from MCP4GhidraPlugin.java."""
     paths = set()
-    plugin_file = JAVA_SRC / "GhidraMCPPlugin.java"
+    plugin_file = JAVA_SRC / "MCP4GhidraPlugin.java"
     if plugin_file.exists():
         content = plugin_file.read_text()
         for match in re.finditer(r'server\.createContext\("([^"]+)"', content):

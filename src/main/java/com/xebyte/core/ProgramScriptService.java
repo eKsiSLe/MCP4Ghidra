@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Service for program management, script execution, memory, and bookmark operations.
- * Extracted from GhidraMCPPlugin as part of v4.0.0 refactor.
+ * Extracted from MCP4GhidraPlugin as part of v4.0.0 refactor.
  */
 @McpToolGroup(value = "program", description = "Program management, script execution, memory read, bookmarks, save")
 public class ProgramScriptService {

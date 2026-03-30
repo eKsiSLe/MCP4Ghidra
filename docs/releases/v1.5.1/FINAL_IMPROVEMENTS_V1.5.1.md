@@ -30,7 +30,7 @@ class java.lang.String cannot be cast to class java.util.Map
 
 **Solution**:
 
-#### Enhanced JSON Parsing (GhidraMCPPlugin.java)
+#### Enhanced JSON Parsing (MCP4GhidraPlugin.java)
 
 1. **parseJsonArray()** (lines 2673-2739):
    - Changed return type from `List<String>` to `List<Object>`
@@ -65,7 +65,7 @@ class java.lang.String cannot be cast to class java.util.Map
 - Enables successful batch comment operations
 - Reduces 17+ API calls to 1 per function
 
-**Files Modified**: `src/main/java/com/xebyte/GhidraMCPPlugin.java`
+**Files Modified**: `src/main/java/com/xebyte/MCP4GhidraPlugin.java`
 
 ---
 
@@ -75,7 +75,7 @@ class java.lang.String cannot be cast to class java.util.Map
 
 **Solution**:
 
-#### Java Implementation (GhidraMCPPlugin.java)
+#### Java Implementation (MCP4GhidraPlugin.java)
 
 1. **Added endpoint** (lines 495-501):
    ```java
@@ -137,7 +137,7 @@ batch_create_labels([
 - Enables efficient function documentation workflow
 
 **Files Modified**:
-- `src/main/java/com/xebyte/GhidraMCPPlugin.java`
+- `src/main/java/com/xebyte/MCP4GhidraPlugin.java`
 - `bridge_mcp_ghidra.py`
 
 ---
@@ -341,7 +341,7 @@ mvn clean package assembly:single -DskipTests -q
 
 ### Quick Deployment (Recommended)
 ```powershell
-.\ghidra-mcp-setup.ps1
+.\mcp4ghidra-setup.ps1
 ```
 
 This script will:
@@ -441,7 +441,7 @@ batch_create_labels([
 ## Files Modified Summary
 
 ### Java Plugin
-**File**: `src/main/java/com/xebyte/GhidraMCPPlugin.java`
+**File**: `src/main/java/com/xebyte/MCP4GhidraPlugin.java`
 
 **Changes**:
 - Line 54: Added `import java.util.concurrent.atomic.AtomicInteger;`

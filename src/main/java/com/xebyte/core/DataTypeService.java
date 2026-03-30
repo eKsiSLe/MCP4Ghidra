@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 /**
  * Service for data type operations: list, create, modify, validate, and analyze data types.
- * Extracted from GhidraMCPPlugin as part of v4.0.0 refactor.
+ * Extracted from MCP4GhidraPlugin as part of v4.0.0 refactor.
  */
 @McpToolGroup(value = "datatype", description = "Struct/enum/union CRUD, apply data types, type conflicts, validation")
 public class DataTypeService {
@@ -32,7 +32,7 @@ public class DataTypeService {
     private final ProgramProvider programProvider;
     private final ThreadingStrategy threadingStrategy;
 
-    // Constants from GhidraMCPPlugin
+    // Constants from MCP4GhidraPlugin
     private static final int MAX_FUNCTIONS_TO_ANALYZE = 100;
     private static final int MIN_FUNCTIONS_TO_ANALYZE = 1;
     private static final int MAX_STRUCT_FIELDS = 256;

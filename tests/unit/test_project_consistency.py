@@ -39,9 +39,9 @@ class TestVersionConsistency(unittest.TestCase):
         self.assertRegex(version, r'\d+\.\d+\.\d+')
 
     def test_java_version_matches_pom(self):
-        """VersionInfo in GhidraMCPPlugin.java should match pom.xml."""
+        """VersionInfo in MCP4GhidraPlugin.java should match pom.xml."""
         pom_version = get_pom_version()
-        plugin_path = JAVA_SRC / "GhidraMCPPlugin.java"
+        plugin_path = JAVA_SRC / "MCP4GhidraPlugin.java"
         if plugin_path.exists():
             content = plugin_path.read_text()
             match = re.search(r'VERSION\s*=\s*"([^"]+)"', content)
@@ -142,11 +142,11 @@ class TestProjectStructure(unittest.TestCase):
         self.assertTrue(PYTHON_BRIDGE.exists())
 
     def test_plugin_exists(self):
-        self.assertTrue((JAVA_SRC / "GhidraMCPPlugin.java").exists())
+        self.assertTrue((JAVA_SRC / "MCP4GhidraPlugin.java").exists())
 
     def test_headless_server_exists(self):
         self.assertTrue(
-            (JAVA_SRC / "headless" / "GhidraMCPHeadlessServer.java").exists()
+            (JAVA_SRC / "headless" / "MCP4GhidraHeadlessServer.java").exists()
         )
 
 

@@ -10,7 +10,7 @@ Before dispatching any subagents, verify Ghidra is running and the plugin is acc
 2. If it returns successfully, proceed with dispatch
 3. If connection refused: **stop immediately** and inform the user. Do not dispatch subagents - they will all fail with the same connection error. Suggest:
    - Start Ghidra and open a program in CodeBrowser
-   - Run `ghidra-mcp-setup.ps1 -Deploy` to auto-activate the plugin
+   - Run `mcp4ghidra-setup.ps1 -Deploy` to auto-activate the plugin
    - Verify the MCP server is started (Tools > GhidraMCP > Start MCP Server)
 
 ## Dispatch Pattern

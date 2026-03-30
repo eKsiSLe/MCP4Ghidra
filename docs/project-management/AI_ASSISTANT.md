@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AI_ASSISTANT.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -18,7 +18,7 @@ Ghidra MCP Server is a production-ready Model Context Protocol (MCP) server that
 
 ### Three-Layer System
 
-1. **Ghidra Java Plugin** (`src/main/java/com/xebyte/GhidraMCPPlugin.java`)
+1. **Ghidra Java Plugin** (`src/main/java/com/xebyte/MCP4GhidraPlugin.java`)
    - Embedded HTTP server running on port 8089 (configurable)
    - Exposes Ghidra's reverse engineering API as REST endpoints
    - Single-file plugin (~10,900 lines) with 107 endpoints (105 analysis + 1 generation + 1 execution)
@@ -44,7 +44,7 @@ Ghidra MCP Server is a production-ready Model Context Protocol (MCP) server that
 
 ### Critical Architecture Details
 
-- **Ghidra libraries must be installed first**: Before building, run `ghidra-mcp-setup.ps1 -SetupDeps` on Windows to install JARs from your Ghidra installation into local Maven repo
+- **Ghidra libraries must be installed first**: Before building, run `mcp4ghidra-setup.ps1 -SetupDeps` on Windows to install JARs from your Ghidra installation into local Maven repo
 - **Plugin loads at Ghidra startup**: The Java plugin starts automatically when Ghidra launches if properly installed
 - **REST API is stateful**: All operations work on the currently open program in Ghidra's CodeBrowser
 - **MCP bridge is stateless**: Each MCP tool call translates to one or more HTTP requests
@@ -55,7 +55,7 @@ Ghidra MCP Server is a production-ready Model Context Protocol (MCP) server that
 
 ```bash
 # 1. Install Ghidra libraries (required before first build)
-.\ghidra-mcp-setup.ps1 -SetupDeps -GhidraPath "C:\path\to\ghidra"
+.\mcp4ghidra-setup.ps1 -SetupDeps -GhidraPath "C:\path\to\ghidra"
 
 # 2. Install Python dependencies
 pip install -r requirements.txt
@@ -97,7 +97,7 @@ pytest tests/ --cov=src --cov-report=html
 Automated installation (recommended):
 ```powershell
 # Windows - automatically detects version and Ghidra installation
-.\ghidra-mcp-setup.ps1
+.\mcp4ghidra-setup.ps1
 ```
 
 Manual installation:
@@ -173,10 +173,10 @@ These files work together to implement version management. **You only edit `pom.
 | `pom.xml` | **Single source of truth** | ✏️ **Edit version here only** |
 | `src/main/resources/version.properties` | Runtime version source for Java plugin | 🔄 Maven auto-substitutes `${project.version}` |
 | `src/main/resources/extension.properties` | Ghidra extension metadata | 🔄 Maven auto-substitutes `${project.version}` |
-| `src/main/java/com/xebyte/GhidraMCPPlugin.java` | Plugin code with `VersionInfo` class | 🔍 Loads version dynamically at runtime |
+| `src/main/java/com/xebyte/MCP4GhidraPlugin.java` | Plugin code with `VersionInfo` class | 🔍 Loads version dynamically at runtime |
 | `CHANGELOG.md` | Version history and release notes | 📝 Update manually for each release |
 | `README.md` | User documentation | ✅ No version refs (generic) |
-| `CLAUDE.md` | AI guidance (this file) | ✅ No version refs (generic) |
+| `AI_ASSISTANT.md` | AI guidance (this file) | ✅ No version refs (generic) |
 | Other documentation files | User guides, references, examples | ✅ All generic (no version refs) |
 
 ### What Each File Does
@@ -191,7 +191,7 @@ These files work together to implement version management. **You only edit `pom.
 
 ```properties
 app.version=${project.version}  # Maven substitutes current version from pom.xml
-app.name=GhidraMCP
+app.name=MCP4Ghidra
 app.description=Production-ready MCP server for Ghidra
 ghidra.version=12.0.3
 java.version=21
@@ -205,14 +205,14 @@ java.version=21
 
 ```properties
 version=${project.version}  # Maven substitutes current version from pom.xml
-name=GhidraMCP
+name=MCP4Ghidra
 description=Production-ready MCP server for Ghidra
 ```
 
 - Tells Ghidra the plugin version
 - Substituted by Maven during build
 
-#### **`GhidraMCPPlugin.java` (Dynamic Loading)**
+#### **`MCP4GhidraPlugin.java` (Dynamic Loading)**
 
 - Contains `VersionInfo` class that loads version from `version.properties` at plugin startup
 - `getVersion()` method returns the version loaded from properties
@@ -272,7 +272,7 @@ git push --tags
 
 # 6. Deploy
 # Copy target/GhidraMCP-NEW_VERSION.zip to release/distribution
-# Or use: .\ghidra-mcp-setup.ps1
+# Or use: .\mcp4ghidra-setup.ps1
 ```
 
 ### Key Principles
@@ -307,7 +307,7 @@ mvn clean package assembly:single
 These files should NOT contain hardcoded version numbers:
 - README.md (use "Latest" or generic language)
 - START_HERE.md (use "Current implementation" or generic)
-- CLAUDE.md (use "Configured in pom.xml")
+- AI_ASSISTANT.md (use "Configured in pom.xml")
 - docs/TOOL_REFERENCE.md (examples show generic "X.Y.Z")
 - docs/PERFORMANCE_BASELINES.md (generic timing references)
 - All other documentation
@@ -332,7 +332,7 @@ For detailed implementation information, see `MAVEN_VERSION_MANAGEMENT.md`.
     - `delete_ghidra_script()` - Remove scripts safely with backups
   - Performance: 10x faster for bulk operations (100+ items)
   - Hybrid workflow: MCP tools for exploration, scripts for bulk automation
-- `src/main/java/com/xebyte/GhidraMCPPlugin.java` - Ghidra plugin (~10,900 lines)
+- `src/main/java/com/xebyte/MCP4GhidraPlugin.java` - Ghidra plugin (~10,900 lines)
   - 107 REST endpoints (105 analysis + 1 generation + 1 execution)
   - `runGhidraScriptWithCapture()` - Script discovery, validation, and error reporting
 - `pom.xml` - Maven build configuration with system-scoped Ghidra dependencies
@@ -341,7 +341,7 @@ For detailed implementation information, see `MAVEN_VERSION_MANAGEMENT.md`.
 ### Automation & Scripts
 
 - `ghidra_scripts/` - Ghidra scripts for automation
-  - `DocumentFunctionWithClaude.java` - AI-assisted function documentation (Ctrl+Shift+P)
+  - `DocumentFunctionWithAI.java` - AI-assisted function documentation (Ctrl+Shift+P)
   - `ClearCallReturnOverrides.java` - Clean orphaned flow overrides
 - `mcp_function_processor.py` - Batch function processing automation
 - `scripts/hybrid-function-processor.ps1` - Automated analysis workflows
@@ -412,7 +412,7 @@ When preparing a new release:
 
 ### Adding a New MCP Tool
 
-1. Add REST endpoint to Java plugin (`GhidraMCPPlugin.java`)
+1. Add REST endpoint to Java plugin (`MCP4GhidraPlugin.java`)
 2. Add MCP tool function to `bridge_mcp_ghidra.py` with `@mcp.tool()` decorator
 3. Implement input validation using validation functions
 4. Use `safe_get()` or `safe_post()` for HTTP calls
@@ -559,7 +559,7 @@ set_function_prototype(
 ## Troubleshooting
 
 ### Build fails with missing Ghidra JARs
-Run `ghidra-mcp-setup.ps1 -SetupDeps` to install JARs from Ghidra installation to local Maven repository
+Run `mcp4ghidra-setup.ps1 -SetupDeps` to install JARs from Ghidra installation to local Maven repository
 
 ### Plugin doesn't appear in Ghidra
 Verify JAR is in `<ghidra>/Extensions/Ghidra/` and restart Ghidra completely
