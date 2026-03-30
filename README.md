@@ -9,6 +9,25 @@
 
 A production-ready Model Context Protocol (MCP) server that bridges Ghidra's powerful reverse engineering capabilities with modern AI tools and automation frameworks. **193 MCP tools**, battle-tested AI workflows, and the most comprehensive Ghidra-MCP integration available.
 
+## Important: v4.3+ Migration Notes
+
+If you are upgrading from older builds, read this first:
+
+- The Python bridge no longer accepts `--ghidra-server`.
+- Set the Ghidra TCP URL via environment variable: `GHIDRA_MCP_URL`.
+- The bridge now prefers local UDS auto-discovery first. If UDS is available, it will use UDS even when TCP exists.
+- If your Ghidra status shows `TCP: Disabled`, direct HTTP calls like `http://127.0.0.1:17171/...` will fail by design.
+
+Recommended MCP client config (stdio):
+
+```toml
+[mcp_servers.ghidra]
+command = "python3"
+args = ["/absolute/path/to/bridge_mcp_ghidra.py", "--transport", "stdio"]
+env = { GHIDRA_MCP_URL = "http://127.0.0.1:17171" } # used when TCP mode is enabled/needed
+enabled = true
+```
+
 ## Why Ghidra MCP?
 
 Most Ghidra MCP implementations give you a handful of read-only tools and call it a day. This project is different — it was built by a reverse engineer who uses it daily on real binaries, not as a demo.
@@ -137,7 +156,7 @@ Most Ghidra MCP implementations give you a handful of read-only tools and call i
    This will:
    - Install Ghidra JAR dependencies into your local `~/.m2/repository`
    - Build `GhidraMCP-<version>.zip` with Maven
-   - Extract the extension to `~/.config/ghidra/ghidra_<version>_PUBLIC/Extensions/`
+   - Extract the extension to your OS-specific Ghidra user extensions directory
    - Update `preferences` with `LastExtensionImportDirectory`
    - Install Python requirements
 
@@ -151,8 +170,10 @@ Most Ghidra MCP implementations give you a handful of read-only tools and call i
    ./mcp4ghidra-setup.sh --help
    ```
 
-> **Linux paths:** The extension is installed to `$HOME/.config/ghidra/ghidra_<version>_PUBLIC/Extensions/GhidraMCP/`.
-> Ghidra config files are in `$HOME/.config/ghidra/ghidra_<version>_PUBLIC/`.
+> **Extension/config paths by OS**
+> - **Linux:** `$HOME/.config/ghidra/ghidra_<version>_PUBLIC/`
+> - **macOS:** `$HOME/Library/ghidra/ghidra_<version>_PUBLIC/`
+> - Extension folder: `<base>/Extensions/GhidraMCP/`
 
 > **Additional helper scripts** (Linux equivalents of the PowerShell utilities):
 > - `functions-extract.sh` — Extract functions via Ghidra REST API (uses `curl`/`jq`)
@@ -165,6 +186,13 @@ Most Ghidra MCP implementations give you a handful of read-only tools and call i
 python bridge_mcp_ghidra.py
 ```
 
+With explicit TCP fallback URL (if needed):
+```bash
+GHIDRA_MCP_URL=http://127.0.0.1:17171 python bridge_mcp_ghidra.py --transport stdio
+```
+
+> Note: `--ghidra-server` was removed in v4.3+.
+
 #### Option 2: SSE Transport (Web/HTTP clients)
 ```bash
 python bridge_mcp_ghidra.py --transport sse --mcp-host 127.0.0.1 --mcp-port 8081
@@ -175,7 +203,9 @@ python bridge_mcp_ghidra.py --transport sse --mcp-host 127.0.0.1 --mcp-port 8081
 2. In **CodeBrowser**, enable the plugin via **File > Configure > Configure All Plugins > GhidraMCP**
 3. Optional: configure custom port via **CodeBrowser > Edit > Tool Options > GhidraMCP HTTP Server**
 4. Start the server via **Tools > GhidraMCP > Start MCP Server**
-5. The server runs on `http://127.0.0.1:8089/` by default
+5. Check **Tools > GhidraMCP > Server Status** to confirm transport:
+   - `UDS: Running` with `TCP: Disabled` means bridge/tools should connect via UDS.
+   - `TCP: Running` means HTTP endpoints are available on your configured port (default `8089` unless changed).
 
 #### Verify It's Working
 ```bash
@@ -213,6 +243,20 @@ curl http://127.0.0.1:8089/get_version
    netstat -ano | findstr :8089
    ```
 4. Look for errors in Ghidra console: **Window > Console**
+
+### MCP tools fail with "Transport closed"
+
+**Cause:** Bridge process exited on startup (most commonly stale CLI args after update).
+
+**Fix:**
+1. Remove `--ghidra-server` from MCP client args.
+2. Use:
+   - args: `["/path/to/bridge_mcp_ghidra.py", "--transport", "stdio"]`
+   - env: `GHIDRA_MCP_URL=http://127.0.0.1:17171` (or your TCP port)
+3. Restart MCP server toggle in your client.
+4. In Ghidra, check **Tools > GhidraMCP > Server Status**:
+   - if `TCP: Disabled`, HTTP checks to `127.0.0.1:<port>` are expected to fail.
+   - this is normal when using UDS transport.
 
 ### 500 Internal Server Errors
 

@@ -64,7 +64,7 @@ ENDPOINT_TIMEOUTS = {
     "default": 30,
 }
 
-DEFAULT_TCP_URL = "http://127.0.0.1:8089"
+DEFAULT_TCP_URL = "http://127.0.0.1:17171"
 
 # Logging
 LOG_LEVEL = os.getenv("GHIDRA_MCP_LOG_LEVEL", "INFO")
@@ -574,7 +574,8 @@ _loaded_groups: set[str] = set()
 CORE_GROUPS = {"listing", "function", "program"}
 
 # CLI-configurable: --lazy keeps only default groups, otherwise load all
-_lazy_mode = True  # default: lazy (only load default groups on connect)
+# Default is non-lazy so MCP clients get full tool availability immediately.
+_lazy_mode = False
 _default_groups: set[str] = CORE_GROUPS
 
 
@@ -833,7 +834,7 @@ async def connect_instance(project: str, ctx: Context | None = None) -> str:
                     "tools_registered": count,
                     "tools_total": total,
                     "loaded_groups": sorted(_loaded_groups),
-                    "note": f"Loaded {count}/{total} tools (core groups). Use load_tool_group() for more.",
+                    "note": f"Loaded {count}/{total} tools.",
                 })
             except Exception as e:
                 return json.dumps({"error": f"Schema fetch failed: {e}", "socket": _active_socket})
@@ -1073,10 +1074,10 @@ def main():
     parser.add_argument("--mcp-port", type=int, help="Port for SSE transport")
     parser.add_argument("--transport", type=str, default="stdio", choices=["stdio", "sse"],
                         help="MCP transport")
-    parser.add_argument("--lazy", action="store_true", default=True,
-                        help="Only load default tool groups on connect (default)")
+    parser.add_argument("--lazy", action="store_true", default=False,
+                        help="Only load default tool groups on connect")
     parser.add_argument("--no-lazy", dest="lazy", action="store_false",
-                        help="Load all tool groups on connect")
+                        help="Load all tool groups on connect (default)")
     parser.add_argument("--default-groups", type=str, default=None,
                         help="Comma-separated list of default tool groups to load on connect "
                              "(default: listing,function,program)")

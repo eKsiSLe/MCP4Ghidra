@@ -36,6 +36,14 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEFAULT_GHIDRA_VERSION="12.0.3"
 PLUGIN_VERSION="2.0.0"
 
+# Per-OS Ghidra user data base path.
+# macOS uses ~/Library/ghidra, Linux typically uses ~/.config/ghidra.
+if [[ "$OSTYPE" == darwin* ]]; then
+    GHIDRA_USER_BASE="$HOME/Library/ghidra"
+else
+    GHIDRA_USER_BASE="${XDG_CONFIG_HOME:-$HOME/.config}/ghidra"
+fi
+
 # Parameters (defaults)
 ACTION=""
 GHIDRA_PATH=""
@@ -374,7 +382,7 @@ invoke_clean_action() {
     fi
 
     # Remove GhidraMCP from user config extensions
-    local ghidra_config_base="$HOME/.config/ghidra"
+    local ghidra_config_base="$GHIDRA_USER_BASE"
     if [[ -d "$ghidra_config_base" ]]; then
         for version_dir in "$ghidra_config_base"/ghidra_*; do
             if [[ -d "$version_dir" ]]; then
@@ -539,7 +547,7 @@ invoke_preflight_checks() {
 
     # Write access checks
     local ghidra_public_version="ghidra_${resolved_ghidra_version}_PUBLIC"
-    local user_ext_dir="$HOME/.config/ghidra/${ghidra_public_version}/Extensions"
+    local user_ext_dir="${GHIDRA_USER_BASE}/${ghidra_public_version}/Extensions"
     if ! test_write_access "$user_ext_dir"; then
         issues+=("No write access to user extension directory: $user_ext_dir")
     else
@@ -778,7 +786,7 @@ if [[ -n "$(get_ghidra_pids)" ]]; then
 fi
 
 # Clean up ALL cached GhidraMCP extensions
-ghidra_config_base="$HOME/.config/ghidra"
+ghidra_config_base="$GHIDRA_USER_BASE"
 if [[ -d "$ghidra_config_base" ]]; then
     cleaned_count=0
     for version_dir in "$ghidra_config_base"/ghidra_*; do
@@ -816,10 +824,13 @@ else
     log_info "Skipping build (using existing artifact)"
 fi
 
-# Detect version from pom.xml
+# Detect version from pom.xml (portable; avoid GNU grep -P)
 pom_path="${SCRIPT_DIR}/pom.xml"
 if [[ -f "$pom_path" ]]; then
-    version=$(grep -oP '<version>\K[^<]+' "$pom_path" | head -1 || echo "$PLUGIN_VERSION")
+    version=$(sed -n 's:.*<version>\([^<]*\)</version>.*:\1:p' "$pom_path" | head -1)
+    if [[ -z "$version" ]]; then
+        version="$PLUGIN_VERSION"
+    fi
     log_success "Detected version: $version"
 else
     log_warning "pom.xml not found, using default version: $PLUGIN_VERSION"
@@ -854,12 +865,12 @@ log_success "Using artifact: $(basename "$artifact_path") ($version)"
 # ============================================================================
 # Deploy to user Extensions directory (Linux-specific)
 # On Linux, Ghidra looks for extensions in:
-#   $HOME/.config/ghidra/ghidra_<VERSION>_PUBLIC/Extensions/
+#   ${GHIDRA_USER_BASE}/ghidra_<VERSION>_PUBLIC/Extensions/
 # We extract the ZIP contents there, creating:
-#   $HOME/.config/ghidra/ghidra_<VERSION>_PUBLIC/Extensions/GhidraMCP/
+#   ${GHIDRA_USER_BASE}/ghidra_<VERSION>_PUBLIC/Extensions/GhidraMCP/
 # ============================================================================
 ghidra_public_version="ghidra_${GHIDRA_VERSION}_PUBLIC"
-user_extensions_dir="$HOME/.config/ghidra/${ghidra_public_version}/Extensions"
+user_extensions_dir="${GHIDRA_USER_BASE}/${ghidra_public_version}/Extensions"
 
 log_info "Installing extension to: ${user_extensions_dir}/"
 
@@ -894,7 +905,7 @@ fi
 # ============================================================================
 # Update preferences file with LastExtensionImportDirectory
 # ============================================================================
-preferences_dir="$HOME/.config/ghidra/${ghidra_public_version}"
+preferences_dir="${GHIDRA_USER_BASE}/${ghidra_public_version}"
 preferences_file="${preferences_dir}/preferences"
 ext_import_dir="${user_extensions_dir}/GhidraMCP"
 pref_key="LastExtensionImportDirectory"
@@ -907,7 +918,11 @@ if ! $DRY_RUN; then
         # Check if the key already exists in the file
         if grep -q "^${pref_key}=" "$preferences_file" 2>/dev/null; then
             # Update existing line
-            sed -i "s|^${pref_key}=.*|${pref_line}|" "$preferences_file"
+            if [[ "$OSTYPE" == darwin* ]]; then
+                sed -i '' "s|^${pref_key}=.*|${pref_line}|" "$preferences_file"
+            else
+                sed -i "s|^${pref_key}=.*|${pref_line}|" "$preferences_file"
+            fi
             log_success "Updated ${pref_key} in preferences"
         else
             # Append the line
