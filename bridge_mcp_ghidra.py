@@ -395,13 +395,38 @@ def _try_reconnect() -> bool:
 
 def _ensure_connected() -> str | None:
     """Check connection and attempt reconnect if needed. Returns error string or None."""
+    global _active_socket, _active_tcp, _connected_project, _transport_mode
+
     if _transport_mode == "none":
         if _connected_project:
             if _try_reconnect():
                 return None
             return (f"Ghidra instance for project '{_connected_project}' is not running. "
                     "Start Ghidra and open the project, then retry.")
-        return "No Ghidra instance connected. Use connect_instance() first."
+        # First-run convenience: if there's exactly one running instance, auto-connect.
+        instances = discover_instances()
+        if len(instances) == 1:
+            inst = instances[0]
+            _active_socket = inst["socket"]
+            _active_tcp = None
+            _transport_mode = "uds"
+            _connected_project = inst.get("project")
+            try:
+                _fetch_and_register_schema()
+                logger.info(
+                    f"Auto-connected on demand to '{_connected_project or 'unknown'}' via {_active_socket}"
+                )
+                return None
+            except Exception as e:
+                logger.warning(f"On-demand auto-connect failed: {e}")
+                _active_socket = None
+                _transport_mode = "none"
+        elif len(instances) > 1:
+            return (
+                f"Multiple Ghidra instances found ({len(instances)}). "
+                "Use connect_instance() to select the target project."
+            )
+        return "No Ghidra instance connected. Start Ghidra and retry."
     return None
 
 
