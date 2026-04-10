@@ -810,6 +810,15 @@ def list_instances() -> str:
         return json.dumps({"instances": [], "note": "No running Ghidra instances found."})
     for inst in instances:
         inst["connected"] = inst["socket"] == _active_socket
+        # "tools" from /mcp/instance_info represents running Ghidra tool windows,
+        # not MCP endpoint count. Preserve it as running_tools and expose MCP count.
+        if "tools" in inst and "running_tools" not in inst:
+            inst["running_tools"] = inst["tools"]
+        if inst["connected"] and _full_schema:
+            inst["tools"] = len(_full_schema)
+            inst["mcp_tools"] = len(_full_schema)
+        elif "mcp_tools" not in inst:
+            inst["mcp_tools"] = None
     return json.dumps({"instances": instances}, indent=2)
 
 
