@@ -26,6 +26,8 @@ import socket
 import time
 import http.client
 import inspect
+import atexit
+import fcntl
 from pathlib import Path
 from urllib.parse import urlencode
 
@@ -88,6 +90,45 @@ _active_socket: str | None = None  # UDS socket path
 _active_tcp: str | None = None  # TCP base URL (e.g. "http://127.0.0.1:8089")
 _transport_mode: str = "none"  # "uds", "tcp", or "none"
 _connected_project: str | None = None  # Project name for auto-reconnect
+_bridge_lock_fd = None
+
+
+def _acquire_single_instance_lock() -> None:
+    """Ensure only one bridge process runs per user/session.
+
+    Prevents Codex from spawning multiple competing bridge processes across chats.
+    """
+    global _bridge_lock_fd
+
+    lock_path = os.getenv("GHIDRA_MCP_BRIDGE_LOCK", "/tmp/mcp4ghidra-bridge.lock")
+    fd = open(lock_path, "a+")
+    try:
+        fcntl.flock(fd.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        fd.seek(0)
+        owner = fd.read().strip() or "unknown"
+        raise SystemExit(
+            f"Another bridge instance is already running (owner pid: {owner}). "
+            "Reuse the existing instance instead of launching a duplicate."
+        )
+
+    fd.seek(0)
+    fd.truncate()
+    fd.write(str(os.getpid()))
+    fd.flush()
+    _bridge_lock_fd = fd
+
+    def _release_lock():
+        try:
+            if _bridge_lock_fd:
+                _bridge_lock_fd.seek(0)
+                _bridge_lock_fd.truncate()
+                fcntl.flock(_bridge_lock_fd.fileno(), fcntl.LOCK_UN)
+                _bridge_lock_fd.close()
+        except Exception:
+            pass
+
+    atexit.register(_release_lock)
 
 
 # ==========================================================================
@@ -1121,6 +1162,7 @@ def main():
     if args.default_groups is not None:
         _default_groups = {g.strip() for g in args.default_groups.split(",") if g.strip()}
 
+    _acquire_single_instance_lock()
     _auto_connect()
 
     if args.transport == "sse":
